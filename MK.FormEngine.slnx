@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/Docs/" />
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Src/" />
+  <Folder Name="/Src/Modules/">
+    <Project Path="src/modules/Application/Application.csproj" />
+    <Project Path="src/modules/Domain/Domain.csproj" />
+    <Project Path="src/modules/Infrastructure/Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Src/Shared/">
+    <Project Path="src/Shared/Shared.Core/Shared.Core.csproj" Id="5a4e833a-48b9-4ae5-af19-f6cd451d13d3" />
+    <Project Path="src/Shared/Shared.Logs/Shared.Logs.csproj" Id="b84fd630-b7f2-40bc-abbb-6da03585f557" />
+    <Project Path="src/Shared/Shared.Swagger/Shared.Swagger.csproj" Id="5a57bcfd-b63f-4dd6-870a-bd67d649786d" />
+  </Folder>
+  <Folder Name="/Src/WebApps/">
+    <Project Path="src/WebApps/MK.FormEngine.API/MK.FormEngine.API.csproj" Id="c494e76a-ca9e-4cea-942a-d2284e4c863c" />
+  </Folder>
+</Solution>

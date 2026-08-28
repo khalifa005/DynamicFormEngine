@@ -1,0 +1,373 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* Filter bar */
+.filter-panel {
+  padding: 1rem 1.25rem;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.85rem;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 9rem;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--p-text-muted-color);
+  }
+}
+
+/* The cascade picker is set to row layout in the dashboard, so it gets a full line. */
+.filter-org {
+  flex: 1 1 100%;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+
+/* KPI grid */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.15rem 1rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  box-shadow: var(--app-shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--app-shadow-lg);
+  }
+}
+
+.kpi-icon {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 0.85rem;
+  color: #fff;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.kpi-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.kpi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--p-text-color);
+  line-height: 1.1;
+
+  small {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--p-text-muted-color);
+    margin-inline-start: 0.1rem;
+  }
+}
+
+.kpi-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--p-text-muted-color);
+  min-width: 0;
+
+}
+
+/* The label truncates; the help icon beside it must not shrink away with it. */
+.kpi-label-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* "How is this calculated" affordance. Dim until hovered so it never competes with the number. */
+.kpi-help,
+.panel-help {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  color: var(--p-text-muted-color);
+  opacity: 0.55;
+  cursor: help;
+  transition: opacity 0.15s ease, color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    color: var(--p-primary-color, #157591);
+  }
+}
+
+.panel-help {
+  margin-inline-start: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.kpi-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  &.up {
+    color: var(--acc-success-fg, #10b981);
+  }
+  &.down {
+    color: var(--acc-danger-fg, #ef4444);
+  }
+}
+
+/* Mid grid: Line Chart + Doughnut Chart + Activity */
+.mid-grid {
+  display: grid;
+  grid-template-columns: 12fr 9fr 9fr;
+  gap: 1.25rem;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/*
+ * Config can hide individual panels, and a fixed column template would then leave a gap where the
+ * hidden panel used to sit. These restate the small-screen breakpoints because they out-specify the
+ * media queries nested in the rules above.
+ */
+.mid-grid.cols-2 {
+  grid-template-columns: 1fr 1fr;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mid-grid.cols-1,
+.peer-grid.cols-1 {
+  grid-template-columns: 1fr;
+}
+
+.panel {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+.panel-head {
+  margin-bottom: 1rem;
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--p-text-color);
+    display: flex;
+    align-items: center;
+  }
+}
+
+.panel-sub {
+  font-size: 0.76rem;
+  color: var(--p-text-muted-color);
+}
+
+/* "Me vs peers": the stat block and its bar chart sit side by side. */
+.peer-grid {
+  grid-template-columns: 10fr 14fr;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.my-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.my-stat-primary {
+  display: flex;
+  flex-direction: column;
+}
+
+.my-stat-value {
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--p-primary-color, #157591);
+}
+
+.my-stat-label {
+  font-size: 0.82rem;
+  color: var(--p-text-muted-color);
+}
+
+.my-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--app-border);
+    border-radius: 0.7rem;
+  }
+}
+
+.my-stat-num {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--p-text-color);
+  line-height: 1.2;
+
+  small {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--p-text-muted-color);
+  }
+}
+
+.my-stat-cap {
+  font-size: 0.72rem;
+  color: var(--p-text-muted-color);
+}
+
+.chart-wrap {
+  height: 300px;
+  position: relative;
+}
+
+.doughnut-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Activity Feed */
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+}
+
+.activity-icon {
+  display: grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 0.7rem;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+
+  &.info {
+    background: rgba(37, 99, 235, 0.12);
+    color: #2563eb;
+  }
+  &.success {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+  }
+  &.warn {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+  }
+  &.danger {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+  }
+}
+
+.activity-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-title {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--p-text-color);
+  line-height: 1.35;
+}
+
+.activity-time {
+  font-size: 0.76rem;
+  color: var(--p-text-muted-color);
+}
+
+.activity-empty {
+  font-size: 0.85rem;
+  color: var(--p-text-muted-color);
+  justify-content: center;
+  padding: 1.5rem 0;
+}
+
+/* The feed can outgrow the charts beside it; cap it and scroll rather than stretch the row. */
+.activity-panel .activity-list {
+  max-height: 300px;
+  overflow-y: auto;
+}

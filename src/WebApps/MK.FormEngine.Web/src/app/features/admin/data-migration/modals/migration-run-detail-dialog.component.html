@@ -1,0 +1,243 @@
+<ng-container *transloco="let t">
+  <p-dialog
+    [visible]="visible()"
+    (visibleChange)="visible.set($event)"
+    (onHide)="close()"
+    [modal]="true"
+    [maximizable]="true"
+    [draggable]="false"
+    [style]="{ width: '72rem', maxWidth: '95vw' }"
+    [header]="t('dataMigration.detail.title', { id: run()?.id ?? '' })"
+  >
+    @if (run(); as detail) {
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <p-tag [value]="t(runStatusKey(detail.status))" [severity]="runStatusSeverity(detail.status)" />
+        <span class="text-sm text-color-secondary">{{ detail.fileName }}</span>
+        <span class="text-sm text-color-secondary">{{ detail.sourceCode }}</span>
+        <span class="text-sm text-color-secondary">{{ detail.templateCode }}</span>
+      </div>
+
+      <!--
+        The column match is how an operator finds out they picked the wrong form. A run whose file
+        matched almost nothing is that mistake, and it is worth more than the record table below.
+      -->
+      <div class="mb-4">
+        <div class="text-xs text-color-secondary">
+          {{
+            t('dataMigration.detail.columnsMatched', {
+              matched: detail.mappedColumnCount,
+              total: detail.sourceColumnCount,
+              ignored: detail.ignoredColumnCount,
+              unmapped: detail.unmappedColumnCount
+            })
+          }}
+        </div>
+        @if (detail.unmappedColumns) {
+          <div class="text-xs mt-1 p-2 border-round surface-100 break-all">
+            <span class="font-medium">{{ t('dataMigration.detail.columnsUnmapped') }}:</span>
+            {{ detail.unmappedColumns }}
+          </div>
+        }
+
+        <!--
+          Behind a toggle rather than always open: the ignored list is the longest of the three and
+          is noise in the ordinary case, but it is also the only place a column the adapter wrongly
+          skips can be seen — so it has to be reachable without going to the database.
+        -->
+        @if (detail.ignoredColumns) {
+          <p-button
+            [label]="
+              showIgnored()
+                ? t('dataMigration.detail.hideIgnored')
+                : t('dataMigration.detail.showIgnored', { count: detail.ignoredColumnCount })
+            "
+            [icon]="showIgnored() ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+            severity="secondary"
+            [text]="true"
+            size="small"
+            styleClass="mt-1 p-0"
+            (onClick)="toggleIgnored()"
+          />
+          @if (showIgnored()) {
+            <div class="text-xs mt-1 p-2 border-round surface-100 break-all">
+              <div class="mb-1 text-color-secondary">{{ t('dataMigration.detail.ignoredHint') }}</div>
+              {{ detail.ignoredColumns }}
+            </div>
+          }
+        }
+      </div>
+
+      <!--
+        How long the job actually took. Queued-to-started is shown separately from started-to-finished
+        because a run that sat in the queue for a minute and a run that spent a minute writing records
+        look identical in a single elapsed figure, and only one of them is a reason to look at Hangfire.
+      -->
+      <div class="flex flex-wrap gap-x-6 gap-y-1 text-xs text-color-secondary mb-4">
+        <span>
+          {{ t('dataMigration.detail.queuedAt') }}:
+          <span class="text-color">{{ detail.created | date: 'yyyy-MM-dd HH:mm:ss' }}</span>
+        </span>
+        @if (detail.startedAt) {
+          <span>
+            {{ t('dataMigration.detail.startedAt') }}:
+            <span class="text-color">{{ detail.startedAt | date: 'yyyy-MM-dd HH:mm:ss' }}</span>
+          </span>
+        }
+        @if (detail.completedAt) {
+          <span>
+            {{ t('dataMigration.detail.completedAt') }}:
+            <span class="text-color">{{ detail.completedAt | date: 'yyyy-MM-dd HH:mm:ss' }}</span>
+          </span>
+        }
+        @if (formatDuration(detail.durationSeconds); as elapsed) {
+          <span>
+            {{ detail.isTerminal ? t('dataMigration.detail.duration') : t('dataMigration.detail.elapsed') }}:
+            <span class="text-color font-medium">{{ elapsed }}</span>
+          </span>
+        }
+        @if (formatDuration(detail.estimatedSecondsRemaining); as remaining) {
+          <span>
+            {{ t('dataMigration.detail.remaining') }}:
+            <span class="text-color font-medium">~{{ remaining }}</span>
+          </span>
+        }
+        @if (detail.startedAt && !detail.completedAt) {
+          <span class="text-color-secondary">{{ t('dataMigration.detail.durationLive') }}</span>
+        }
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+        <div>
+          <div class="text-xs text-color-secondary">{{ t('dataMigration.stats.total') }}</div>
+          <div class="text-lg font-semibold">{{ detail.totalRecords }}</div>
+        </div>
+        <!-- A validate run writes nothing, so Imported/Skipped would all read 0 and say nothing.
+             It reports what it did instead: how many records it checked. -->
+        @if (isValidateRun()) {
+          <div>
+            <div class="text-xs text-color-secondary">{{ t('dataMigration.stats.checked') }}</div>
+            <div class="text-lg font-semibold">{{ detail.validatedCount }}</div>
+          </div>
+        } @else {
+          <div>
+            <div class="text-xs text-color-secondary">
+              {{ isBackfillRun() ? t('dataMigration.stats.updated') : t('dataMigration.stats.imported') }}
+            </div>
+            <div class="text-lg font-semibold">{{ detail.importedCount }}</div>
+          </div>
+          <div>
+            <div class="text-xs text-color-secondary">
+              {{ isBackfillRun() ? t('dataMigration.stats.unchanged') : t('dataMigration.stats.skipped') }}
+            </div>
+            <div class="text-lg font-semibold">{{ detail.skippedCount }}</div>
+          </div>
+        }
+        <div>
+          <div class="text-xs text-color-secondary">{{ t('dataMigration.stats.failed') }}</div>
+          <div class="text-lg font-semibold">{{ detail.failedCount }}</div>
+        </div>
+        <div>
+          <div class="text-xs text-color-secondary">
+            @if (isValidateRun()) {
+              {{ t('dataMigration.stats.filesFound') }}
+            } @else if (isBackfillRun()) {
+              {{ t('dataMigration.stats.filesAttached') }}
+            } @else {
+              {{ t('dataMigration.stats.filesImported') }}
+            }
+          </div>
+          <div class="text-lg font-semibold">{{ detail.filesImported }}</div>
+        </div>
+        <div>
+          <div class="text-xs text-color-secondary">{{ t('dataMigration.stats.filesMissing') }}</div>
+          <div class="text-lg font-semibold" [class.text-orange-500]="(detail.filesMissing ?? 0) > 0">
+            {{ detail.filesMissing }}
+          </div>
+        </div>
+      </div>
+
+      @if (detail.errorMessage) {
+        <div class="p-3 mb-4 border-round surface-100 text-sm">{{ detail.errorMessage }}</div>
+      }
+    }
+
+    <div class="flex items-center justify-between mb-3 gap-3">
+      <span class="text-sm text-color-secondary">
+        {{ t('dataMigration.detail.matching', { count: totalRecords() }) }}
+      </span>
+      <p-select
+        [options]="filterOptions"
+        [ngModel]="filter()"
+        (ngModelChange)="onFilterChange($event)"
+        optionValue="value"
+        appendTo="body"
+        styleClass="w-18rem"
+      >
+        <ng-template #selectedItem let-option>{{ t(option.labelKey) }}</ng-template>
+        <ng-template #item let-option>{{ t(option.labelKey) }}</ng-template>
+      </p-select>
+    </div>
+
+    <!--
+      paginatorDropdownAppendTo: the rows-per-page overlay renders inline by default, and PrimeNG
+      closes an inline overlay as soon as an ancestor scrolls — here that ancestor is the dialog
+      body, so the list vanished on the way down to it. Same reason every p-select in a dialog
+      needs appendTo="body"; the table only spells the input differently.
+    -->
+    <p-table
+      [value]="records()"
+      [lazy]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalRecords()"
+      [loading]="loading()"
+      [rowsPerPageOptions]="[20, 50, 100]"
+      dataKey="id"
+      styleClass="p-datatable-sm"
+      paginatorDropdownAppendTo="body"
+    >
+      <ng-template #header>
+        <tr>
+          <th style="width: 6rem">{{ t('dataMigration.detail.row') }}</th>
+          <th>{{ t('dataMigration.detail.externalId') }}</th>
+          <th style="width: 9rem">{{ t('dataMigration.detail.status') }}</th>
+          <th>{{ t('dataMigration.detail.survey') }}</th>
+          <th style="width: 7rem">{{ t('dataMigration.detail.files') }}</th>
+          <th>{{ t('dataMigration.detail.message') }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-record>
+        <tr>
+          <td>{{ record.rowNumber }}</td>
+          <td class="text-xs">{{ record.externalId }}</td>
+          <td>
+            <p-tag
+              [value]="t(recordStatusKey(record.status))"
+              [severity]="recordStatusSeverity(record.status)"
+            />
+          </td>
+          <td class="text-xs">{{ record.surveyCode }}</td>
+          <td>
+            {{ record.filesImported }}
+            @if (record.filesMissing) {
+              <span class="text-orange-500"> / -{{ record.filesMissing }}</span>
+            }
+          </td>
+          <td class="text-xs">{{ record.message }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="6" class="text-center p-4">{{ t('dataMigration.detail.empty') }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <ng-template #footer>
+      <p-button [label]="t('common.close')" severity="secondary" (onClick)="close()" />
+    </ng-template>
+  </p-dialog>
+</ng-container>

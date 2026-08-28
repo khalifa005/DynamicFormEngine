@@ -1,0 +1,391 @@
+[
+    {
+        "dataName": "street_name",
+        "type": "single_choice",
+        "labelEn": "Street name",
+        "labelAr": "اسم الشارع",
+        "required": true,
+        "section": "streets",
+        "choices": [
+            {
+                "value": "طريق الملك فيصل (الساحلي من خالد بن الوليد الى شارع البيبسي) - الخبر",
+                "labelEn": "King Faisal Road (Coastal from Khalid bin Al-Waleed to Pepsi Street) - Al Khobar",
+                "labelAr": "طريق الملك فيصل (الساحلي من خالد بن الوليد الى شارع البيبسي) - الخبر"
+            },
+            {
+                "value": "شارع الأمير تركي - الخبر",
+                "labelEn": "Prince Turki Street - Al Khobar",
+                "labelAr": "شارع الأمير تركي - الخبر"
+            },
+            {
+                "value": "طريق الكورنيش - الخبر",
+                "labelEn": "Corniche Road - Al Khobar",
+                "labelAr": "طريق الكورنيش - الخبر"
+            },
+            {
+                "value": "طريق خادم الحرمين الشريفين - الخبر",
+                "labelEn": "Custodian of the Two Holy Mosques Road - Al Khobar",
+                "labelAr": "طريق خادم الحرمين الشريفين - الخبر"
+            },
+            {
+                "value": "طريق الملك عبدالعزيز (من تقاطع الأمير فيصل بن فهد الى تقاطع خادم الحرمين) - الخبر",
+                "labelEn": "King Abdulaziz Road (from Prince Faisal bin Fahd intersection to Custodian of the Two Holy Mosques intersection) - Al Khobar",
+                "labelAr": "طريق الملك عبدالعزيز (من تقاطع الأمير فيصل بن فهد الى تقاطع خادم الحرمين) - الخبر"
+            },
+            {
+                "value": "طريق الملك فهد (المنطقة بين الدمام والخبر - الطريق السريع) - الدمام و الخبر",
+                "labelEn": "King Fahd Road (area between Dammam and Al Khobar - the highway) - Dammam and Al Khobar",
+                "labelAr": "طريق الملك فهد (المنطقة بين الدمام والخبر - الطريق السريع) - الدمام و الخبر"
+            },
+            {
+                "value": "شارع الملك خالد - الخبر الشمالية",
+                "labelEn": "King Khalid Street - North Al Khobar",
+                "labelAr": "شارع الملك خالد - الخبر الشمالية"
+            },
+            {
+                "value": "شارع الأمير محمد بن فهد (الشارع الأول سابقاً) - الدمام",
+                "labelEn": "Prince Mohammed bin Fahd Street (formerly First Street) - Dammam",
+                "labelAr": "شارع الأمير محمد بن فهد (الشارع الأول سابقاً) - الدمام"
+            },
+            {
+                "value": "طريق أبو بكر الصديق (تقاطع طريق الملك سعود الى تقاطع طريق الرياض) - الدمام",
+                "labelEn": "Abu Bakr Al-Siddiq Road (King Saud Road intersection to Riyadh Road intersection) - Dammam",
+                "labelAr": "طريق أبو بكر الصديق (تقاطع طريق الملك سعود الى تقاطع طريق الرياض) - الدمام"
+            },
+            {
+                "value": "طريق عمر بن الخطاب (تقاطع طريق الرياض الى تقاطع طريق الملك سعود) - الدمام",
+                "labelEn": "Omar bin Al-Khattab Road (Riyadh Road intersection to King Saud Road intersection) - Dammam",
+                "labelAr": "طريق عمر بن الخطاب (تقاطع طريق الرياض الى تقاطع طريق الملك سعود) - الدمام"
+            },
+            {
+                "value": "شارع الملك عبدالعزيز (من تقاطع الشارع الأول الى تقاطع شارع 18) - الدمام",
+                "labelEn": "King Abdulaziz Street (from First Street intersection to Street 18 intersection) - Dammam",
+                "labelAr": "شارع الملك عبدالعزيز (من تقاطع الشارع الأول الى تقاطع شارع 18) - الدمام"
+            },
+            {
+                "value": "شارع الملك سعود (من تقاطع طريق الكورنيش الى تقاطع شارع 18) - الدمام",
+                "labelEn": "King Saud Street (from Corniche Road intersection to Street 18 intersection) - Dammam",
+                "labelAr": "شارع الملك سعود (من تقاطع طريق الكورنيش الى تقاطع شارع 18) - الدمام"
+            },
+            {
+                "value": "شارع الملك سعود ( من تقاطع شارع 18 الى تقاطع شارع 28) - الدمام",
+                "labelEn": "King Saud Street (from Street 18 intersection to Street 28 intersection) - Dammam",
+                "labelAr": "شارع الملك سعود ( من تقاطع شارع 18 الى تقاطع شارع 28) - الدمام"
+            },
+            {
+                "value": "شارع الملك سعود ( تقاطع شارع 28 الى شارع عمر بن عبدالعزيز) - الدمام",
+                "labelEn": "King Saud Street (Street 28 intersection to Omar bin Abdulaziz Street) - Dammam",
+                "labelAr": "شارع الملك سعود ( تقاطع شارع 28 الى شارع عمر بن عبدالعزيز) - الدمام"
+            },
+            {
+                "value": "طريق الأمير نايف بن عبدالعزيز (من طريق الملك عبدالله الى طريق الملك فهد) - الدمام",
+                "labelEn": "Prince Nayef bin Abdulaziz Road (from King Abdullah Road to King Fahd Road) - Dammam",
+                "labelAr": "طريق الأمير نايف بن عبدالعزيز (من طريق الملك عبدالله الى طريق الملك فهد) - الدمام"
+            },
+            {
+                "value": "طريق الأمير نايف بن عبدالعزيز (من طريق الملك فهد الى طريق الملك سعود) - الدمام",
+                "labelEn": "Prince Nayef bin Abdulaziz Road (from King Fahd Road to King Saud Road) - Dammam",
+                "labelAr": "طريق الأمير نايف بن عبدالعزيز (من طريق الملك فهد الى طريق الملك سعود) - الدمام"
+            },
+            {
+                "value": "طريق الأمير نايف بن عبدالعزيز (من طريق الملك سعود الى طريق الخليج ) - الدمام",
+                "labelEn": "Prince Nayef bin Abdulaziz Road (from King Saud Road to Gulf Road) - Dammam",
+                "labelAr": "طريق الأمير نايف بن عبدالعزيز (من طريق الملك سعود الى طريق الخليج ) - الدمام"
+            },
+            {
+                "value": "طريق القشلة (من الساحلي الى نهاية الظهران مول) - الدمام و الخبر",
+                "labelEn": "Al-Qishlah Road (from the coastal road to the end of Dhahran Mall) - Dammam and Al Khobar",
+                "labelAr": "طريق القشلة (من الساحلي الى نهاية الظهران مول) - الدمام و الخبر"
+            },
+            {
+                "value": "طريق الظهران (تقاطع طريق الملك عبدالله الى تقاطع طريق الملك فهد) - الاحساء",
+                "labelEn": "Dhahran Road (King Abdullah Road intersection to King Fahd Road intersection) - Al-Ahsa",
+                "labelAr": "طريق الظهران (تقاطع طريق الملك عبدالله الى تقاطع طريق الملك فهد) - الاحساء"
+            },
+            {
+                "value": "طريق عين نجم (من من تقاطع طريق مكة الى تقاطع شارع خالد بن الوليد ) - الاحساء",
+                "labelEn": "Ain Najm Road (from Makkah Road intersection to Khalid bin Al-Waleed Street intersection) - Al-Ahsa",
+                "labelAr": "طريق عين نجم (من من تقاطع طريق مكة الى تقاطع شارع خالد بن الوليد ) - الاحساء"
+            },
+            {
+                "value": "شارع القدس (من شارع احد الى شارع سلمان الفارسي) - القطيف",
+                "labelEn": "Al-Quds Street (from Uhud Street to Salman Al-Farsi Street) - Qatif",
+                "labelAr": "شارع القدس (من شارع احد الى شارع سلمان الفارسي) - القطيف"
+            },
+            {
+                "value": "شارع احد (من طريق الخليج الى طريق الجبيل) - القطيف",
+                "labelEn": "Uhud Street (from Gulf Road to Jubail Road) - Qatif",
+                "labelAr": "شارع احد (من طريق الخليج الى طريق الجبيل) - القطيف"
+            },
+            {
+                "value": "راس تنورة",
+                "labelEn": "Ras Tanura",
+                "labelAr": "راس تنورة"
+            },
+            {
+                "value": "طريق الأمير نايف - الخفجي",
+                "labelEn": "Prince Nayef Road - Khafji",
+                "labelAr": "طريق الأمير نايف - الخفجي"
+            },
+            {
+                "value": "طريق الملك عبدالله - الخفجي",
+                "labelEn": "King Abdullah Road - Khafji",
+                "labelAr": "طريق الملك عبدالله - الخفجي"
+            },
+            {
+                "value": "طريق الملك عبد العزيز - الخفجي",
+                "labelEn": "King Abdulaziz Road - Khafji",
+                "labelAr": "طريق الملك عبد العزيز - الخفجي"
+            },
+            {
+                "value": "طريق الأمير متعب بن منصور - الخفجي",
+                "labelEn": "Prince Mutaib bin Mansour Road - Khafji",
+                "labelAr": "طريق الأمير متعب بن منصور - الخفجي"
+            },
+            {
+                "value": "طريق الملك عبدالعزيز - حفر الباطن",
+                "labelEn": "King Abdulaziz Road - Hafr Al-Batin",
+                "labelAr": "طريق الملك عبدالعزيز - حفر الباطن"
+            },
+            {
+                "value": "طريق الملك عبد العزيز - مليجه",
+                "labelEn": "King Abdulaziz Road - Mulayjah",
+                "labelAr": "طريق الملك عبد العزيز - مليجه"
+            },
+            {
+                "value": "طريق الملك عبدالعزيز - النعيرية",
+                "labelEn": "King Abdulaziz Road - Nairyah",
+                "labelAr": "طريق الملك عبدالعزيز - النعيرية"
+            },
+            {
+                "value": "طريق الملك فهد بن عبد العزيز - النعيرية",
+                "labelEn": "King Fahd bin Abdulaziz Road - Nairyah",
+                "labelAr": "طريق الملك فهد بن عبد العزيز - النعيرية"
+            },
+            {
+                "value": "طريق الملك فيصل بن عبد العزيز - النعيرية",
+                "labelEn": "King Faisal bin Abdulaziz Road - Nairyah",
+                "labelAr": "طريق الملك فيصل بن عبد العزيز - النعيرية"
+            },
+            {
+                "value": "طريق الملك خالد - العزيزية",
+                "labelEn": "King Khalid Road - Aziziyah",
+                "labelAr": "طريق الملك خالد - العزيزية"
+            },
+            {
+                "value": "طريق الأمير محمد بن فهد - القرية العليا",
+                "labelEn": "Prince Mohammed bin Fahd Road - Al Qaryah Al Olaya",
+                "labelAr": "طريق الأمير محمد بن فهد - القرية العليا"
+            },
+            {
+                "value": "شارع الملك عبد العزيز - القرية العليا",
+                "labelEn": "King Abdulaziz Street - Al Qaryah Al Olaya",
+                "labelAr": "شارع الملك عبد العزيز - القرية العليا"
+            },
+            {
+                "value": "طريق الشبيلي - الخبر",
+                "labelEn": "Ash-Shobili Road - Al Khobar",
+                "labelAr": "طريق الشبيلي - الخبر"
+            },
+            {
+                "value": "الخضرية - الدمام",
+                "labelEn": "Al-Khodariyah - Dammam",
+                "labelAr": "الخضرية - الدمام"
+            },
+            {
+                "value": "شارع زهير بن قيس - الدمام",
+                "labelEn": "Zuhair bin Qais Street - Dammam",
+                "labelAr": "شارع زهير بن قيس - الدمام"
+            },
+            {
+                "value": "شارع الملك فهد - حي الخبر الشمالية - الخبر",
+                "labelEn": "King Fahd Street - North Al Khobar District - Al Khobar",
+                "labelAr": "شارع الملك فهد - حي الخبر الشمالية - الخبر"
+            },
+            {
+                "value": "شارع الامام محمد بن عبدالوهاب - حي الندى",
+                "labelEn": "Imam Mohammed bin Abdulwahab Street - Al Nada District",
+                "labelAr": "شارع الامام محمد بن عبدالوهاب - حي الندى"
+            }
+        ]
+    },
+    {
+        "dataName": "property_name",
+        "type": "text",
+        "labelEn": "Property name",
+        "labelAr": "اسم العقار إن وجد",
+        "required": false,
+        "section": "streets"
+    },
+    {
+        "dataName": "meter_no",
+        "type": "text",
+        "labelEn": "Meter Number",
+        "labelAr": "رقم العداد",
+        "required": true,
+        "section": "meter"
+    },
+    {
+        "dataName": "meter_photo_indoor",
+        "type": "photo",
+        "labelEn": "Indoor meter photo",
+        "labelAr": "( الداخلي ) صورة العداد",
+        "required": true,
+        "section": "meter",
+        "maxFiles": 1
+    },
+    {
+        "dataName": "meter_photo_outdoor",
+        "type": "photo",
+        "labelEn": "Outdoor meter photo",
+        "labelAr": "( الخارجي ) صورة العداد",
+        "required": true,
+        "section": "meter",
+        "maxFiles": 1
+    },
+    {
+        "dataName": "property_connection_no",
+        "type": "text",
+        "labelEn": "Property connection number",
+        "labelAr": "رقم توصيلة العقار",
+        "required": true,
+        "section": "meter"
+    },
+    {
+        "dataName": "property_classification",
+        "type": "single_choice",
+        "labelEn": "Property classification",
+        "labelAr": "تصنيف العقار",
+        "required": true,
+        "section": "property",
+        "allowOther": true,
+        "choices": [
+            {
+                "value": "تجاري",
+                "labelEn": "Commercial",
+                "labelAr": "تجاري"
+            },
+            {
+                "value": "سكني",
+                "labelEn": "Residential",
+                "labelAr": "سكني"
+            },
+            {
+                "value": "حكومي",
+                "labelEn": "Governmental",
+                "labelAr": "حكومي"
+            }
+        ]
+    },
+    {
+        "dataName": "easement_status",
+        "type": "single_choice",
+        "labelEn": "Easement status",
+        "labelAr": "حالة الارتفاق",
+        "required": true,
+        "section": "property",
+        "allowOther": true,
+        "choices": [
+            {
+                "value": "مياه فقط",
+                "labelEn": "Water only",
+                "labelAr": "مياه فقط"
+            },
+            {
+                "value": "صرف فقط",
+                "labelEn": "Sewage only",
+                "labelAr": "صرف فقط"
+            },
+            {
+                "value": "مياه وصرف صحي",
+                "labelEn": "Water and sewage",
+                "labelAr": "مياه وصرف صحي"
+            }
+        ]
+    },
+    {
+        "dataName": "number_of_electricity_meters",
+        "type": "numeric",
+        "labelEn": "Number of electricity meters",
+        "labelAr": "عدد عدادات الكهرباء",
+        "required": true,
+        "section": "electricity_block",
+        "numericFormat": "integer"
+    },
+    {
+        "dataName": "electricity_meters_photos",
+        "type": "photo",
+        "labelEn": "Electricity meter photos",
+        "labelAr": "صور عدادات الكهرباء",
+        "required": true,
+        "section": "electricity_block",
+        "maxFiles": 1
+    },
+    {
+        "dataName": "parcel_floors_count",
+        "type": "numeric",
+        "labelEn": "Number of Floors",
+        "labelAr": "عدد الطوابق",
+        "required": true,
+        "section": "building",
+        "numericFormat": "integer"
+    },
+    {
+        "dataName": "shop_count",
+        "type": "numeric",
+        "labelEn": "Number of shops",
+        "labelAr": "عدد المحلات التجارية",
+        "required": true,
+        "section": "building",
+        "numericFormat": "integer"
+    },
+    {
+        "dataName": "property_photo",
+        "type": "photo",
+        "labelEn": "Property photo",
+        "labelAr": "صورة العقار",
+        "required": true,
+        "section": "building",
+        "maxFiles": 1
+    },
+    {
+        "dataName": "extra_photo",
+        "type": "photo",
+        "labelEn": "Extra photo",
+        "labelAr": "صورة إضافية",
+        "required": false,
+        "section": "building",
+        "maxFiles": 1
+    },
+    {
+        "dataName": "maps_url",
+        "type": "text",
+        "labelEn": "Geographic location",
+        "labelAr": "الموقع الجغرافي",
+        "required": true,
+        "section": "location"
+    },
+    {
+        "dataName": "remarks",
+        "type": "text",
+        "labelEn": "Remarks",
+        "labelAr": "ملاحظات",
+        "required": false,
+        "section": "location"
+    },
+    {
+        "dataName": "acknowledgement",
+        "type": "single_choice",
+        "labelEn": "I pledge that all data entered in this form is correct and accurate and represents the actual reality of the visit, and I bear full responsibility for any error or misleading information entered. I acknowledge that any modification to the system based on the inspection will be under my full responsibility.",
+        "labelAr": "اتعهد بان جميع البيانات المدخله في هذا النموذج صحيحه ودقيقه وتمثل الواقع الفعلي محل الزياره ، واتحمل كامل المسؤولية عن اي خطأ او تضليل في المعلومات المدخلة . واقر بان اي تعديل في النظام بناء على المعاينة سيكون تحت مسؤوليتي الكاملة",
+        "required": true,
+        "section": "location",
+        "choices": [
+            {
+                "value": "نعم",
+                "labelEn": "Yes",
+                "labelAr": "نعم"
+            }
+        ]
+    }
+]

@@ -1,0 +1,632 @@
+<ng-container *transloco="let t">
+  <div class="dashboard">
+    <!-- Greeting/subtitle are rendered by the dashboard topbar (PageHeaderService). -->
+
+    <!-- Filters -->
+    @if (sections.filters) {
+    <section class="panel filter-panel animate-fade-in-up">
+      <div class="filter-row">
+        <div class="filter-field">
+          <label>{{ t('dashboard.filters.from') }}</label>
+          <p-datepicker
+            [(ngModel)]="fromDate"
+            dateFormat="yy-mm-dd"
+            appendTo="body"
+            [showIcon]="true"
+            [disabled]="loading()"
+          />
+        </div>
+
+        <div class="filter-field">
+          <label>{{ t('dashboard.filters.to') }}</label>
+          <p-datepicker
+            [(ngModel)]="toDate"
+            dateFormat="yy-mm-dd"
+            appendTo="body"
+            [showIcon]="true"
+            [disabled]="loading()"
+          />
+        </div>
+
+        <div class="filter-field">
+          <label>{{ t('dashboard.filters.grain') }}</label>
+          <p-select
+            [(ngModel)]="trendGrain"
+            [options]="trendGrainOptions()"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+            [disabled]="loading()"
+          />
+        </div>
+
+
+        <div class="filter-field filter-org">
+          <app-org-scope-selector
+            mode="single"
+            layout="row"
+            [initialLocation]="orgFilterSeed()"
+            [disabled]="loading()"
+            (locationChange)="onOrgFilterChange($event)"
+          />
+        </div>
+
+        <div class="filter-actions">
+          <p-button
+            [label]="t('dashboard.filters.apply')"
+            icon="pi pi-filter"
+            (onClick)="load()"
+            [loading]="loading()"
+            [disabled]="loading()"
+          />
+          <p-button
+            [label]="t('dashboard.filters.reset')"
+            icon="pi pi-times"
+            severity="secondary"
+            [text]="true"
+            (onClick)="resetFilters()"
+            [disabled]="loading()"
+          />
+        </div>
+      </div>
+    </section>
+    }
+
+    <!-- KPI cards -->
+    @if (sections.kpis) {
+    <section class="kpi-grid">
+      @if (loading() && !view()) {
+        @for (i of skeletonCards; track i) {
+          <article class="kpi-card">
+            <p-skeleton shape="circle" size="2.75rem" />
+            <div class="kpi-body">
+              <p-skeleton width="4rem" height="1.5rem" styleClass="mb-2" />
+              <p-skeleton width="7rem" height="0.75rem" />
+            </div>
+          </article>
+        }
+      } @else {
+        @for (kpi of kpiCards(); track kpi.key; let i = $index) {
+          <article class="kpi-card animate-fade-in-up" [style.animation-delay.ms]="i * 60">
+            <span class="kpi-icon" [style.background]="kpi.accent">
+              <i [class]="kpi.icon"></i>
+            </span>
+            <div class="kpi-body">
+              <span class="kpi-value">
+                {{ kpi.value | number: '1.0-2' }}@if (kpi.isPercent) {<small>%</small>}@if (kpi.isHours) {<small>{{ t('dashboard.hoursShort') }}</small>}
+              </span>
+              <span class="kpi-label">
+                <span class="kpi-label-text">{{ t(kpi.labelKey) }}</span>
+                <i
+                  class="pi pi-info-circle kpi-help"
+                  [pTooltip]="t(helpKey(kpi.key))"
+                  tooltipPosition="top"
+                  [attr.aria-label]="t('dashboard.helpAria')"
+                  tabindex="0"
+                ></i>
+              </span>
+            </div>
+            @if (kpi.deltaPercent !== 0) {
+              <span
+                class="kpi-delta"
+                [class.up]="kpi.inverse ? kpi.deltaPercent < 0 : kpi.deltaPercent >= 0"
+                [class.down]="kpi.inverse ? kpi.deltaPercent >= 0 : kpi.deltaPercent < 0"
+                [pTooltip]="t('dashboard.vsLastMonth')"
+              >
+                <i
+                  class="pi"
+                  [class.pi-arrow-up]="kpi.deltaPercent >= 0"
+                  [class.pi-arrow-down]="kpi.deltaPercent < 0"
+                ></i>
+                {{ kpi.deltaPercent | number: '1.0-1' }}%
+              </span>
+            }
+          </article>
+        }
+      }
+    </section>
+    }
+
+    <!-- Charts & Activity Grid -->
+    @if (midGridCount > 0) {
+    <section
+      class="mid-grid"
+      [class.cols-1]="midGridCount === 1"
+      [class.cols-2]="midGridCount === 2"
+    >
+      <!-- Line Chart -->
+      @if (sections.trend) {
+      <div class="panel chart-panel animate-fade-in-up">
+        <div class="panel-head">
+          <h3>
+            <i class="pi pi-chart-line mr-2 text-primary"></i>{{ t('dashboard.trendTitle') }}
+            <i
+              class="pi pi-info-circle panel-help"
+              [pTooltip]="t('dashboard.panelHelp.trend')"
+              tooltipPosition="top"
+              [attr.aria-label]="t('dashboard.helpAria')"
+              tabindex="0"
+            ></i>
+          </h3>
+        </div>
+        <div class="chart-wrap">
+          @if (loading() && !view()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="line" [data]="chartData()" [options]="lineChartOptions()" />
+          }
+        </div>
+      </div>
+      }
+
+      <!-- Doughnut Status Chart -->
+      @if (sections.statusDistribution) {
+      <div class="panel status-chart-panel animate-fade-in-up">
+        <div class="panel-head">
+          <h3>
+            <i class="pi pi-chart-pie mr-2 text-primary"></i>{{ t('dashboard.statusDistributionTitle') }}
+            <i
+              class="pi pi-info-circle panel-help"
+              [pTooltip]="t('dashboard.panelHelp.statusDistribution')"
+              tooltipPosition="top"
+              [attr.aria-label]="t('dashboard.helpAria')"
+              tabindex="0"
+            ></i>
+          </h3>
+        </div>
+        <div class="chart-wrap doughnut-wrap">
+          @if (loading() && !view()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="doughnut" [data]="doughnutData()" [options]="doughnutChartOptions()" />
+          }
+        </div>
+      </div>
+      }
+
+      <!-- Transaction feed: who did what, most recent first -->
+      @if (sections.transactions) {
+      <div class="panel activity-panel animate-fade-in-up">
+        <div class="panel-head">
+          <h3>
+            <i class="pi pi-history mr-2 text-primary"></i>{{ t('dashboard.transactions') }}
+            <i
+              class="pi pi-info-circle panel-help"
+              [pTooltip]="t('dashboard.panelHelp.transactions')"
+              tooltipPosition="top"
+              [attr.aria-label]="t('dashboard.helpAria')"
+              tabindex="0"
+            ></i>
+          </h3>
+        </div>
+        <ul class="activity-list">
+          @for (item of transactions(); track item.historyId) {
+            <li>
+              <span class="activity-icon" [class]="transactionSeverity(item)">
+                <i [class]="transactionIcon(item)"></i>
+              </span>
+              <div class="activity-text">
+                <span class="activity-title">
+                  {{
+                    t('dashboard.activityTransition', {
+                      code: item.surveyCode,
+                      status: t(statusKey(item.toStatus)),
+                      user: item.displayName ?? '',
+                    })
+                  }}
+                </span>
+                <span class="activity-time">{{ item.changedDate | date: 'short' }}</span>
+              </div>
+            </li>
+          } @empty {
+            <li class="activity-empty">{{ t('dashboard.noData') }}</li>
+          }
+        </ul>
+      </div>
+      }
+    </section>
+    }
+
+    <!-- My performance vs peers -->
+    @if (peerGridCount > 0) {
+    <section class="mid-grid peer-grid" [class.cols-1]="peerGridCount === 1">
+      @if (sections.myPerformance) {
+      <div class="panel animate-fade-in-up">
+        <div class="panel-head">
+          <h3>
+            <i class="pi pi-user mr-2 text-primary"></i>{{ t('dashboard.myPerformance') }}
+            <i
+              class="pi pi-info-circle panel-help"
+              [pTooltip]="t('dashboard.panelHelp.myPerformance')"
+              tooltipPosition="top"
+              [attr.aria-label]="t('dashboard.helpAria')"
+              tabindex="0"
+            ></i>
+          </h3>
+        </div>
+        <div class="my-stats">
+          <div class="my-stat-primary">
+            <span class="my-stat-value">{{ myStats().transactionCount ?? 0 | number }}</span>
+            <span class="my-stat-label">{{ t('dashboard.transactionCount') }}</span>
+          </div>
+          <div class="my-stat-grid">
+            <div>
+              <span class="my-stat-num">
+                #{{ myPeerRow()?.rank ?? '-' }}
+                <small>/ {{ myStats().cohortSize ?? 0 }}</small>
+              </span>
+              <span class="my-stat-cap">{{ t('dashboard.myRank') }}</span>
+            </div>
+            <div>
+              <span class="my-stat-num">{{ myPeerRow()?.percentileRank ?? 0 | number: '1.0-0' }}%</span>
+              <span class="my-stat-cap">{{ t('dashboard.percentile') }}</span>
+            </div>
+            <div>
+              <span class="my-stat-num">{{ myPeerRow()?.cohortAvg ?? 0 | number: '1.0-1' }}</span>
+              <span class="my-stat-cap">{{ t('dashboard.cohortAverage') }}</span>
+            </div>
+            <div>
+              <span class="my-stat-num">{{ myStats().surveysTouched ?? 0 | number }}</span>
+              <span class="my-stat-cap">{{ t('dashboard.surveysTouched') }}</span>
+            </div>
+            <div>
+              <span class="my-stat-num">{{ myStats().approvedCount ?? 0 | number }}</span>
+              <span class="my-stat-cap">{{ t('dashboard.myApproved') }}</span>
+            </div>
+            <div>
+              <span class="my-stat-num">
+                {{ myStats().avgHandlingHours ?? 0 | number: '1.0-1' }}<small>{{ t('dashboard.hoursShort') }}</small>
+              </span>
+              <span class="my-stat-cap">{{ t('dashboard.avgHandling') }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+
+      @if (sections.peerComparison) {
+      <div class="panel animate-fade-in-up peer-chart-panel">
+        <div class="panel-head">
+          <h3>
+            <i class="pi pi-chart-bar mr-2 text-primary"></i>{{ t('dashboard.vsPeers') }}
+            <i
+              class="pi pi-info-circle panel-help"
+              [pTooltip]="t('dashboard.panelHelp.vsPeers')"
+              tooltipPosition="top"
+              [attr.aria-label]="t('dashboard.helpAria')"
+              tabindex="0"
+            ></i>
+          </h3>
+          <span class="panel-sub">{{ t('dashboard.peerScopeHint') }}</span>
+        </div>
+        <div class="chart-wrap">
+          @if (loading() && !view()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="bar" [data]="peerChartData()" [options]="barChartOptions()" />
+          }
+        </div>
+      </div>
+      }
+    </section>
+    }
+
+    <!-- Teams per CBU / Branch / Operation Area -->
+    @if (sections.teamsByOrg) {
+    <section class="panel table-panel animate-fade-in-up">
+      <div class="panel-head flex items-center justify-between gap-3">
+        <h3>
+          <i class="pi pi-sitemap mr-2 text-primary"></i>{{ t('dashboard.teamsByOrg') }}
+          <i
+            class="pi pi-info-circle panel-help"
+            [pTooltip]="t('dashboard.panelHelp.teamsByOrg')"
+            tooltipPosition="top"
+            [attr.aria-label]="t('dashboard.helpAria')"
+            tabindex="0"
+          ></i>
+        </h3>
+        <p-selectButton
+          [ngModel]="orgLevel()"
+          (ngModelChange)="orgLevel.set($event)"
+          [options]="orgLevelOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [allowEmpty]="false"
+        />
+      </div>
+      <p-table
+        [value]="teamsByOrg()"
+        [loading]="loading()"
+        [paginator]="true"
+        [rows]="8"
+        styleClass="app-table p-datatable-sm p-datatable-striped"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th>{{ t('dashboard.colOrgNode') }}</th>
+            <th class="text-center">{{ t('dashboard.colTeams') }}</th>
+            <th class="text-center">{{ t('dashboard.colWorkingTeams') }}</th>
+            <th class="text-center">{{ t('dashboard.colMembers') }}</th>
+            <th class="text-center">{{ t('dashboard.colSurveys') }}</th>
+            <th class="text-center">{{ t('dashboard.colOpen') }}</th>
+            <th class="text-center">{{ t('dashboard.colApproved') }}</th>
+            <th class="text-center">{{ t('dashboard.colSurveysPerTeam') }}</th>
+            <th class="text-center">{{ t('dashboard.colAvgHours') }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td>
+              <span class="font-semibold">{{ localizedName(row.nameEn, row.nameAr) }}</span>
+              <small class="block text-surface-500 font-mono">{{ row.code }}</small>
+            </td>
+            <td class="text-center font-semibold">{{ row.teamCount | number }}</td>
+            <td class="text-center">{{ row.workingTeamCount | number }}</td>
+            <td class="text-center">{{ row.memberCount | number }}</td>
+            <td class="text-center font-semibold">{{ row.surveyCount | number }}</td>
+            <td class="text-center">{{ row.openSurveyCount | number }}</td>
+            <td class="text-center">{{ row.approvedSurveyCount | number }}</td>
+            <td class="text-center">{{ row.surveysPerTeam | number: '1.0-2' }}</td>
+            <td class="text-center">{{ row.avgCompletionHours | number: '1.0-1' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="9" class="text-center text-surface-500 py-6">{{ t('dashboard.noData') }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+    }
+
+    <!-- Teams per department -->
+    @if (sections.teamsByDepartment) {
+    <section class="panel table-panel animate-fade-in-up">
+      <div class="panel-head">
+        <h3>
+          <i class="pi pi-briefcase mr-2 text-primary"></i>{{ t('dashboard.teamsByDepartment') }}
+          <i
+            class="pi pi-info-circle panel-help"
+            [pTooltip]="t('dashboard.panelHelp.teamsByDepartment')"
+            tooltipPosition="top"
+            [attr.aria-label]="t('dashboard.helpAria')"
+            tabindex="0"
+          ></i>
+        </h3>
+      </div>
+      <p-table
+        [value]="teamsByDepartment()"
+        [loading]="loading()"
+        [paginator]="false"
+        styleClass="app-table p-datatable-sm p-datatable-striped"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th>{{ t('dashboard.colDepartment') }}</th>
+            <th class="text-center">{{ t('dashboard.colTeams') }}</th>
+            <th class="text-center">{{ t('dashboard.colSurveys') }}</th>
+            <th class="text-center">{{ t('dashboard.colOpen') }}</th>
+            <th class="text-center">{{ t('dashboard.colApproved') }}</th>
+            <th class="text-center">{{ t('dashboard.colSurveysPerTeam') }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td class="font-semibold">{{ localizedName(row.nameEn, row.nameAr) }}</td>
+            <td class="text-center">{{ row.teamCount | number }}</td>
+            <td class="text-center font-semibold">{{ row.surveyCount | number }}</td>
+            <td class="text-center">{{ row.openSurveyCount | number }}</td>
+            <td class="text-center">{{ row.approvedSurveyCount | number }}</td>
+            <td class="text-center">{{ row.surveysPerTeam | number: '1.0-2' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="6" class="text-center text-surface-500 py-6">{{ t('dashboard.noData') }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+    }
+
+    <!-- Late surveys: still-open overdue work first, then work that finished late -->
+    @if (sections.lateSurveys) {
+    <section class="panel table-panel animate-fade-in-up">
+      <div class="panel-head">
+        <h3>
+          <i class="pi pi-clock mr-2 text-primary"></i>{{ t('dashboard.lateSurveys') }}
+          <i
+            class="pi pi-info-circle panel-help"
+            [pTooltip]="t('dashboard.panelHelp.lateSurveys')"
+            tooltipPosition="top"
+            [attr.aria-label]="t('dashboard.helpAria')"
+            tabindex="0"
+          ></i>
+        </h3>
+      </div>
+      <p-table
+        [value]="lateSurveys()"
+        [loading]="loading()"
+        [paginator]="true"
+        [rows]="8"
+        styleClass="app-table p-datatable-sm p-datatable-striped"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th>{{ t('surveys.fields.surveyCode') }}</th>
+            <th>{{ t('dashboard.colLateness') }}</th>
+            <th>{{ t('dashboard.colDeadlineKind') }}</th>
+            <th class="text-center">{{ t('dashboard.colDaysLate') }}</th>
+            <th>{{ t('surveys.fields.dueDate') }}</th>
+            <th>{{ t('surveys.fields.status') }}</th>
+            <th>{{ t('surveys.fields.fieldTeam') }}</th>
+            <th>{{ t('surveys.fields.branch') }}</th>
+            <th>{{ t('surveys.fields.template') }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td class="font-semibold text-primary-600">{{ row.surveyCode }}</td>
+            <td>
+              <p-tag
+                [severity]="latenessSeverity(row.latenessKind)"
+                [value]="t(latenessKey(row.latenessKind))"
+              />
+            </td>
+            <td>
+              <p-tag
+                severity="secondary"
+                [value]="t(deadlineKindKey(row.deadlineKind))"
+              />
+            </td>
+            <td class="text-center font-semibold" [class.text-red-500]="row.daysLate > 0">
+              {{ row.daysLate | number }}
+            </td>
+            <td class="text-surface-500 text-sm">{{ row.dueDate | date: 'yyyy-MM-dd HH:mm' }}</td>
+            <td>
+              <p-tag [severity]="statusSeverity(row.status)" [value]="t(statusKey(row.status))" />
+            </td>
+            <td>{{ row.fieldTeamName || '—' }}</td>
+            <td>{{ localizedName(row.branchNameEn, row.branchNameAr) || row.branchCode }}</td>
+            <td>{{ localizedName(row.templateNameEn, row.templateNameAr) }}</td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="9" class="text-center text-surface-500 py-6">
+              {{ t('dashboard.noLateSurveys') }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+    }
+
+    <!-- Late teams: the same lateness rolled up to whoever held the work -->
+    @if (sections.lateTeams) {
+    <section class="panel table-panel animate-fade-in-up">
+      <div class="panel-head">
+        <h3>
+          <i class="pi pi-users mr-2 text-primary"></i>{{ t('dashboard.lateTeams') }}
+          <i
+            class="pi pi-info-circle panel-help"
+            [pTooltip]="t('dashboard.panelHelp.lateTeams')"
+            tooltipPosition="top"
+            [attr.aria-label]="t('dashboard.helpAria')"
+            tabindex="0"
+          ></i>
+        </h3>
+      </div>
+      <p-table
+        [value]="lateTeams()"
+        [loading]="loading()"
+        [paginator]="false"
+        styleClass="app-table p-datatable-sm p-datatable-striped"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th>{{ t('surveys.fields.fieldTeam') }}</th>
+            <th class="text-center">{{ t('dashboard.colSurveys') }}</th>
+            <th class="text-center">{{ t('dashboard.colOverdue') }}</th>
+            <th class="text-center">{{ t('dashboard.colCompletedLate') }}</th>
+            <th class="text-center">{{ t('dashboard.colOnTime') }}</th>
+            <th class="text-center">{{ t('dashboard.colAvgDaysLate') }}</th>
+            <th class="text-center">{{ t('dashboard.colMaxDaysOverdue') }}</th>
+            <th class="text-center">{{ t('dashboard.colOnTimeRate') }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td>
+              <span class="font-semibold">{{ row.fieldTeamName || '—' }}</span>
+              <small class="block text-surface-500 font-mono">{{ row.userCode }}</small>
+            </td>
+            <td class="text-center">{{ row.surveyCount | number }}</td>
+            <td class="text-center font-semibold" [class.text-red-500]="row.overdueCount > 0">
+              {{ row.overdueCount | number }}
+            </td>
+            <td class="text-center" [class.text-amber-500]="row.completedLateCount > 0">
+              {{ row.completedLateCount | number }}
+            </td>
+            <td class="text-center">{{ row.onTimeCount | number }}</td>
+            <td class="text-center">{{ row.avgDaysLate | number: '1.0-1' }}</td>
+            <td class="text-center">{{ row.maxDaysOverdue | number }}</td>
+            <td class="text-center">{{ row.onTimeRatePercent | number: '1.0-0' }}%</td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="8" class="text-center text-surface-500 py-6">
+              {{ t('dashboard.noLateTeams') }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+    }
+
+    <!-- Recent Surveys Table -->
+    @if (sections.recentSurveys) {
+    <section class="panel table-panel animate-fade-in-up">
+      <div class="panel-head flex items-center justify-between">
+        <h3><i class="pi pi-list mr-2 text-primary"></i>{{ t('dashboard.recentSurveys') }}</h3>
+      </div>
+      <p-table
+        [value]="recentSurveys()"
+        [loading]="loading()"
+        [paginator]="false"
+        styleClass="app-table p-datatable-sm p-datatable-striped"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th>{{ t('surveys.fields.surveyCode') }}</th>
+            <th>{{ t('surveys.fields.template') }}</th>
+            <th>{{ t('surveys.fields.branch') }}</th>
+            <th>{{ t('surveys.fields.fieldTeam') }}</th>
+            <th>{{ t('surveys.fields.source') }}</th>
+            <th>{{ t('surveys.fields.status') }}</th>
+            <th>{{ t('surveys.fields.created') }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td class="font-semibold text-primary-600">
+              {{ row.surveyCode }}
+              @if (row.isOverdue) {
+                <i
+                  class="pi pi-exclamation-triangle text-red-500 ml-1"
+                  [pTooltip]="t('dashboard.overdue')"
+                ></i>
+              }
+            </td>
+            <td>{{ localizedName(row.templateNameEn, row.templateNameAr) }}</td>
+            <td>{{ localizedName(row.branchNameEn, row.branchNameAr) || row.branchCode }}</td>
+            <td>{{ row.fieldTeamName }}</td>
+            <td>
+              <span
+                class="text-xs px-2 py-0.5 rounded bg-surface-100 font-mono text-surface-600 dark:bg-surface-800 dark:text-surface-300"
+              >
+                {{ t(sourceKey(row.source)) }}
+              </span>
+            </td>
+            <td>
+              <p-tag [severity]="statusSeverity(row.status)" [value]="t(statusKey(row.status))" />
+            </td>
+            <td class="text-surface-500 text-sm">{{ row.created | date: 'yyyy-MM-dd' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="7" class="text-center text-surface-500 py-6">{{ t('dashboard.noData') }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+    }
+  </div>
+</ng-container>

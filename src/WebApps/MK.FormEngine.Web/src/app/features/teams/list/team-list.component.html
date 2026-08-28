@@ -1,0 +1,207 @@
+<ng-container *transloco="let t">
+  <p-toast />
+
+  <!-- Page title/subtitle are rendered by the dashboard topbar (PageHeaderService). -->
+  <div class="mb-4 flex justify-end">
+    <p-button [label]="t('teams.newTeam')" icon="pi pi-plus" (onClick)="openNew()"> </p-button>
+  </div>
+
+  <div class="card p-4">
+    <p-table
+      #dt
+      [value]="teams"
+      [lazy]="true"
+      (onLazyLoad)="loadTeams($event)"
+      [rows]="10"
+      [paginator]="true"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      styleClass="app-table p-datatable-sm p-datatable-striped"
+      [scrollable]="true"
+      [tableStyle]="{ 'min-width': '72rem' }"
+      [rowHover]="true"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="{{ t('lookups.pageReport') }}"
+    >
+      <ng-template pTemplate="caption">
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <p-select
+            [(ngModel)]="selectedContractorId"
+            [options]="contractorOptions"
+            optionLabel="nameEn"
+            optionValue="id"
+            [placeholder]="t('teams.selectContractor')"
+            [showClear]="true"
+            [filter]="true"
+            filterBy="nameEn,nameAr,poNumber"
+            [loading]="contractorsLoading"
+            appendTo="body"
+            class="w-full sm:w-72"
+            (onChange)="onSearch()"
+          />
+          <p-iconfield iconPosition="left" class="w-full sm:w-auto">
+            <p-inputicon styleClass="pi pi-search" />
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="onSearch()"
+              [placeholder]="t('lookups.searchPlaceholder')"
+              class="w-full sm:w-auto"
+            />
+          </p-iconfield>
+          @if (searchTerm || selectedContractorId) {
+            <p-button
+              icon="pi pi-times"
+              styleClass="p-button-text p-button-secondary"
+              (onClick)="clearSearch()"
+              [pTooltip]="t('common.reset')"
+            ></p-button>
+          }
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ t('teams.userCode') }}</th>
+          <th>{{ t('teams.name') }}</th>
+          <th>{{ t('teams.mobile') }}</th>
+          <th>{{ t('teams.teamType') }}</th>
+          <th>{{ t('teams.contractor') }}</th>
+          <th>{{ t('teams.device') }}</th>
+          <th>{{ t('teams.lastActive') }}</th>
+          <th>{{ t('teams.status') }}</th>
+          <th class="w-[8rem] text-right">{{ t('teams.actions') }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-team>
+        <tr>
+          <td class="font-medium">{{ team.userCode }}</td>
+          <td>{{ team.name }}</td>
+          <td>{{ team.mobile || '-' }}</td>
+          <td>{{ team.teamType || '-' }}</td>
+          <td>{{ contractorLabel(team) }}</td>
+          <td>
+            @if (team.deviceName || team.deviceOs || team.appVersion) {
+              <div class="flex flex-col">
+                <span>{{ team.deviceName || '-' }}</span>
+                <span class="text-xs text-surface-500">
+                  @if (team.deviceOs && team.appVersion) {
+                    {{ team.deviceOs }} · {{ team.appVersion }}
+                  } @else {
+                    {{ team.deviceOs || team.appVersion }}
+                  }
+                </span>
+              </div>
+            } @else {
+              -
+            }
+          </td>
+          <td>
+            @if (team.lastActiveAt) {
+              <div class="flex flex-col">
+                <span>{{ team.lastActiveAt | date: 'yyyy-MM-dd HH:mm' }}</span>
+                @if (hasLastActiveLocation(team)) {
+                  <span class="flex items-center gap-1 text-xs text-surface-500">
+                    {{ team.lastActiveLatitude | number: '1.4-4' }},
+                    {{ team.lastActiveLongitude | number: '1.4-4' }}
+                    <p-button
+                      icon="pi pi-map-marker"
+                      [rounded]="true"
+                      [text]="true"
+                      size="small"
+                      [pTooltip]="t('teams.viewLastActiveOnMap')"
+                      [ariaLabel]="t('teams.viewLastActiveOnMap')"
+                      (onClick)="openLastActiveMap(team)"
+                    />
+                  </span>
+                }
+              </div>
+            } @else {
+              -
+            }
+          </td>
+          <td>
+            <p-tag
+              [value]="team.isActive ? t('lookups.active') : t('lookups.inactive')"
+              [severity]="getActiveSeverity(team.isActive)"
+            ></p-tag>
+          </td>
+          <!-- `display:flex` on a `td` drops it out of the table's column sizing,
+               so the buttons are laid out by an inner wrapper instead. -->
+          <td class="text-right">
+            <div class="flex justify-end gap-1">
+              @if (hasLastActiveLocation(team)) {
+                <p-button
+                  icon="pi pi-map-marker"
+                  [rounded]="true"
+                  [text]="true"
+                  [pTooltip]="t('teams.viewLastActiveOnMap')"
+                  [ariaLabel]="t('teams.viewLastActiveOnMap')"
+                  (onClick)="openLastActiveMap(team)"
+                />
+              }
+              <p-button
+                [icon]="team.isActive ? 'pi pi-ban' : 'pi pi-check-circle'"
+                [rounded]="true"
+                [text]="true"
+                [severity]="team.isActive ? 'danger' : 'success'"
+                [pTooltip]="team.isActive ? t('common.deactivate') : t('common.activate')"
+                (onClick)="toggleStatus(team)"
+              ></p-button>
+              <p-button
+                icon="pi pi-pencil"
+                [rounded]="true"
+                [text]="true"
+                severity="secondary"
+                (onClick)="openEdit(team)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9" class="p-8 text-center text-surface-500">
+            {{ t('teams.noTeams') }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-dialog
+    [(visible)]="displayDialog"
+    [header]="dialogTitle"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '40rem' }"
+    (onHide)="onDialogHide()"
+  >
+    <app-team-form
+      *ngIf="displayDialog"
+      [team]="editingTeam"
+      (saved)="onSaved()"
+      (cancelled)="onDialogHide()"
+      (viewLastActive)="openLastActiveMap(editingTeam)"
+    >
+    </app-team-form>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="mapVisible"
+    [modal]="true"
+    [draggable]="false"
+    [dismissableMask]="true"
+    [style]="{ width: '46rem', maxWidth: '95vw' }"
+    [header]="mapTitle"
+  >
+    @if (mapVisible && mapPoint) {
+      <app-geo-map [value]="mapPoint" [readonly]="true" height="380px" />
+    }
+  </p-dialog>
+</ng-container>

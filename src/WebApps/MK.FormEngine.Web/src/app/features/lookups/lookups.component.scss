@@ -1,0 +1,31 @@
+/* ─── PrimeNG Overrides (using Tailwind theme hooks) ────────────────────────── */
+
+/* PrimeNG v20 tab panels padding */
+::ng-deep .lookups-page .p-tabpanels {
+  padding: 1.25rem;
+  background: transparent;
+}
+
+::ng-deep .lookups-page .p-tablist {
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--p-surface-200, #e2e8f0);
+}
+
+/* ─── Tab Header Icons ────────────────────────────────────────────────────── */
+
+.tab-icon {
+  margin-inline-end: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* ─── RTL cell support ────────────────────────────────────────────────────── */
+
+.rtl-cell {
+  direction: rtl;
+  font-family: 'Tajawal', 'Segoe UI', sans-serif;
+}
+
+/* Table headers/rows now come from the global `.app-table` skin in styles.scss.
+   The local override that used to live here pinned borders to `--p-surface-*`,
+   which are fixed palette ramps that do not flip with the colour scheme, so the
+   lookup grids kept light borders in dark mode. */

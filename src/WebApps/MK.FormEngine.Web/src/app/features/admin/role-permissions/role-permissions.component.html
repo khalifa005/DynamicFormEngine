@@ -1,0 +1,106 @@
+<ng-container *transloco="let t">
+  <p-toast />
+
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+    <p class="text-sm text-surface-500">{{ t('admin.rolePermissions.hint') }}</p>
+
+    <div class="flex items-center gap-2">
+      @if (hasChanges()) {
+      <p-button
+        [label]="t('common.cancel')"
+        severity="secondary"
+        [text]="true"
+        [disabled]="saving()"
+        (onClick)="reset()"
+      />
+      }
+      <p-button
+        [label]="t('common.save')"
+        icon="pi pi-check"
+        [loading]="saving()"
+        [disabled]="saving() || !hasChanges()"
+        (onClick)="save()"
+      />
+    </div>
+  </div>
+
+  <div class="card p-4">
+    <p-table
+      [value]="rows()"
+      [loading]="loading()"
+      dataKey="code"
+      rowGroupMode="subheader"
+      groupRowsBy="module"
+      sortField="module"
+      [sortOrder]="1"
+      styleClass="app-table p-datatable-sm p-datatable-striped"
+      [scrollable]="true"
+      [tableStyle]="{ 'min-width': '60rem' }"
+      [rowHover]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="min-w-[16rem]">{{ t('admin.rolePermissions.columns.permission') }}</th>
+          @for (role of roles(); track role.name) {
+          <th class="text-center whitespace-nowrap">
+            <div class="flex flex-col items-center gap-1">
+              <span>{{ roleLabel(role) }}</span>
+              @if (role.isSystem) {
+              <p-tag
+                severity="warn"
+                [value]="t('admin.rolePermissions.fullAccess')"
+                [pTooltip]="t('admin.rolePermissions.fullAccessHint')"
+                tooltipPosition="bottom"
+              />
+              }
+            </div>
+          </th>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="groupheader" let-row>
+        <tr class="bg-surface-100 dark:bg-surface-800">
+          <td [attr.colspan]="roles().length + 1" class="font-semibold">
+            {{ t('admin.rolePermissions.modules.' + row.module) }}
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <div class="flex flex-col">
+              <span class="font-medium">{{ label(row) }}</span>
+              <span class="text-xs text-surface-500">{{ row.code }}</span>
+            </div>
+          </td>
+          @for (role of roles(); track role.name) {
+          <td class="text-center">
+            <p-checkbox
+              [binary]="true"
+              [ngModel]="role.isSystem || isGranted(role.name!, row.code)"
+              [disabled]="role.isSystem || saving()"
+              [pTooltip]="role.isSystem ? t('admin.rolePermissions.fullAccessHint') : ''"
+              tooltipPosition="top"
+              (onChange)="toggle(role.name!, row.code)"
+              [attr.aria-label]="roleLabel(role) + ' — ' + label(row)"
+            />
+          </td>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="roles().length + 1">
+            <div class="flex flex-col items-center gap-2 py-8 text-surface-500">
+              <i class="pi pi-shield text-3xl"></i>
+              <span>{{ t('admin.rolePermissions.empty') }}</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</ng-container>

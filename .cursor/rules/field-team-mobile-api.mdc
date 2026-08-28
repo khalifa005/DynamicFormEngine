@@ -1,0 +1,40 @@
+---
+description: Do not change the /api/v1/fsms/field-team mobile contract; notify the mobile app team if a change is required.
+globs: **/FsmsFieldTeamController.cs,**/LoginFieldTeam/**,**/CreateFieldTeamSurvey/**,**/GetFieldTeam*/**,**/SubmitSurvey/**,**/BulkSubmitSurveys/**,**/GetAvailableTemplatesForFieldTeam/**,**/UploadSubmissionFile/**,**/DeleteSubmissionFile/**,**/GetSubmissionFile/**
+alwaysApply: true
+---
+
+# Field-Team Mobile API Is Frozen
+
+`/api/v1/fsms/field-team` is the **mobile app contract**. It is critical. Do **not** change, rename, move, or reshape any part of this surface unless the user explicitly asks and the **mobile app team is notified first**.
+
+Owned by `FsmsFieldTeamController` (`[Route("api/v1/fsms/field-team")]`) and the MediatR slices / DTOs it dispatches.
+
+## Do not change
+
+- Route prefix, action paths, HTTP methods, or route parameter names
+- Query, form, or body field names
+- Response DTO shapes, property names, types, or nesting
+- Status codes, error codes, or success/failure `Result<T>` conventions the app already relies on
+- Auth requirements (anonymous vs `[Authorize]`, policies) in a way that breaks existing clients
+
+Internal bug fixes and handler logic are allowed **only** when the HTTP contract stays identical.
+
+## If a change is required
+
+1. Stop. Do not silently rename, add, remove, or reshape the contract.
+2. Tell the user this is a **breaking mobile API change**.
+3. Instruct them to **notify the mobile app team** before merging, with: endpoint, what changed (rename / type / status / new-or-removed field), and why.
+4. Prefer additive, backward-compatible changes (new optional fields / new endpoints) over renames. Even additive changes still need a mobile-team heads-up.
+
+## Incorrect
+
+- Renaming `team-login`, `surveys`, DTO properties, or query params "for clarity"
+- Moving field-team endpoints onto a back-office controller
+- Changing a response type or dropping a field the app already consumes
+
+## Correct
+
+- Fix a handler bug without changing the JSON the app receives
+- Add a **new** back-office endpoint instead of altering this mobile surface
+- If the mobile contract must change: warn the user and require mobile-app-team notification

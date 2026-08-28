@@ -1,0 +1,47 @@
+---
+description: >-
+  PrimeNG overlays inside p-dialog must append to body. Includes p-select
+  appendTo="body" and p-table paginatorDropdownAppendTo="body" (the table
+  spells the input differently, which is why it slips past).
+globs:
+  - "**/*.html"
+  - "**/*.ts"
+  - "**/modals/**"
+---
+
+# PrimeNG Overlays in Dialogs
+
+When adding a PrimeNG dropdown overlay (e.g. `<p-select>`, `<p-multiselect>`, `<p-autoComplete>`, `<p-datepicker>`, `<p-menu>`) inside a modal (`<p-dialog>`), add `appendTo="body"`.
+
+When adding a paginated `<p-table>` inside a modal, add `paginatorDropdownAppendTo="body"`. The table does **not** use `appendTo` — that is why this keeps getting missed even when the filter select above the table already has `appendTo="body"`.
+
+## Why
+
+The rows-per-page overlay renders inline by default, and PrimeNG dismisses an inline overlay the moment an ancestor scrolls. In a dialog the ancestor is the dialog body — so opening the dropdown and scrolling down to reach the options was itself the thing that closed it. Appending to body takes the overlay out of the scrolling container, and it now follows the trigger instead of dying with it.
+
+This is the same rule the project already applies to p-select inside p-dialog; the table just spells the input differently, which is why it slipped past.
+
+## Correct
+
+```html
+<p-select formControlName="category" [options]="categories" appendTo="body" />
+
+<p-table
+  [value]="records()"
+  [paginator]="true"
+  [rows]="pageSize"
+  [rowsPerPageOptions]="[20, 50, 100]"
+  paginatorDropdownAppendTo="body"
+>
+```
+
+## Incorrect
+
+```html
+<p-select formControlName="category" [options]="categories" />
+
+<!-- Missing paginatorDropdownAppendTo — overlay closes when the dialog scrolls -->
+<p-table [value]="records()" [paginator]="true" [rowsPerPageOptions]="[20, 50, 100]" />
+```
+
+See skill `primeng-overlays`.

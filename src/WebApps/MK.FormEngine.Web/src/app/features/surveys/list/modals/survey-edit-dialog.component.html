@@ -1,0 +1,124 @@
+<p-dialog
+  *transloco="let t"
+  [(visible)]="visible"
+  [modal]="true"
+  [maximizable]="true"
+  [draggable]="true"
+  [style]="{ width: '44rem' }"
+  [breakpoints]="{ '960px': '90vw' }"
+  [header]="t('surveys.editSurvey')"
+  (onShow)="onShow()"
+>
+  <div class="flex flex-col gap-4">
+    <p class="text-sm text-surface-500">
+      {{ survey()?.surveyCode }} — {{ t('surveys.editSubtitle') }}
+    </p>
+
+    <app-org-scope-selector
+      mode="single"
+      [initialLocation]="initialLocation()"
+      [disabled]="saving()"
+      (locationChange)="onLocationChange($event)"
+    />
+
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-semibold">{{ t('surveys.fields.coordinates') }}</span>
+      <!-- A survey stores latitude/longitude only, so the address row is off; the
+           search box still helps find the place. -->
+      <app-geo-map
+        [value]="locationPoint()"
+        (valueChange)="locationPoint.set($event)"
+        [showAddress]="false"
+        height="300px"
+      />
+    </div>
+
+    <form [formGroup]="form" class="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div class="flex flex-col gap-1">
+        <label for="survey-edit-customer-name" class="text-sm font-medium">
+          {{ t('surveys.fields.customerName') }}
+        </label>
+        <input
+          pInputText
+          id="survey-edit-customer-name"
+          formControlName="customerName"
+          class="w-full"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="survey-edit-customer-phone" class="text-sm font-medium">
+          {{ t('surveys.fields.customerPhone') }}
+        </label>
+        <!-- dir="ltr" so the digits keep their order under the Arabic layout. -->
+        <input
+          pInputText
+          id="survey-edit-customer-phone"
+          type="tel"
+          formControlName="customerPhone"
+          class="w-full"
+          dir="ltr"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('surveys.department') }}</label>
+        <p-select
+          formControlName="departmentId"
+          [options]="departments()"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="t('surveys.selectDepartment')"
+          [showClear]="true"
+          [loading]="loadingDepartments()"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium">{{ t('surveys.fields.fillDueDate') }}</label>
+          <p-datepicker
+            formControlName="dueDate"
+            dateFormat="yy-mm-dd"
+            [showTime]="true"
+            [showIcon]="true"
+            [showClear]="true"
+            appendTo="body"
+            styleClass="w-full"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium">{{ t('surveys.fields.completionDueDate') }}</label>
+          <p-datepicker
+            formControlName="completionDueDate"
+            dateFormat="yy-mm-dd"
+            [showTime]="true"
+            [showIcon]="true"
+            [showClear]="true"
+            appendTo="body"
+            styleClass="w-full"
+          />
+        </div>
+    </form>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      [label]="t('common.cancel')"
+      icon="pi pi-times"
+      [text]="true"
+      severity="secondary"
+      [disabled]="saving()"
+      (onClick)="cancel()"
+    />
+    <p-button
+      [label]="t('common.save')"
+      icon="pi pi-check"
+      [loading]="saving()"
+      [disabled]="saving()"
+      (onClick)="save()"
+    />
+  </ng-template>
+</p-dialog>

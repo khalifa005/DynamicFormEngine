@@ -1,0 +1,25 @@
+<ng-container *transloco="let t">
+  <div class="denied-page">
+    <div class="denied-card">
+      <span class="denied-icon"><i class="pi pi-lock"></i></span>
+
+      <h1>{{ t('auth.sso.denied.title') }}</h1>
+      <p class="denied-message">{{ t(messageKey()) }}</p>
+
+      @if (username) {
+        <p class="denied-account">
+          {{ t('auth.sso.denied.account') }}
+          <strong>{{ username }}</strong>
+        </p>
+      }
+
+      <p-button
+        (onClick)="retry()"
+        [label]="t('auth.sso.denied.tryAgain')"
+        [loading]="retrying()"
+        [disabled]="retrying()"
+        styleClass="w-full"
+      />
+    </div>
+  </div>
+</ng-container>

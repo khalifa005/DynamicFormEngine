@@ -1,0 +1,35 @@
+---
+description: Never hand-edit the NSwag-generated Angular API client; change the API first, then regenerate.
+globs: **/api-client.generated.ts
+alwaysApply: true
+---
+
+# Never Hand-Edit Generated API Client
+
+Do **not** create, edit, patch, or "fix" `src/WebApps/MK.FormEngine.Web/src/app/core/api/api-client.generated.ts` by hand.
+
+The client is generated from the running API OpenAPI contract. All contract changes (endpoints, DTOs, enums, properties) must be made on the **API / Application** side first. Only then regenerate the client.
+
+## Workflow
+
+1. Implement or change the API (controllers, MediatR slices, DTOs).
+2. Start `MK.FormEngine.API`.
+3. From `src/WebApps/MK.FormEngine.Web`, run:
+
+```bash
+npm run api:generate
+```
+
+4. Use the regenerated types/clients in Angular code.
+
+## Incorrect
+
+- Adding methods, classes, or properties directly in `api-client.generated.ts`
+- Renaming or typing DTOs only on the client
+- Copy-pasting DTO shapes into the generated file to unblock UI work
+
+## Correct
+
+- Add/update the endpoint or DTO in the API
+- Regenerate with `npm run api:generate`
+- Consume the new generated members in feature code

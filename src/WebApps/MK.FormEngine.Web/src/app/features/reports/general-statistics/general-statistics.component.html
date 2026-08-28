@@ -1,0 +1,220 @@
+<ng-container *transloco="let t">
+  <p-toast />
+  <div class="report-page">
+    <app-report-filter-bar
+      [branchOptions]="branchOptions()"
+      [operationAreaOptions]="operationAreaOptions()"
+      [statusOptions]="statusOptions()"
+      [showTeamFilter]="false"
+      [loading]="loading()"
+      (apply)="onApply($event)"
+      (reset)="onReset()"
+    />
+
+    <div class="report-page-actions">
+      <app-report-export-actions
+        reportNameKey="nav.reportsGeneralStatistics"
+        [rowCount]="kpiTotalTasks()"
+        [activeFilterCount]="activeFilterCount()"
+        [disabled]="loading()"
+        [exportFn]="exportFn"
+      />
+    </div>
+
+    <!-- KPI cards -->
+    <section class="report-kpi-grid">
+      @if (loading() && !report()) {
+        @for (i of [0, 1, 2, 3, 4, 5, 6, 7]; track i) {
+          <article class="report-kpi-card">
+            <p-skeleton shape="circle" size="2.75rem" />
+            <div class="report-kpi-body">
+              <p-skeleton width="4rem" height="1.5rem" styleClass="mb-2" />
+              <p-skeleton width="7rem" height="0.75rem" />
+            </div>
+          </article>
+        }
+      } @else {
+        @for (kpi of kpiCards(); track kpi.key) {
+          <article class="report-kpi-card">
+            <span class="report-kpi-icon" [style.background]="kpi.accent">
+              <i [class]="kpi.icon"></i>
+            </span>
+            <div class="report-kpi-body">
+              <span class="report-kpi-value">
+                {{ kpi.value | number: '1.0-1' }}@if (kpi.isPercent) {<small>%</small>}@if (kpi.isHours) {<small>{{ t('dashboard.hoursShort') }}</small>}
+              </span>
+              <span class="report-kpi-label">{{ t(kpi.labelKey) }}</span>
+            </div>
+            @if (kpi.deltaPercent !== undefined && kpi.deltaPercent !== 0) {
+              <span
+                class="report-kpi-delta"
+                [class.up]="kpi.inverse ? kpi.deltaPercent < 0 : kpi.deltaPercent >= 0"
+                [class.down]="kpi.inverse ? kpi.deltaPercent >= 0 : kpi.deltaPercent < 0"
+                [pTooltip]="t('dashboard.vsLastMonth')"
+              >
+                <i class="pi" [class.pi-arrow-up]="kpi.deltaPercent >= 0" [class.pi-arrow-down]="kpi.deltaPercent < 0"></i>
+                {{ kpi.deltaPercent | number: '1.0-1' }}%
+              </span>
+            }
+          </article>
+        }
+      }
+    </section>
+
+    <!-- Charts -->
+    <section class="report-grid-3">
+      <div class="report-panel">
+        <div class="report-panel-head">
+          <h3><i class="pi pi-chart-line mr-2 text-primary"></i>{{ t('reports.charts.tasksOverTime') }}</h3>
+        </div>
+        <div class="report-chart-wrap">
+          @if (loading() && !report()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="line" [data]="trendData()" [options]="lineChartOptions()" />
+          }
+        </div>
+      </div>
+
+      <div class="report-panel">
+        <div class="report-panel-head">
+          <h3><i class="pi pi-chart-pie mr-2 text-primary"></i>{{ t('reports.charts.statusDistribution') }}</h3>
+        </div>
+        <div class="report-chart-wrap">
+          @if (loading() && !report()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="doughnut" [data]="doughnutData()" [options]="doughnutChartOptions()" />
+          }
+        </div>
+      </div>
+
+      <div class="report-panel">
+        <div class="report-panel-head">
+          <h3><i class="pi pi-users mr-2 text-primary"></i>{{ t('reports.charts.teamPerformanceOverview') }}</h3>
+        </div>
+        <div class="report-chart-wrap">
+          @if (loading() && !report()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="bar" [data]="teamOverviewData()" [options]="barChartOptions()" />
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent activity -->
+    <section class="report-panel">
+      <div class="report-panel-head">
+        <h3><i class="pi pi-history mr-2 text-primary"></i>{{ t('reports.charts.recentActivity') }}</h3>
+      </div>
+      <ul class="report-activity-list">
+        @for (item of recentActivity(); track item.id) {
+          <li>
+            <span class="report-activity-icon" [class]="activityIconClass(item.status)">
+              <i [class]="activityIcon(item.status)"></i>
+            </span>
+            <div class="report-activity-text">
+              <span class="report-activity-title">
+                {{ item.surveyCode }} — {{ templateDisplay(item.templateNameEn, item.templateNameAr) }}
+                <p-tag [severity]="statusSeverity(item.status)" [value]="t(statusKey(item.status))" />
+              </span>
+              <span class="report-activity-time">
+                {{ item.created | date: 'yyyy-MM-dd HH:mm' }} · {{ templateDisplay(item.branchNameEn, item.branchNameAr) }} · {{ item.fieldTeamName || '—' }}
+              </span>
+            </div>
+          </li>
+        } @empty {
+          <li class="report-activity-time">{{ t('reports.table.noData') }}</li>
+        }
+      </ul>
+    </section>
+
+    <!-- Late survey tasks: still-open overdue work first, then work that finished late -->
+    <section class="report-panel">
+      <div class="report-panel-head">
+        <h3><i class="pi pi-clock mr-2 text-primary"></i>{{ t('dashboard.lateSurveys') }}</h3>
+      </div>
+      <p-table
+        [value]="lateTasks()"
+        [loading]="loading()"
+        [paginator]="true"
+        [rows]="8"
+        styleClass="app-table p-datatable-sm p-datatable-striped"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th>{{ t('surveys.fields.surveyCode') }}</th>
+            <th>{{ t('dashboard.colLateness') }}</th>
+            <th class="text-center">{{ t('dashboard.colDaysLate') }}</th>
+            <th>{{ t('reports.table.status') }}</th>
+            <th>{{ t('reports.table.team') }}</th>
+            <th>{{ t('surveys.fields.branch') }}</th>
+            <th>{{ t('surveys.fields.template') }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td class="font-semibold text-primary-600">{{ row.surveyCode }}</td>
+            <td><p-tag [severity]="latenessSeverity(row.latenessKind)" [value]="t(latenessKey(row.latenessKind))" /></td>
+            <td class="text-center font-semibold" [class.text-red-500]="row.daysLate > 0">{{ row.daysLate | number }}</td>
+            <td><p-tag [severity]="statusSeverity(row.status)" [value]="t(statusKey(row.status))" /></td>
+            <td>{{ row.fieldTeamName || '—' }}</td>
+            <td>{{ templateDisplay(row.branchNameEn, row.branchNameAr) }}</td>
+            <td>{{ templateDisplay(row.templateNameEn, row.templateNameAr) }}</td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="7" class="text-center text-surface-500 py-6">{{ t('dashboard.noLateSurveys') }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+
+    <!-- Late teams: the same lateness rolled up to whoever holds the work -->
+    <section class="report-panel">
+      <div class="report-panel-head">
+        <h3><i class="pi pi-users mr-2 text-primary"></i>{{ t('dashboard.lateTeams') }}</h3>
+      </div>
+      <p-table
+        [value]="lateTeams()"
+        [loading]="loading()"
+        [paginator]="false"
+        styleClass="app-table p-datatable-sm p-datatable-striped"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th>{{ t('reports.table.team') }}</th>
+            <th class="text-center">{{ t('reports.kpi.totalTasks') }}</th>
+            <th class="text-center">{{ t('dashboard.colOverdue') }}</th>
+            <th class="text-center">{{ t('dashboard.colCompletedLate') }}</th>
+            <th class="text-center">{{ t('dashboard.colOnTime') }}</th>
+            <th class="text-center">{{ t('dashboard.colAvgDaysLate') }}</th>
+            <th class="text-center">{{ t('dashboard.colMaxDaysOverdue') }}</th>
+            <th class="text-center">{{ t('dashboard.colOnTimeRate') }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td class="font-semibold">{{ row.fieldTeamName }}</td>
+            <td class="text-center">{{ row.surveyCount | number }}</td>
+            <td class="text-center font-semibold" [class.text-red-500]="row.overdueCount > 0">{{ row.overdueCount | number }}</td>
+            <td class="text-center" [class.text-amber-500]="row.completedLateCount > 0">{{ row.completedLateCount | number }}</td>
+            <td class="text-center">{{ row.onTimeCount | number }}</td>
+            <td class="text-center">{{ row.avgDaysLate | number: '1.0-1' }}</td>
+            <td class="text-center">{{ row.maxDaysOverdue | number }}</td>
+            <td class="text-center">{{ row.onTimeRatePercent | number: '1.0-0' }}%</td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="8" class="text-center text-surface-500 py-6">{{ t('dashboard.noLateTeams') }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+  </div>
+</ng-container>

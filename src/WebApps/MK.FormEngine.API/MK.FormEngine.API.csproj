@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+    <PackageReference Include="Microsoft.OpenApi" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Shared.Core\Shared.Core.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Swagger\Shared.Swagger.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Logs\Shared.Logs.csproj" />
+    <ProjectReference Include="..\..\modules\Application\Application.csproj" />
+    <ProjectReference Include="..\..\modules\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      SAML service-provider signing certificates, loaded at startup from {ContentRoot}/CertData/.
+      The PFX files are gitignored (*.pfx) and supplied per environment; the glob matching nothing on
+      a fresh clone is expected and harmless while Sso:Enabled is false.
+
+      Deliberately narrowed to *.pfx rather than the whole folder: CertData also holds password and
+      metadata files that must not be copied into the published output.
+    -->
+    <Content Include="CertData\*.pfx" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

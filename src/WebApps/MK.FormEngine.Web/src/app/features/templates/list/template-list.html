@@ -1,0 +1,171 @@
+<ng-container *transloco="let t">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="card mt-4">
+    <!-- Page title/subtitle are rendered by the dashboard topbar (PageHeaderService). -->
+    <p-toolbar styleClass="mb-4">
+      <ng-template pTemplate="right">
+        <p-button [label]="t('templates.newTemplate')" icon="pi pi-plus" (onClick)="editTemplate()"></p-button>
+      </ng-template>
+    </p-toolbar>
+
+    <p-table
+      #dt
+      [value]="templates"
+      [lazy]="true"
+      (onLazyLoad)="loadTemplates($event)"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 20, 50, 100]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      styleClass="app-table p-datatable-sm p-datatable-striped"
+      [scrollable]="true"
+      [tableStyle]="{ 'min-width': '72rem' }"
+      [rowHover]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ t('templates.code') }}</th>
+          <th>{{ t('templates.nameEn') }}</th>
+          <th>{{ t('templates.nameAr') }}</th>
+          <th>{{ t('templates.category') }}</th>
+          <th>{{ t('templates.faType') }}</th>
+          <th>{{ t('templates.version') }}</th>
+          <th>{{ t('templates.status') }}</th>
+          <th class="w-48 text-center">{{ t('templates.actions') }}</th>
+        </tr>
+        <tr>
+          <th>
+            <p-columnFilter type="text" field="search" [showMenu]="false" [showClearButton]="false" placeholder="Search..."></p-columnFilter>
+          </th>
+          <th></th>
+          <th></th>
+          <th>
+            <p-columnFilter type="text" field="category" [showMenu]="false" [showClearButton]="false" placeholder="Category..."></p-columnFilter>
+          </th>
+          <th></th>
+          <th></th>
+          <th>
+            <p-columnFilter type="text" field="status" [showMenu]="false" [showClearButton]="false" placeholder="Status..."></p-columnFilter>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-template>
+        <tr>
+          <td class="font-mono text-sm">{{ template.templateCode }}</td>
+          <td>{{ template.templateNameEn }}</td>
+          <td>{{ template.templateNameAr }}</td>
+          <td>{{ template.category }}</td>
+          <td class="font-mono text-sm">{{ template.faTypeCode || '—' }}</td>
+          <td class="text-center">
+            <span class="font-semibold text-sm">v{{ template.currentVersionNo ?? 0 }}</span>
+          </td>
+          <td>
+            <p-tag [severity]="getSeverity(template.status)" [value]="getStatusLabel(template.status)"></p-tag>
+          </td>
+          <td class="text-center">
+            <div class="flex justify-center gap-2">
+              <p-button icon="pi pi-pencil" severity="secondary" size="small" [text]="true" [rounded]="true" (onClick)="editTemplate(template.templateId)" [pTooltip]="t('templates.editDetails')"></p-button>
+              <p-button icon="pi pi-th-large" severity="info" size="small" [text]="true" [rounded]="true" (onClick)="designFields(template.templateId)" [pTooltip]="t('templates.designFields')"></p-button>
+              <p-button icon="pi pi-history" severity="help" size="small" [text]="true" [rounded]="true" (onClick)="openVersionsDialog(template)" [pTooltip]="t('templates.viewVersions')"></p-button>
+              <!-- Publish is promoted out of the overflow menu: it is the action a draft exists for. -->
+              <p-button
+                *ngIf="canPublish(template.status)"
+                icon="pi pi-check-circle"
+                severity="success"
+                size="small"
+                [text]="true"
+                [rounded]="true"
+                (onClick)="confirmAction(template.templateId, 'publish')"
+                [loading]="actioningTemplateId === template.templateId"
+                [disabled]="actioningTemplateId !== undefined"
+                [pTooltip]="t('templates.publish')"
+              ></p-button>
+              <p-button icon="pi pi-ellipsis-v" severity="secondary" size="small" [text]="true" [rounded]="true" [disabled]="actioningTemplateId !== undefined" (onClick)="toggleMenu($event, template, menu)"></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center py-4">{{ t('templates.noTemplates') }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-menu #menu [model]="menuItems" [popup]="true" appendTo="body"></p-menu>
+
+  <!-- ── Clone dialog ──────────────────────────────────────────────────── -->
+  <p-dialog [header]="t('templates.cloneTemplate')" [(visible)]="cloneDialogVisible" [modal]="true" [style]="{ width: '25rem' }">
+    <form [formGroup]="cloneForm" (ngSubmit)="submitClone()" class="flex flex-col gap-4 mt-2">
+      <div class="flex flex-col gap-2">
+        <label for="newTemplateCode" class="font-semibold">{{ t('templates.newCode') }}</label>
+        <input pInputText id="newTemplateCode" formControlName="newTemplateCode" autocomplete="off" />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="newTemplateNameEn" class="font-semibold">{{ t('templates.newNameEn') }}</label>
+        <input pInputText id="newTemplateNameEn" formControlName="newTemplateNameEn" autocomplete="off" />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="newTemplateNameAr" class="font-semibold">{{ t('templates.newNameAr') }}</label>
+        <input pInputText id="newTemplateNameAr" formControlName="newTemplateNameAr" autocomplete="off" />
+      </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <p-button [label]="t('templates.cancel')" severity="secondary" (onClick)="cloneDialogVisible = false" [disabled]="cloning"></p-button>
+        <p-button [label]="t('templates.clone')" type="submit" [loading]="cloning" [disabled]="cloneForm.invalid || cloning"></p-button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <!-- ── Versions dialog ───────────────────────────────────────────────── -->
+  <p-dialog
+    [header]="t('templates.versionsFor') + ' ' + selectedTemplateNameForVersions"
+    [(visible)]="versionsDialogVisible"
+    [modal]="true"
+    [style]="{ width: '55rem' }"
+    [maximizable]="true"
+  >
+    <p-table
+      [value]="templateVersions"
+      [loading]="versionsLoading"
+      styleClass="app-table p-datatable-sm p-datatable-striped"
+      [rowHover]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ t('templates.versionNo') }}</th>
+          <th>{{ t('templates.targetClient') }}</th>
+          <th>{{ t('templates.publishedBy') }}</th>
+          <th>{{ t('templates.publishedDate') }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-version>
+        <tr>
+          <td>
+            <span class="font-semibold">v{{ version.versionNo }}</span>
+          </td>
+          <td>{{ version.targetClient }}</td>
+          <td>{{ version.publishedBy }}</td>
+          <td>{{ version.publishedDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center py-4">{{ t('templates.noVersions') }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-dialog>
+
+  <!-- ── Create/Edit template dialog ──────────────────────────────────── -->
+  <p-dialog [header]="selectedTemplateIdForForm ? t('templates.editTemplate') : t('templates.newTemplate')" [(visible)]="formDialogVisible" [modal]="true" [style]="{ width: '50rem' }" [maximizable]="true">
+    <app-template-form *ngIf="formDialogVisible" [templateId]="selectedTemplateIdForForm" (saved)="onFormSaved()" (canceled)="formDialogVisible = false"></app-template-form>
+  </p-dialog>
+
+</ng-container>

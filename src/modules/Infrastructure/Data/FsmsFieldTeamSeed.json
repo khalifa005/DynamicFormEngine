@@ -1,0 +1,32 @@
+[
+    {
+        "userCode": "FT-DEMO-001",
+        "name": "demo_team_alpha",
+        "mobile": "5550000001",
+        "poNumber": "PO-DEMO-001"
+    },
+    {
+        "userCode": "FT-DEMO-002",
+        "name": "demo_team_beta",
+        "mobile": "5550000002",
+        "poNumber": "PO-DEMO-002"
+    },
+    {
+        "userCode": "FT-DEMO-003",
+        "name": "demo_team_gamma",
+        "mobile": "5550000003",
+        "poNumber": "PO-DEMO-003"
+    },
+    {
+        "userCode": "FT-DEMO-004",
+        "name": "demo_team_delta",
+        "mobile": "5550000004",
+        "poNumber": "PO-DEMO-004"
+    },
+    {
+        "userCode": "FT-DEMO-005",
+        "name": "demo_team_epsilon",
+        "mobile": "5550000005",
+        "poNumber": "PO-DEMO-005"
+    }
+]

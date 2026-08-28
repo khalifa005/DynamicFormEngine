@@ -1,0 +1,934 @@
+<ng-container *transloco="let t">
+  <p-toast />
+
+  <div class="p-5 flex flex-col gap-5 min-h-full">
+    <!-- Page title/subtitle are rendered by the dashboard topbar (PageHeaderService). -->
+
+    <!-- ── Tab View (PrimeNG v20 p-tabs) ── -->
+    <div class="bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl shadow-sm overflow-hidden">
+      <p-tabs [value]="activeTab" (valueChange)="onTabChange($event)">
+
+        <!-- ── Tab Navigation Headers ── -->
+        <p-tablist class="px-4 border-b border-surface-200 dark:border-surface-800">
+          <p-tab value="0" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-building"></i>
+            {{ t('lookups.departments.title') }}
+          </p-tab>
+          <p-tab value="1" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-globe"></i>
+            {{ t('lookups.clusters.title') }}
+          </p-tab>
+          <p-tab value="2" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-sitemap"></i>
+            {{ t('lookups.cbus.title') }}
+          </p-tab>
+          <p-tab value="3" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-map-marker"></i>
+            {{ t('lookups.branches.title') }}
+          </p-tab>
+          <p-tab value="4" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-map"></i>
+            {{ t('lookups.operationAreas.title') }}
+          </p-tab>
+          <p-tab value="5" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-tag"></i>
+            {{ t('lookups.faTypes.title') }}
+          </p-tab>
+          <p-tab value="6" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-objects-column"></i>
+            {{ t('lookups.fieldCatalog.title') }}
+          </p-tab>
+          <p-tab value="7" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-replay"></i>
+            {{ t('lookups.returnReasons.title') }}
+          </p-tab>
+          <p-tab value="8" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-list"></i>
+            {{ t('lookups.taskTypes.title') }}
+          </p-tab>
+          <p-tab value="9" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-users"></i>
+            {{ t('lookups.customerTypes.title') }}
+          </p-tab>
+          <p-tab value="10" class="flex items-center gap-2 text-sm font-semibold py-3">
+            <i class="pi pi-briefcase"></i>
+            {{ t('lookups.contractors.title') }}
+          </p-tab>
+        </p-tablist>
+
+        <!-- ── Tab Panels ── -->
+        <p-tabpanels class="p-5 bg-transparent">
+
+          <!-- ═══ TAB 0 — DEPARTMENTS ════════════════════════════════ -->
+          <p-tabpanel value="0">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input
+                  pInputText type="text" id="dept-search"
+                  [(ngModel)]="departmentsSearch"
+                  (keyup.enter)="onDepartmentsSearch()"
+                  [placeholder]="t('lookups.searchPlaceholder')"
+                  class="w-56 text-sm"
+                />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onDepartmentsSearch()" />
+              @if (departmentsSearch) {
+                <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearDepartmentsSearch()" />
+              }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">
+                {{ departmentsTotalRecords }} {{ t('lookups.records') }}
+              </span>
+              <p-button icon="pi pi-plus" [label]="t('common.add')" (onClick)="openAddDept()" />
+            </div>
+
+            <p-table
+              [value]="departments" [lazy]="true" (onLazyLoad)="loadDepartments($event)"
+              [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body"
+              [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')"
+              [totalRecords]="departmentsTotalRecords" [loading]="departmentsLoading"
+              styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 80px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">#</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.departments.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.departments.nameAr') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('common.actions') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-dept>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td class="text-xs text-muted-color font-mono">{{ dept.id }}</td>
+                  <td class="text-sm">{{ dept.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ dept.nameAr }}</td>
+                  <td class="text-center">
+                    <p-tag [value]="dept.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(dept.isActive)" />
+                  </td>
+                  <td class="text-center">
+                    <div class="flex gap-1 justify-center">
+                      <p-button icon="pi pi-pencil" [text]="true" severity="secondary" size="small" (onClick)="openEditDept(dept)" [pTooltip]="t('common.edit')" />
+                      <p-button
+                        [icon]="dept.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                        [text]="true" [severity]="dept.isActive ? 'danger' : 'success'" size="small"
+                        (onClick)="toggleDeptActive(dept)"
+                        [pTooltip]="dept.isActive ? t('lookups.deactivate') : t('lookups.activate')"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr><td colspan="5" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr>
+              </ng-template>
+            </p-table>
+          </p-tabpanel>
+
+          <!-- ═══ TAB 1 — CLUSTERS ═══════════════════════════════════ -->
+          <p-tabpanel value="1">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="cluster-search" [(ngModel)]="clustersSearch" (keyup.enter)="onClustersSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onClustersSearch()" />
+              @if (clustersSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearClustersSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ clustersTotalRecords }} {{ t('lookups.records') }}</span>
+            </div>
+            <p-table [value]="clusters" [lazy]="true" (onLazyLoad)="loadClusters($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="clustersTotalRecords" [loading]="clustersLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 80px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">#</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.clusters.code') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.clusters.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.clusters.nameAr') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-cluster>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td class="text-xs text-muted-color font-mono">{{ cluster.id }}</td>
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ cluster.code }}</span></td>
+                  <td class="text-sm">{{ cluster.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ cluster.nameAr }}</td>
+                  <td class="text-center"><p-tag [value]="cluster.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(cluster.isActive)" /></td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="5" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+
+          <!-- ═══ TAB 2 — CBUS ═══════════════════════════════════════ -->
+          <p-tabpanel value="2">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="cbu-search" [(ngModel)]="cbusSearch" (keyup.enter)="onCbusSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onCbusSearch()" />
+              @if (cbusSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearCbusSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ cbusTotalRecords }} {{ t('lookups.records') }}</span>
+              <p-button icon="pi pi-plus" [label]="t('common.add')" (onClick)="openAddCbu()" />
+            </div>
+            <p-table [value]="cbus" [lazy]="true" (onLazyLoad)="loadCbus($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="cbusTotalRecords" [loading]="cbusLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 80px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">#</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.cbus.code') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.cbus.clusterCode') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.cbus.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.cbus.nameAr') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('common.actions') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-cbu>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td class="text-xs text-muted-color font-mono">{{ cbu.id }}</td>
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ cbu.code }}</span></td>
+                  <td class="text-sm text-muted-color">{{ cbu.clusterCode }}</td>
+                  <td class="text-sm">{{ cbu.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ cbu.nameAr }}</td>
+                  <td class="text-center"><p-tag [value]="cbu.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(cbu.isActive)" /></td>
+                  <td class="text-center">
+                    <div class="flex gap-1 justify-center">
+                      <p-button icon="pi pi-pencil" [text]="true" severity="secondary" size="small" (onClick)="openEditCbu(cbu)" [pTooltip]="t('common.edit')" />
+                      <p-button [icon]="cbu.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" [severity]="cbu.isActive ? 'danger' : 'success'" size="small" (onClick)="toggleCbuActive(cbu)" [pTooltip]="cbu.isActive ? t('lookups.deactivate') : t('lookups.activate')" />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="7" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+
+          <!-- ═══ TAB 3 — BRANCHES ══════════════════════════════════════ -->
+          <p-tabpanel value="3">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="branch-search" [(ngModel)]="branchesSearch" (keyup.enter)="onBranchesSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onBranchesSearch()" />
+              @if (branchesSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearBranchesSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ branchesTotalRecords }} {{ t('lookups.records') }}</span>
+              <p-button icon="pi pi-plus" [label]="t('common.add')" (onClick)="openAddBranch()" />
+            </div>
+            <p-table [value]="branches" [lazy]="true" (onLazyLoad)="loadBranches($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="branchesTotalRecords" [loading]="branchesLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 80px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">#</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.branches.code') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.branches.cbuCode') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.branches.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.branches.nameAr') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('common.actions') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-branch>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td class="text-xs text-muted-color font-mono">{{ branch.id }}</td>
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ branch.code }}</span></td>
+                  <td class="text-sm text-muted-color">{{ branch.cbuCode }}</td>
+                  <td class="text-sm">{{ branch.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ branch.nameAr }}</td>
+                  <td class="text-center"><p-tag [value]="branch.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(branch.isActive)" /></td>
+                  <td class="text-center">
+                    <div class="flex gap-1 justify-center">
+                      <p-button icon="pi pi-pencil" [text]="true" severity="secondary" size="small" (onClick)="openEditBranch(branch)" [pTooltip]="t('common.edit')" />
+                      <p-button [icon]="branch.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" [severity]="branch.isActive ? 'danger' : 'success'" size="small" (onClick)="toggleBranchActive(branch)" [pTooltip]="branch.isActive ? t('lookups.deactivate') : t('lookups.activate')" />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="7" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+
+          <!-- ═══ TAB 4 — OPERATION AREAS ═══════════════════════════ -->
+          <p-tabpanel value="4">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="area-search" [(ngModel)]="operationAreasSearch" (keyup.enter)="onOperationAreasSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onOperationAreasSearch()" />
+              @if (operationAreasSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearOperationAreasSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ operationAreasTotalRecords }} {{ t('lookups.records') }}</span>
+              <p-button icon="pi pi-plus" [label]="t('common.add')" (onClick)="openAddArea()" />
+            </div>
+            <p-table [value]="operationAreas" [lazy]="true" (onLazyLoad)="loadOperationAreas($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="operationAreasTotalRecords" [loading]="operationAreasLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 80px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">#</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.operationAreas.code') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.operationAreas.cbuCode') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.operationAreas.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.operationAreas.nameAr') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('common.actions') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-area>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td class="text-xs text-muted-color font-mono">{{ area.id }}</td>
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ area.code }}</span></td>
+                  <td class="text-sm text-muted-color">{{ area.cbuCode }}</td>
+                  <td class="text-sm">{{ area.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ area.nameAr }}</td>
+                  <td class="text-center"><p-tag [value]="area.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(area.isActive)" /></td>
+                  <td class="text-center">
+                    <div class="flex gap-1 justify-center">
+                      <p-button icon="pi pi-pencil" [text]="true" severity="secondary" size="small" (onClick)="openEditArea(area)" [pTooltip]="t('common.edit')" />
+                      <p-button [icon]="area.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" [severity]="area.isActive ? 'danger' : 'success'" size="small" (onClick)="toggleAreaActive(area)" [pTooltip]="area.isActive ? t('lookups.deactivate') : t('lookups.activate')" />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="7" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+
+          <!-- ═══ TAB 5 — FA TYPES ═══════════════════════════════════ -->
+          <p-tabpanel value="5">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="fatype-search" [(ngModel)]="faTypesSearch" (keyup.enter)="onFaTypesSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onFaTypesSearch()" />
+              @if (faTypesSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearFaTypesSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ faTypesTotalRecords }} {{ t('lookups.records') }}</span>
+              <p-button icon="pi pi-plus" [label]="t('common.add')" (onClick)="openAddFaType()" />
+            </div>
+            <p-table [value]="faTypes" [lazy]="true" (onLazyLoad)="loadFaTypes($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="faTypesTotalRecords" [loading]="faTypesLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 80px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">#</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.faTypes.code') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.faTypes.taskTypeId') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.faTypes.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.faTypes.nameAr') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('common.actions') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-fa>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td class="text-xs text-muted-color font-mono">{{ fa.id }}</td>
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ fa.faTypeCode }}</span></td>
+                  <td class="text-sm text-muted-color font-mono">{{ fa.taskTypeId }}</td>
+                  <td class="text-sm">{{ fa.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ fa.nameAr }}</td>
+                  <td class="text-center"><p-tag [value]="fa.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(fa.isActive)" /></td>
+                  <td class="text-center">
+                    <div class="flex gap-1 justify-center">
+                      <p-button icon="pi pi-pencil" [text]="true" severity="secondary" size="small" (onClick)="openEditFaType(fa)" [pTooltip]="t('common.edit')" />
+                      <p-button [icon]="fa.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" [severity]="fa.isActive ? 'danger' : 'success'" size="small" (onClick)="toggleFaTypeActive(fa)" [pTooltip]="fa.isActive ? t('lookups.deactivate') : t('lookups.activate')" />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="7" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+
+          <!-- ═══ TAB 6 — FIELD CATALOG ══════════════════════════════ -->
+          <p-tabpanel value="6">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="catalog-search" [(ngModel)]="fieldCatalogSearch" (keyup.enter)="onFieldCatalogSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onFieldCatalogSearch()" />
+              @if (fieldCatalogSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearFieldCatalogSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ fieldCatalogTotalRecords }} {{ t('lookups.records') }}</span>
+            </div>
+            <p-table [value]="fieldCatalog" [lazy]="true" (onLazyLoad)="loadFieldCatalog($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="fieldCatalogTotalRecords" [loading]="fieldCatalogLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.fieldCatalog.dataName') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.fieldCatalog.fieldType') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.fieldCatalog.labelEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.fieldCatalog.labelAr') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ item.dataName }}</span></td>
+                  <td class="text-sm text-muted-color">{{ item.fieldType }}</td>
+                  <td class="text-sm">{{ item.labelEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ item.labelAr }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="4" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+
+          <!-- ═══ TAB 7 — RETURN REASONS ════════════════════════════ -->
+          <p-tabpanel value="7">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="reason-search" [(ngModel)]="returnReasonsSearch" (keyup.enter)="onReturnReasonsSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onReturnReasonsSearch()" />
+              @if (returnReasonsSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearReturnReasonsSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ returnReasonsTotalRecords }} {{ t('lookups.records') }}</span>
+              <p-button icon="pi pi-plus" [label]="t('common.add')" (onClick)="openAddReason()" />
+            </div>
+            <p-table [value]="returnReasons" [lazy]="true" (onLazyLoad)="loadReturnReasons($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="returnReasonsTotalRecords" [loading]="returnReasonsLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.returnReasons.code') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.returnReasons.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.returnReasons.nameAr') }}</th>
+                  <th style="width: 100px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.returnReasons.sortOrder') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('common.actions') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-reason>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ reason.code }}</span></td>
+                  <td class="text-sm">{{ reason.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ reason.nameAr }}</td>
+                  <td class="text-center text-sm text-muted-color">{{ reason.sortOrder }}</td>
+                  <td class="text-center"><p-tag [value]="reason.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(reason.isActive)" /></td>
+                  <td class="text-center">
+                    <div class="flex gap-1 justify-center">
+                      <p-button icon="pi pi-pencil" [text]="true" severity="secondary" size="small" (onClick)="openEditReason(reason)" [pTooltip]="t('common.edit')" />
+                      <p-button [icon]="reason.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" [severity]="reason.isActive ? 'danger' : 'success'" size="small" (onClick)="toggleReasonActive(reason)" [pTooltip]="reason.isActive ? t('lookups.deactivate') : t('lookups.activate')" />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="6" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+
+          <!-- ═══ TAB 8 — TASK TYPES ════════════════════════════════ -->
+          <p-tabpanel value="8">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="tasktype-search" [(ngModel)]="taskTypesSearch" (keyup.enter)="onTaskTypesSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onTaskTypesSearch()" />
+              @if (taskTypesSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearTaskTypesSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ taskTypesTotalRecords }} {{ t('lookups.records') }}</span>
+              <p-button icon="pi pi-plus" [label]="t('common.add')" (onClick)="openAddTaskType()" />
+            </div>
+            <p-table [value]="taskTypes" [lazy]="true" (onLazyLoad)="loadTaskTypes($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="taskTypesTotalRecords" [loading]="taskTypesLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.taskTypes.id') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.taskTypes.code') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.taskTypes.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.taskTypes.nameAr') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('common.actions') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-taskType>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td class="text-sm">{{ taskType.id }}</td>
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ taskType.code }}</span></td>
+                  <td class="text-sm">{{ taskType.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ taskType.nameAr }}</td>
+                  <td class="text-center"><p-tag [value]="taskType.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(taskType.isActive)" /></td>
+                  <td class="text-center">
+                    <div class="flex gap-1 justify-center">
+                      <p-button icon="pi pi-pencil" [text]="true" severity="secondary" size="small" (onClick)="openEditTaskType(taskType)" [pTooltip]="t('common.edit')" />
+                      <p-button [icon]="taskType.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" [severity]="taskType.isActive ? 'danger' : 'success'" size="small" (onClick)="toggleTaskTypeActive(taskType)" [pTooltip]="taskType.isActive ? t('lookups.deactivate') : t('lookups.activate')" />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="6" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+
+          <!-- ═══ TAB 9 — CUSTOMER TYPES ════════════════════════════ -->
+          <p-tabpanel value="9">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="customertype-search" [(ngModel)]="customerTypesSearch" (keyup.enter)="onCustomerTypesSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onCustomerTypesSearch()" />
+              @if (customerTypesSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearCustomerTypesSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ customerTypesTotalRecords }} {{ t('lookups.records') }}</span>
+              <p-button icon="pi pi-plus" [label]="t('common.add')" (onClick)="openAddCustomerType()" />
+            </div>
+            <p-table [value]="customerTypes" [lazy]="true" (onLazyLoad)="loadCustomerTypes($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="customerTypesTotalRecords" [loading]="customerTypesLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.customerTypes.code') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.customerTypes.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.customerTypes.nameAr') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('common.actions') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-customerType>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ customerType.code }}</span></td>
+                  <td class="text-sm">{{ customerType.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ customerType.nameAr }}</td>
+                  <td class="text-center"><p-tag [value]="customerType.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(customerType.isActive)" /></td>
+                  <td class="text-center">
+                    <div class="flex gap-1 justify-center">
+                      <p-button icon="pi pi-pencil" [text]="true" severity="secondary" size="small" (onClick)="openEditCustomerType(customerType)" [pTooltip]="t('common.edit')" />
+                      <p-button [icon]="customerType.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" [severity]="customerType.isActive ? 'danger' : 'success'" size="small" (onClick)="toggleCustomerTypeActive(customerType)" [pTooltip]="customerType.isActive ? t('lookups.deactivate') : t('lookups.activate')" />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="5" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+
+
+          <!-- ═══ TAB 10 — CONTRACTORS ══════════════════════════════ -->
+          <p-tabpanel value="10">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" id="contractor-search" [(ngModel)]="contractorsSearch" (keyup.enter)="onContractorsSearch()" [placeholder]="t('lookups.searchPlaceholder')" class="w-56 text-sm" />
+              </p-iconfield>
+              <p-button icon="pi pi-search" [label]="t('common.search')" severity="secondary" (onClick)="onContractorsSearch()" />
+              @if (contractorsSearch) { <p-button icon="pi pi-times" severity="secondary" [text]="true" (onClick)="clearContractorsSearch()" /> }
+              <span class="ml-auto rtl:mr-auto text-xs text-muted-color bg-surface-100 dark:bg-surface-850 rounded-full px-3 py-1 shrink-0">{{ contractorsTotalRecords }} {{ t('lookups.records') }}</span>
+              <p-button icon="pi pi-plus" [label]="t('common.add')" (onClick)="openAddContractor()" />
+            </div>
+            <p-table [value]="contractors" [lazy]="true" (onLazyLoad)="loadContractors($event)" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" paginatorDropdownAppendTo="body" [showCurrentPageReport]="true" [currentPageReportTemplate]="t('lookups.pageReport')" [totalRecords]="contractorsTotalRecords" [loading]="contractorsLoading" styleClass="app-table p-datatable-sm p-datatable-striped" [scrollable]="true" [tableStyle]="{ 'min-width': '52rem' }" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.contractors.poNumber') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.contractors.nameEn') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.contractors.nameAr') }}</th>
+                  <th class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5">{{ t('lookups.contractors.commercialRegistration') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('lookups.status') }}</th>
+                  <th style="width: 120px" class="text-xs uppercase tracking-wider font-semibold text-muted-color bg-surface-50 dark:bg-surface-950 px-3 py-2.5 text-center">{{ t('common.actions') }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-contractor>
+                <tr class="hover:bg-surface-50 dark:hover:bg-surface-850 transition-colors">
+                  <td><span class="app-badge app-badge--brand app-badge--code">{{ contractor.poNumber }}</span></td>
+                  <td class="text-sm">{{ contractor.nameEn }}</td>
+                  <td class="text-sm text-right rtl:text-left rtl-cell font-sans" style="direction: rtl;">{{ contractor.nameAr }}</td>
+                  <td class="text-sm">{{ contractor.commercialRegistration || '-' }}</td>
+                  <td class="text-center"><p-tag [value]="contractor.isActive ? t('lookups.active') : t('lookups.inactive')" [severity]="getActiveSeverity(contractor.isActive)" /></td>
+                  <td class="text-center">
+                    <div class="flex gap-1 justify-center">
+                      <p-button icon="pi pi-pencil" [text]="true" severity="secondary" size="small" (onClick)="openEditContractor(contractor)" [pTooltip]="t('common.edit')" />
+                      <p-button [icon]="contractor.isActive ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" [severity]="contractor.isActive ? 'danger' : 'success'" size="small" (onClick)="toggleContractorActive(contractor)" [pTooltip]="contractor.isActive ? t('lookups.deactivate') : t('lookups.activate')" />
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage"><tr><td colspan="6" class="text-center py-10 text-muted-color"><i class="pi pi-inbox text-4xl opacity-40 block mb-2"></i><span>{{ t('lookups.noData') }}</span></td></tr></ng-template>
+            </p-table>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       DIALOGS — all use appendTo="body" per project rules
+       ══════════════════════════════════════════════════════ -->
+
+  <!-- Department Dialog -->
+  <p-dialog
+    [(visible)]="deptDialogVisible"
+    [header]="deptEditing ? t('lookups.departments.editTitle') : t('lookups.departments.addTitle')"
+    [modal]="true" [draggable]="false" [resizable]="false"
+    appendTo="body" styleClass="w-full max-w-lg"
+  >
+    <form [formGroup]="deptForm" class="flex flex-col gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.departments.nameEn') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameEn" [placeholder]="t('lookups.departments.nameEn')" />
+        @if (deptForm.get('nameEn')?.invalid && deptForm.get('nameEn')?.touched) {
+          <small class="text-red-500">{{ t('validation.required') }}</small>
+        }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.departments.nameAr') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameAr" [placeholder]="t('lookups.departments.nameAr')" dir="rtl" />
+        @if (deptForm.get('nameAr')?.invalid && deptForm.get('nameAr')?.touched) {
+          <small class="text-red-500">{{ t('validation.required') }}</small>
+        }
+      </div>
+      <div class="flex items-center gap-2">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="dept-active" />
+        <label for="dept-active" class="text-sm">{{ t('lookups.active') }}</label>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.cancel')" severity="secondary" [text]="true" (onClick)="deptDialogVisible = false" [disabled]="deptSaving" />
+      <p-button [label]="t('common.save')" icon="pi pi-check" (onClick)="saveDept()" [loading]="deptSaving" [disabled]="deptSaving" />
+    </ng-template>
+  </p-dialog>
+
+  <!-- CBU Dialog -->
+  <p-dialog
+    [(visible)]="cbuDialogVisible"
+    [header]="cbuEditing ? t('lookups.cbus.editTitle') : t('lookups.cbus.addTitle')"
+    [modal]="true" [draggable]="false" [resizable]="false"
+    appendTo="body" styleClass="w-full max-w-2xl"
+  >
+    <form [formGroup]="cbuForm" class="grid grid-cols-2 gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.cbus.code') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="code" />
+        @if (cbuForm.get('code')?.invalid && cbuForm.get('code')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.cbus.clusterCode') }} <span class="text-red-500">*</span></label>
+        <p-select
+          formControlName="clusterCode"
+          [options]="clusterOptions"
+          optionLabel="label" optionValue="value"
+          [filter]="true" filterBy="label"
+          [loading]="clusterOptionsLoading"
+          [placeholder]="t('lookups.cbus.selectCluster')"
+          [emptyMessage]="t('lookups.noData')"
+          appendTo="body" styleClass="w-full"
+        />
+        @if (cbuForm.get('clusterCode')?.invalid && cbuForm.get('clusterCode')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.cbus.nameEn') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameEn" />
+        @if (cbuForm.get('nameEn')?.invalid && cbuForm.get('nameEn')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.cbus.nameAr') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameAr" dir="rtl" />
+        @if (cbuForm.get('nameAr')?.invalid && cbuForm.get('nameAr')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.cbus.orgId') }}</label>
+        <p-inputnumber formControlName="orgId" [useGrouping]="false" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.cbus.orgCode') }}</label>
+        <input pInputText formControlName="orgCode" />
+      </div>
+      <div class="flex flex-col gap-1 col-span-2">
+        <label class="text-sm font-medium">{{ t('lookups.cbus.defaultTaskZone') }}</label>
+        <input pInputText formControlName="defaultTaskZone" />
+      </div>
+      <div class="flex items-center gap-2 col-span-2">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="cbu-active" />
+        <label for="cbu-active" class="text-sm">{{ t('lookups.active') }}</label>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.cancel')" severity="secondary" [text]="true" (onClick)="cbuDialogVisible = false" [disabled]="cbuSaving" />
+      <p-button [label]="t('common.save')" icon="pi pi-check" (onClick)="saveCbu()" [loading]="cbuSaving" [disabled]="cbuSaving" />
+    </ng-template>
+  </p-dialog>
+
+  <!-- Branch Dialog -->
+  <p-dialog
+    [(visible)]="branchDialogVisible"
+    [header]="branchEditing ? t('lookups.branches.editTitle') : t('lookups.branches.addTitle')"
+    [modal]="true" [draggable]="false" [resizable]="false"
+    appendTo="body" styleClass="w-full max-w-2xl"
+  >
+    <form [formGroup]="branchForm" class="grid grid-cols-2 gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.branches.code') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="code" />
+        @if (branchForm.get('code')?.invalid && branchForm.get('code')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.branches.cbuCode') }}</label>
+        <p-select
+          formControlName="cbuCode"
+          [options]="cbuOptions"
+          optionLabel="label" optionValue="value"
+          [filter]="true" filterBy="label"
+          [loading]="cbuOptionsLoading"
+          [showClear]="true"
+          [placeholder]="t('lookups.branches.selectCbu')"
+          [emptyMessage]="t('lookups.noData')"
+          appendTo="body" styleClass="w-full"
+        />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.branches.nameEn') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameEn" />
+        @if (branchForm.get('nameEn')?.invalid && branchForm.get('nameEn')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.branches.nameAr') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameAr" dir="rtl" />
+        @if (branchForm.get('nameAr')?.invalid && branchForm.get('nameAr')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.branches.taskZone') }}</label>
+        <input pInputText formControlName="taskZone" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.branches.branchCode') }}</label>
+        <input pInputText formControlName="branchCode" />
+      </div>
+      <div class="flex items-center gap-2 col-span-2">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="branch-active" />
+        <label for="branch-active" class="text-sm">{{ t('lookups.active') }}</label>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.cancel')" severity="secondary" [text]="true" (onClick)="branchDialogVisible = false" [disabled]="branchSaving" />
+      <p-button [label]="t('common.save')" icon="pi pi-check" (onClick)="saveBranch()" [loading]="branchSaving" [disabled]="branchSaving" />
+    </ng-template>
+  </p-dialog>
+
+  <!-- Operation Area Dialog -->
+  <p-dialog
+    [(visible)]="areaDialogVisible"
+    [header]="areaEditing ? t('lookups.operationAreas.editTitle') : t('lookups.operationAreas.addTitle')"
+    [modal]="true" [draggable]="false" [resizable]="false"
+    appendTo="body" styleClass="w-full max-w-2xl"
+  >
+    <form [formGroup]="areaForm" class="grid grid-cols-2 gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.operationAreas.code') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="code" />
+        @if (areaForm.get('code')?.invalid && areaForm.get('code')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.operationAreas.cbuCode') }} <span class="text-red-500">*</span></label>
+        <p-select
+          formControlName="cbuCode"
+          [options]="cbuOptions"
+          optionLabel="label" optionValue="value"
+          [filter]="true" filterBy="label"
+          [loading]="cbuOptionsLoading"
+          [placeholder]="t('lookups.operationAreas.selectCbu')"
+          [emptyMessage]="t('lookups.noData')"
+          appendTo="body" styleClass="w-full"
+        />
+        @if (areaForm.get('cbuCode')?.invalid && areaForm.get('cbuCode')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.operationAreas.nameEn') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameEn" />
+        @if (areaForm.get('nameEn')?.invalid && areaForm.get('nameEn')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.operationAreas.nameAr') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameAr" dir="rtl" />
+        @if (areaForm.get('nameAr')?.invalid && areaForm.get('nameAr')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1 col-span-2">
+        <label class="text-sm font-medium">{{ t('lookups.operationAreas.mainAreaCode') }}</label>
+        <input pInputText formControlName="mainAreaCode" />
+      </div>
+      <div class="flex items-center gap-2 col-span-2">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="area-active" />
+        <label for="area-active" class="text-sm">{{ t('lookups.active') }}</label>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.cancel')" severity="secondary" [text]="true" (onClick)="areaDialogVisible = false" [disabled]="areaSaving" />
+      <p-button [label]="t('common.save')" icon="pi pi-check" (onClick)="saveArea()" [loading]="areaSaving" [disabled]="areaSaving" />
+    </ng-template>
+  </p-dialog>
+
+  <!-- FA Type Dialog -->
+  <p-dialog
+    [(visible)]="faTypeDialogVisible"
+    [header]="faTypeEditing ? t('lookups.faTypes.editTitle') : t('lookups.faTypes.addTitle')"
+    [modal]="true" [draggable]="false" [resizable]="false"
+    appendTo="body" styleClass="w-full max-w-2xl"
+  >
+    <form [formGroup]="faTypeForm" class="grid grid-cols-2 gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.faTypes.code') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="faTypeCode" />
+        @if (faTypeForm.get('faTypeCode')?.invalid && faTypeForm.get('faTypeCode')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.faTypes.taskTypeId') }} <span class="text-red-500">*</span></label>
+        <p-inputnumber formControlName="taskTypeId" [useGrouping]="false" />
+        @if (faTypeForm.get('taskTypeId')?.invalid && faTypeForm.get('taskTypeId')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.faTypes.nameEn') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameEn" />
+        @if (faTypeForm.get('nameEn')?.invalid && faTypeForm.get('nameEn')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.faTypes.nameAr') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameAr" dir="rtl" />
+        @if (faTypeForm.get('nameAr')?.invalid && faTypeForm.get('nameAr')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex items-center gap-2 col-span-2">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="fatype-active" />
+        <label for="fatype-active" class="text-sm">{{ t('lookups.active') }}</label>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.cancel')" severity="secondary" [text]="true" (onClick)="faTypeDialogVisible = false" [disabled]="faTypeSaving" />
+      <p-button [label]="t('common.save')" icon="pi pi-check" (onClick)="saveFaType()" [loading]="faTypeSaving" [disabled]="faTypeSaving" />
+    </ng-template>
+  </p-dialog>
+
+  <!-- Return Reason Dialog -->
+  <p-dialog
+    [(visible)]="reasonDialogVisible"
+    [header]="reasonEditing ? t('lookups.returnReasons.editTitle') : t('lookups.returnReasons.addTitle')"
+    [modal]="true" [draggable]="false" [resizable]="false"
+    appendTo="body" styleClass="w-full max-w-2xl"
+  >
+    <form [formGroup]="reasonForm" class="grid grid-cols-2 gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.returnReasons.code') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="code" />
+        @if (reasonForm.get('code')?.invalid && reasonForm.get('code')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.returnReasons.sortOrder') }}</label>
+        <p-inputnumber formControlName="sortOrder" [useGrouping]="false" [min]="0" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.returnReasons.nameEn') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameEn" />
+        @if (reasonForm.get('nameEn')?.invalid && reasonForm.get('nameEn')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.returnReasons.nameAr') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameAr" dir="rtl" />
+        @if (reasonForm.get('nameAr')?.invalid && reasonForm.get('nameAr')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex items-center gap-2 col-span-2">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="reason-active" />
+        <label for="reason-active" class="text-sm">{{ t('lookups.active') }}</label>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.cancel')" severity="secondary" [text]="true" (onClick)="reasonDialogVisible = false" [disabled]="reasonSaving" />
+      <p-button [label]="t('common.save')" icon="pi pi-check" (onClick)="saveReason()" [loading]="reasonSaving" [disabled]="reasonSaving" />
+    </ng-template>
+  </p-dialog>
+
+  <!-- Task Type Dialog -->
+  <p-dialog
+    [(visible)]="taskTypeDialogVisible"
+    [header]="taskTypeEditing ? t('lookups.taskTypes.editTitle') : t('lookups.taskTypes.addTitle')"
+    [modal]="true" [draggable]="false" [resizable]="false"
+    appendTo="body" styleClass="w-full max-w-2xl"
+  >
+    <form [formGroup]="taskTypeForm" class="grid grid-cols-2 gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.taskTypes.id') }} <span class="text-red-500">*</span></label>
+        <p-inputnumber formControlName="id" [useGrouping]="false" [min]="1" />
+        @if (taskTypeForm.get('id')?.invalid && taskTypeForm.get('id')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.taskTypes.code') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="code" />
+        @if (taskTypeForm.get('code')?.invalid && taskTypeForm.get('code')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.taskTypes.nameEn') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameEn" />
+        @if (taskTypeForm.get('nameEn')?.invalid && taskTypeForm.get('nameEn')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.taskTypes.nameAr') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameAr" dir="rtl" />
+        @if (taskTypeForm.get('nameAr')?.invalid && taskTypeForm.get('nameAr')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex items-center gap-2 col-span-2">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="tasktype-active" />
+        <label for="tasktype-active" class="text-sm">{{ t('lookups.active') }}</label>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.cancel')" severity="secondary" [text]="true" (onClick)="taskTypeDialogVisible = false" [disabled]="taskTypeSaving" />
+      <p-button [label]="t('common.save')" icon="pi pi-check" (onClick)="saveTaskType()" [loading]="taskTypeSaving" [disabled]="taskTypeSaving" />
+    </ng-template>
+  </p-dialog>
+
+  <!-- Customer Type Dialog -->
+  <p-dialog
+    [(visible)]="customerTypeDialogVisible"
+    [header]="customerTypeEditing ? t('lookups.customerTypes.editTitle') : t('lookups.customerTypes.addTitle')"
+    [modal]="true" [draggable]="false" [resizable]="false"
+    appendTo="body" styleClass="w-full max-w-2xl"
+  >
+    <form [formGroup]="customerTypeForm" class="grid grid-cols-2 gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.customerTypes.code') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="code" />
+        @if (customerTypeForm.get('code')?.invalid && customerTypeForm.get('code')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.customerTypes.nameEn') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameEn" />
+        @if (customerTypeForm.get('nameEn')?.invalid && customerTypeForm.get('nameEn')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1 col-span-2">
+        <label class="text-sm font-medium">{{ t('lookups.customerTypes.nameAr') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameAr" dir="rtl" />
+        @if (customerTypeForm.get('nameAr')?.invalid && customerTypeForm.get('nameAr')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex items-center gap-2 col-span-2">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="customertype-active" />
+        <label for="customertype-active" class="text-sm">{{ t('lookups.active') }}</label>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.cancel')" severity="secondary" [text]="true" (onClick)="customerTypeDialogVisible = false" [disabled]="customerTypeSaving" />
+      <p-button [label]="t('common.save')" icon="pi pi-check" (onClick)="saveCustomerType()" [loading]="customerTypeSaving" [disabled]="customerTypeSaving" />
+    </ng-template>
+  </p-dialog>
+
+  <!-- Contractor Dialog -->
+  <p-dialog
+    [(visible)]="contractorDialogVisible"
+    [header]="contractorEditing ? t('lookups.contractors.editTitle') : t('lookups.contractors.addTitle')"
+    [modal]="true" [draggable]="false" [resizable]="false"
+    appendTo="body" styleClass="w-full max-w-2xl"
+  >
+    <form [formGroup]="contractorForm" class="grid grid-cols-2 gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.contractors.poNumber') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="poNumber" />
+        @if (contractorForm.get('poNumber')?.invalid && contractorForm.get('poNumber')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.contractors.commercialRegistration') }}</label>
+        <input pInputText formControlName="commercialRegistration" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.contractors.nameEn') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameEn" />
+        @if (contractorForm.get('nameEn')?.invalid && contractorForm.get('nameEn')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium">{{ t('lookups.contractors.nameAr') }} <span class="text-red-500">*</span></label>
+        <input pInputText formControlName="nameAr" dir="rtl" />
+        @if (contractorForm.get('nameAr')?.invalid && contractorForm.get('nameAr')?.touched) { <small class="text-red-500">{{ t('validation.required') }}</small> }
+      </div>
+      <div class="flex items-center gap-2 col-span-2">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="contractor-active" />
+        <label for="contractor-active" class="text-sm">{{ t('lookups.active') }}</label>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.cancel')" severity="secondary" [text]="true" (onClick)="contractorDialogVisible = false" [disabled]="contractorSaving" />
+      <p-button [label]="t('common.save')" icon="pi pi-check" (onClick)="saveContractor()" [loading]="contractorSaving" [disabled]="contractorSaving" />
+    </ng-template>
+  </p-dialog>
+
+</ng-container>

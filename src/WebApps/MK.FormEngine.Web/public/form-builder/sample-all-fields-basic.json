@@ -1,0 +1,472 @@
+{
+  "name_en": "Sample Survey (All Field Types)",
+  "name_ar": "نموذج تجريبي (جميع أنواع الحقول)",
+  "elements": [
+    {
+      "type": "text",
+      "label_en": "Full Name",
+      "label_ar": "الاسم الكامل",
+      "data_name": "full_name",
+      "description_en": "Enter your full legal name.",
+      "description_ar": "أدخل اسمك الكامل كما في الهوية.",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "min_length": 2,
+      "max_length": 100,
+      "pattern": {
+        "regex": "^[A-Za-z\\s]{2,100}$",
+        "description": "Letters and spaces only"
+      },
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "numeric",
+      "label_en": "Age",
+      "label_ar": "العمر",
+      "data_name": "age",
+      "description_en": "Must be between 10 and 120.",
+      "description_ar": "يجب أن يكون بين 10 و 120.",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "format": "integer",
+      "min": 10,
+      "max": 120,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": [
+          {
+            "field": "full_name",
+            "operator": "is_not_empty",
+            "value": ""
+          }
+        ]
+      }
+    },
+    {
+      "type": "yes_no",
+      "label_en": "Has Vehicle",
+      "label_ar": "يملك مركبة",
+      "data_name": "has_vehicle",
+      "description_en": "",
+      "description_ar": "",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "date",
+      "label_en": "Inspection Date",
+      "label_ar": "تاريخ التفتيش",
+      "data_name": "inspection_date",
+      "description_en": "",
+      "description_ar": "",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "time",
+      "label_en": "Inspection Time",
+      "label_ar": "وقت التفتيش",
+      "data_name": "inspection_time",
+      "description_en": "",
+      "description_ar": "",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "single_choice",
+      "label_en": "Sport",
+      "label_ar": "الرياضة",
+      "data_name": "sport",
+      "description_en": "Select your preferred sport.",
+      "description_ar": "اختر رياضتك المفضلة.",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "allow_other": true,
+      "multiple": false,
+      "parent_field": null,
+      "choices": [
+        {
+          "value": "football",
+          "label_en": "Football",
+          "label_ar": "كرة القدم",
+          "dependency_value": null
+        },
+        {
+          "value": "basketball",
+          "label_en": "Basketball",
+          "label_ar": "كرة السلة",
+          "dependency_value": null
+        }
+      ],
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "single_choice",
+      "label_en": "Club",
+      "label_ar": "النادي",
+      "data_name": "club",
+      "description_en": "Options filtered by the selected sport.",
+      "description_ar": "يتم تصفية الخيارات حسب الرياضة المختارة.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "allow_other": false,
+      "multiple": false,
+      "parent_field": "sport",
+      "choices": [
+        {
+          "value": "real_madrid",
+          "label_en": "Real Madrid",
+          "label_ar": "ريال مدريد",
+          "dependency_value": "football"
+        },
+        {
+          "value": "barcelona",
+          "label_en": "Barcelona",
+          "label_ar": "برشلونة",
+          "dependency_value": "football"
+        },
+        {
+          "value": "lakers",
+          "label_en": "Los Angeles Lakers",
+          "label_ar": "لوس أنgeles ليكرز",
+          "dependency_value": "basketball"
+        },
+        {
+          "value": "celtics",
+          "label_en": "Boston Celtics",
+          "label_ar": "بوسطن سلتيكس",
+          "dependency_value": "basketball"
+        }
+      ],
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [
+          {
+            "field": "sport",
+            "operator": "is_not_empty",
+            "value": ""
+          }
+        ],
+        "preserve_data": true
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "multiple_choice",
+      "label_en": "Equipment",
+      "label_ar": "المعدات",
+      "data_name": "equipment",
+      "description_en": "Select all that apply.",
+      "description_ar": "اختر كل ما ينطبق.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "allow_other": true,
+      "multiple": true,
+      "parent_field": null,
+      "choices": [
+        {
+          "value": "helmet",
+          "label_en": "Helmet",
+          "label_ar": "خوذة",
+          "dependency_value": null
+        },
+        {
+          "value": "gloves",
+          "label_en": "Gloves",
+          "label_ar": "قفازات",
+          "dependency_value": null
+        },
+        {
+          "value": "boots",
+          "label_en": "Boots",
+          "label_ar": "أحذية",
+          "dependency_value": null
+        }
+      ],
+      "visible_conditions": {
+        "match": "any",
+        "conditions": [
+          {
+            "field": "has_vehicle",
+            "operator": "equal",
+            "value": "yes"
+          },
+          {
+            "field": "sport",
+            "operator": "is_not_empty",
+            "value": ""
+          }
+        ],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "photo",
+      "label_en": "Site Photos",
+      "label_ar": "صور الموقع",
+      "data_name": "site_photos",
+      "description_en": "Attach up to 3 photos of the site.",
+      "description_ar": "أرفق حتى 3 صور للموقع.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      },
+      "max_files": 3,
+      "max_file_size_mb": 10,
+      "allowed_extensions": [
+        "jpg",
+        "jpeg",
+        "png"
+      ]
+    },
+    {
+      "type": "video",
+      "label_en": "Walkthrough Video",
+      "label_ar": "فيديو الجولة",
+      "data_name": "walkthrough_video",
+      "description_en": "Optional short video of the inspection.",
+      "description_ar": "فيديو قصير اختياري للتفتيش.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      },
+      "max_files": 1,
+      "max_file_size_mb": 50,
+      "allowed_extensions": [
+        "mp4",
+        "mov"
+      ]
+    },
+    {
+      "type": "audio",
+      "label_en": "Voice Note",
+      "label_ar": "ملاحظة صوتية",
+      "data_name": "voice_note",
+      "description_en": "Optional recorded note.",
+      "description_ar": "ملاحظة مسجلة اختيارية.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      },
+      "max_files": 1,
+      "max_file_size_mb": 20,
+      "allowed_extensions": [
+        "mp3",
+        "m4a",
+        "wav"
+      ]
+    },
+    {
+      "type": "signature",
+      "label_en": "Inspector Signature",
+      "label_ar": "توقيع المفتش",
+      "data_name": "inspector_signature",
+      "description_en": "Sign to confirm the inspection results.",
+      "description_ar": "وقّع لتأكيد نتائج التفتيش.",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": [
+          {
+            "field": "inspection_date",
+            "operator": "is_not_empty",
+            "value": ""
+          }
+        ]
+      }
+    },
+    {
+      "type": "geolocation",
+      "label_en": "Site Location",
+      "label_ar": "موقع الموقع",
+      "data_name": "site_location",
+      "description_en": "Click the map or drag the pin to mark the exact site.",
+      "description_ar": "انقر على الخريطة أو اسحب الدبوس لتحديد الموقع بدقة.",
+      "default_value": "24.7136,46.6753",
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "map_zoom": 6,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "section",
+      "label_en": "Additional Details",
+      "label_ar": "تفاصيل إضافية",
+      "data_name": "additional_details",
+      "description_en": "Nested fields grouped in a section.",
+      "description_ar": "حقول متداخلة مجمعة في قسم.",
+      "hidden": false,
+      "display": "inline",
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "elements": [
+        {
+          "type": "text",
+          "label_en": "Notes",
+          "label_ar": "ملاحظات",
+          "data_name": "notes",
+          "description_en": "",
+          "description_ar": "",
+          "default_value": null,
+          "required": false,
+          "hidden": false,
+          "disabled": false,
+          "min_length": null,
+          "max_length": 500,
+          "pattern": null,
+          "visible_conditions": {
+            "match": "all",
+            "conditions": [],
+            "preserve_data": false
+          },
+          "required_conditions": {
+            "match": "all",
+            "conditions": []
+          }
+        },
+        {
+          "type": "numeric",
+          "label_en": "Rating",
+          "label_ar": "التقييم",
+          "data_name": "rating",
+          "description_en": "Decimal value between 0 and 5.",
+          "description_ar": "قيمة عشرية بين 0 و 5.",
+          "default_value": null,
+          "required": false,
+          "hidden": false,
+          "disabled": true,
+          "format": "decimal",
+          "min": 0,
+          "max": 5,
+          "visible_conditions": {
+            "match": "all",
+            "conditions": [],
+            "preserve_data": false
+          },
+          "required_conditions": {
+            "match": "all",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  ]
+}

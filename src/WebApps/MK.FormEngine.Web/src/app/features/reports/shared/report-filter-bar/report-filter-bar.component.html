@@ -1,0 +1,133 @@
+<ng-container *transloco="let t">
+  <section class="panel filter-panel">
+    <div class="filter-row">
+      <div class="filter-field">
+        <label>{{ t('reports.filters.from') }}</label>
+        <p-datepicker
+          [(ngModel)]="fromDate"
+          dateFormat="yy-mm-dd"
+          appendTo="body"
+          [showIcon]="true"
+          [showButtonBar]="true"
+          [disabled]="loading()"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label>{{ t('reports.filters.to') }}</label>
+        <p-datepicker
+          [(ngModel)]="toDate"
+          dateFormat="yy-mm-dd"
+          appendTo="body"
+          [showIcon]="true"
+          [showButtonBar]="true"
+          [disabled]="loading()"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label>{{ t('reports.filters.status') }}</label>
+        <p-select
+          [(ngModel)]="status"
+          [options]="statusOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="t('reports.filters.allStatuses')"
+          [showClear]="true"
+          appendTo="body"
+          [disabled]="loading()"
+        />
+      </div>
+
+      @if (showTeamFilter()) {
+        <div class="filter-field">
+          <label>{{ t('reports.filters.team') }}</label>
+          <p-select
+            [(ngModel)]="teamId"
+            [options]="teamOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [placeholder]="t('reports.filters.allTeams')"
+            [showClear]="true"
+            appendTo="body"
+            [disabled]="loading()"
+          />
+        </div>
+      }
+
+      @if (showSourceFilter()) {
+        <div class="filter-field">
+          <label>{{ t('reports.filters.source') }}</label>
+          <p-select
+            [(ngModel)]="source"
+            [options]="sourceOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [placeholder]="t('reports.filters.allSources')"
+            [showClear]="true"
+            appendTo="body"
+            [disabled]="loading()"
+          />
+        </div>
+      }
+
+      <div class="filter-field">
+        <label>{{ t('reports.filters.branch') }}</label>
+        <p-select
+          [(ngModel)]="branchCode"
+          [options]="branchOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="t('reports.filters.allBranches')"
+          [showClear]="true"
+          appendTo="body"
+          [disabled]="loading()"
+        />
+      </div>
+
+      <div class="filter-field">
+        <label>{{ t('reports.filters.operationArea') }}</label>
+        <p-select
+          [(ngModel)]="operationAreaCode"
+          [options]="operationAreaOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="t('reports.filters.allOperationAreas')"
+          [showClear]="true"
+          appendTo="body"
+          [disabled]="loading()"
+        />
+      </div>
+
+      <div class="filter-actions">
+        <p-button
+          [label]="t('reports.filters.apply')"
+          icon="pi pi-filter"
+          (onClick)="onApply()"
+          [loading]="loading()"
+          [disabled]="loading()"
+        />
+        <p-button
+          [label]="t('reports.filters.reset')"
+          icon="pi pi-times"
+          severity="secondary"
+          [text]="true"
+          (onClick)="onReset()"
+          [disabled]="loading()"
+        />
+      </div>
+    </div>
+
+    <div class="active-filters">
+      <span class="active-filters-label">
+        <i class="pi pi-filter-fill"></i>
+        {{ t('reports.filters.active') }}
+      </span>
+      @for (chip of activeChips(); track chip.key) {
+        <p-chip [label]="chip.label" [removable]="true" (onRemove)="clearChip(chip.key)" />
+      } @empty {
+        <span class="no-active-filters">{{ t('reports.filters.noActive') }}</span>
+      }
+    </div>
+  </section>
+</ng-container>

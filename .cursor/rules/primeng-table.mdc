@@ -1,0 +1,41 @@
+---
+description: PrimeNG p-table must use lazy server-side pagination, sorting, and filtering.
+globs:
+  - "**/MK.FormEngine.Web/**/*.html"
+  - "**/MK.FormEngine.Web/**/*.ts"
+  - "**/features/**/*list*"
+  - "**/features/**/*table*"
+alwaysApply: false
+---
+
+# PrimeNG Table — Server Sort / Filter / Page
+
+Follow [PrimeNG Table](https://primeng.dev/table) lazy mode and the `primeng-table` skill.
+
+## Required on every server-backed list
+
+```html
+<p-table
+  [value]="items()"
+  [lazy]="true"
+  (onLazyLoad)="load($event)"
+  [paginator]="true"
+  [rows]="pageSize"
+  [totalRecords]="totalRecords()"
+  [loading]="loading()"
+>
+```
+
+- Map `TableLazyLoadEvent` (`first`, `rows`, `sortField`, `sortOrder`, filters) to the API.
+- Sortable headers: `pSortableColumn` + `p-sortIcon`.
+- Clear loading in `finalize`. Include localized `emptymessage`.
+
+## Forbidden when `[lazy]="true"`
+
+- Client-side `.sort()` / `.filter()` on the current page only
+- Omitting `[totalRecords]` or `[loading]`
+- Loading the full dataset for a worklist/lookup grid
+
+## Filters
+
+Send caption/toolbar or column filters to the server; reset to page 1 on apply/clear. Use `appendTo="body"` on filter overlays inside dialogs. On a paginated `p-table` inside `p-dialog`, also set `paginatorDropdownAppendTo="body"` — the table does not use `appendTo`, which is why the rows-per-page dropdown keeps closing on dialog scroll.

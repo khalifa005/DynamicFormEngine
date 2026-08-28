@@ -1,0 +1,22 @@
+root = true
+
+[*.cs]
+# Prefer file-scoped namespaces (one less level of indentation)
+csharp_style_namespace_declarations = file_scoped:warning
+
+# 'this.' is noise in modern C#
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+
+# Modern language features
+csharp_style_prefer_primary_constructors = true:suggestion
+csharp_prefer_braces = true:warning
+dotnet_style_prefer_collection_expression = true:suggestion
+
+# Interfaces start with I
+dotnet_naming_rule.interfaces_start_with_i.severity = warning
+dotnet_naming_rule.interfaces_start_with_i.symbols = interface_symbol
+dotnet_naming_rule.interfaces_start_with_i.style = i_prefix_style
+dotnet_naming_symbols.interface_symbol.applicable_kinds = interface
+dotnet_naming_style.i_prefix_style.required_prefix = I
+dotnet_naming_style.i_prefix_style.capitalization = pascal_case

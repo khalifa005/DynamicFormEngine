@@ -1,0 +1,443 @@
+<ng-container *transloco="let t">
+  <p-toast />
+
+  <!-- Page title/subtitle are rendered by the dashboard topbar (PageHeaderService). -->
+  <div class="mb-4 flex flex-wrap items-center justify-end gap-2">
+    @if (selectedCount() > 0) {
+      <span class="text-sm text-surface-500">
+        {{ t('surveys.bulkAllocate.selectedCount', { count: selectedCount() }) }}
+      </span>
+      <p-button
+        [label]="t('surveys.actions.clearSelection')"
+        icon="pi pi-times"
+        severity="secondary"
+        [text]="true"
+        (onClick)="clearSelection()"
+      />
+    }
+    <p-button
+      [label]="t('surveys.actions.bulkAllocate')"
+      icon="pi pi-send"
+      severity="secondary"
+      [outlined]="true"
+      [disabled]="selectedCount() === 0 || loading()"
+      [pTooltip]="selectedCount() === 0 ? t('surveys.bulkAllocate.selectionHint') : ''"
+      tooltipPosition="bottom"
+      (onClick)="openBulkAllocate()"
+    />
+    <p-button [label]="t('surveys.actions.newSurvey')" icon="pi pi-plus" (onClick)="openCreate()" />
+  </div>
+
+  <div class="card p-4">
+    <p-table
+      [value]="surveys()"
+      [lazy]="true"
+      (onLazyLoad)="loadSurveys($event)"
+      [rows]="pageSize"
+      [paginator]="true"
+      [totalRecords]="totalRecords()"
+      [loading]="loading()"
+      [rowsPerPageOptions]="[10, 25, 50, 100]"
+      [sortField]="sortField"
+      [sortOrder]="sortOrder"
+      dataKey="surveyId"
+      [selection]="selectedSurveys"
+      (selectionChange)="onSelectionChange($event)"
+      [rowSelectable]="isRowSelectable"
+      [contextMenu]="rowContextMenu"
+      [(contextMenuSelection)]="contextSurvey"
+      (onContextMenuSelect)="onContextMenu($event)"
+      styleClass="app-table p-datatable-sm p-datatable-striped"
+      [scrollable]="true"
+      [tableStyle]="{ 'min-width': '104rem' }"
+      [rowHover]="true"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="{{ t('lookups.pageReport') }}"
+    >
+      <ng-template pTemplate="caption">
+        <div class="flex flex-wrap items-center gap-2.5 p-1">
+          <p-iconfield iconPosition="left" class="w-full min-w-0 sm:w-64 shrink-0">
+            <p-inputicon styleClass="pi pi-search" />
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="search"
+              (keyup.enter)="applyFilters()"
+              [placeholder]="t('surveys.filters.searchPlaceholder')"
+              class="w-full"
+            />
+          </p-iconfield>
+
+          <p-select
+            [(ngModel)]="status"
+            [options]="statusOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [showClear]="true"
+            [placeholder]="t('surveys.filters.status')"
+            (onChange)="applyFilters()"
+            appendTo="body"
+            class="w-full sm:w-44 shrink-0"
+            styleClass="w-full"
+          />
+
+          <p-select
+            [(ngModel)]="source"
+            [options]="sourceOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [showClear]="true"
+            [placeholder]="t('surveys.filters.source')"
+            (onChange)="applyFilters()"
+            appendTo="body"
+            class="w-full sm:w-36 shrink-0"
+            styleClass="w-full"
+          />
+
+          <p-select
+            [(ngModel)]="returnReasonCode"
+            [options]="returnReasonOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [showClear]="true"
+            [placeholder]="t('surveys.filters.returnReason')"
+            (onChange)="applyFilters()"
+            appendTo="body"
+            class="w-full sm:w-48 shrink-0"
+            styleClass="w-full"
+          />
+
+          <p-datepicker
+            [(ngModel)]="createdFrom"
+            (ngModelChange)="applyFilters()"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            [showClear]="true"
+            [placeholder]="t('surveys.filters.createdFrom')"
+            appendTo="body"
+            class="inline-flex w-full sm:w-56 max-w-full shrink-0 [&_.p-inputtext]:min-w-0 [&_.p-inputtext]:w-full"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          />
+
+          <p-datepicker
+            [(ngModel)]="createdTo"
+            (ngModelChange)="applyFilters()"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            [showClear]="true"
+            [placeholder]="t('surveys.filters.createdTo')"
+            appendTo="body"
+            class="inline-flex w-full sm:w-56 max-w-full shrink-0 [&_.p-inputtext]:min-w-0 [&_.p-inputtext]:w-full"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          />
+
+          <!-- The cascade itself lives in a dialog; open here, and show what is
+               in force so the filter is still readable while closed. -->
+          <p-button
+            [label]="t('org.filterByOrg')"
+            icon="pi pi-sitemap"
+            severity="secondary"
+            [outlined]="!orgFilterLabel"
+            [disabled]="loading()"
+            [badge]="orgFilterLabel ?? undefined"
+            badgeSeverity="contrast"
+            class="shrink-0"
+            styleClass="whitespace-nowrap"
+            (onClick)="orgFilterVisible.set(true)"
+          />
+
+          <div class="flex items-center gap-2 ms-auto shrink-0">
+            <p-button
+              [label]="t('surveys.filters.apply')"
+              icon="pi pi-filter"
+              severity="secondary"
+              [outlined]="true"
+              [disabled]="loading()"
+              (onClick)="applyFilters()"
+            />
+
+            @if (hasFilters) {
+              <p-button
+                [label]="t('surveys.filters.clear')"
+                icon="pi pi-filter-slash"
+                severity="secondary"
+                [text]="true"
+                [disabled]="loading()"
+                (onClick)="clearFilters()"
+              />
+            }
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="w-12">
+            <p-tableHeaderCheckbox />
+          </th>
+          <th pSortableColumn="surveyCode" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.surveyCode') }}</span>
+              <p-sortIcon field="surveyCode" />
+            </div>
+          </th>
+          <th pSortableColumn="templateCode" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.template') }}</span>
+              <p-sortIcon field="templateCode" />
+            </div>
+          </th>
+          <th pSortableColumn="status" class="app-col-wrap w-[15rem] cursor-pointer select-none">
+            <div class="flex items-center justify-between gap-2">
+              <span>{{ t('surveys.fields.status') }}</span>
+              <p-sortIcon field="status" />
+            </div>
+          </th>
+          <th pSortableColumn="source" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.source') }}</span>
+              <p-sortIcon field="source" />
+            </div>
+          </th>
+          <th pSortableColumn="branchCode" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.branch') }}</span>
+              <p-sortIcon field="branchCode" />
+            </div>
+          </th>
+          <th pSortableColumn="departmentName" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.department') }}</span>
+              <p-sortIcon field="departmentName" />
+            </div>
+          </th>
+          <th pSortableColumn="allocatedFieldTeamName" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.fieldTeam') }}</span>
+              <p-sortIcon field="allocatedFieldTeamName" />
+            </div>
+          </th>
+          <th pSortableColumn="customerName" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.customerName') }}</span>
+              <p-sortIcon field="customerName" />
+            </div>
+          </th>
+          <th pSortableColumn="faId" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.faId') }}</span>
+              <p-sortIcon field="faId" />
+            </div>
+          </th>
+          <th pSortableColumn="created" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.created') }}</span>
+              <p-sortIcon field="created" />
+            </div>
+          </th>
+          <th pSortableColumn="dueDate" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.dueDate') }}</span>
+              <p-sortIcon field="dueDate" />
+            </div>
+          </th>
+          <th pSortableColumn="submissionCount" class="cursor-pointer select-none">
+            <div class="flex items-center justify-between">
+              <span>{{ t('surveys.fields.fills') }}</span>
+              <p-sortIcon field="submissionCount" />
+            </div>
+          </th>
+          <th class="w-[6rem] text-right">{{ t('surveys.fields.actions') }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-survey>
+        <tr [pContextMenuRow]="survey">
+          <td>
+            <!-- A filled or closed survey can no longer move, so it cannot join a batch either. -->
+            <p-tableCheckbox
+              [value]="survey"
+              [disabled]="!isSelectable(survey)"
+              [pTooltip]="!isSelectable(survey) ? t('surveys.bulkAllocate.selectionHint') : ''"
+              tooltipPosition="right"
+            />
+          </td>
+          <td class="font-medium">
+            <button type="button" class="text-primary hover:underline" (click)="openDetail(survey)">
+              {{ survey.surveyCode }}
+            </button>
+          </td>
+          <td>
+            <div class="flex items-center gap-1.5">
+              <span>{{ survey.templateCode || '-' }}</span>
+              @if (survey.templateVersionNo) {
+                <span class="app-badge app-badge--code">v{{ survey.templateVersionNo }}</span>
+              }
+            </div>
+            <!-- Pinned to an older form than the template now publishes; offer the move forward. -->
+            @if (isBehindTemplateVersion(survey)) {
+              <p-button
+                icon="pi pi-arrow-up-right"
+                size="small"
+                severity="warn"
+                [text]="true"
+                [label]="'v' + survey.templateCurrentVersionNo"
+                [loading]="migratingSurveyId() === survey.surveyId"
+                [disabled]="migratingSurveyId() !== null"
+                [pTooltip]="
+                  t('surveys.migrateVersion.tooltip', { version: survey.templateCurrentVersionNo })
+                "
+                tooltipPosition="top"
+                (onClick)="migrateVersion(survey)"
+              />
+            }
+          </td>
+          <td class="app-col-wrap">
+            <div class="flex flex-wrap items-center gap-1">
+              <p-tag
+                [value]="t('surveys.status.' + survey.status)"
+                [severity]="statusSeverity(survey.status)"
+              />
+              <!-- Why it came back, beside the status so the crew reads both in one glance. The
+                   note itself is on the tooltip; the tag alone is what draws the eye. -->
+              @if (survey.returnReasonCode) {
+                <p-tag
+                  [value]="t('surveys.returnReasons.' + survey.returnReasonCode)"
+                  [severity]="returnReasonSeverity(survey.returnReasonCode)"
+                  [pTooltip]="survey.returnReason || ''"
+                  tooltipPosition="top"
+                />
+              }
+              @if (survey.isExternalTask) {
+                <p-tag [value]="t('surveys.fields.isExternalTask')" severity="info" />
+              }
+              @if (wasSubmittedAgain(survey)) {
+                <p-tag
+                  [value]="t('surveys.tags.submittedAgain')"
+                  severity="info"
+                  [pTooltip]="
+                    t('surveys.fields.returnedDate') +
+                    ': ' +
+                    (survey.returnedDate | date: 'yyyy-MM-dd HH:mm') +
+                    ' · ' +
+                    t('surveys.fields.submittedDate') +
+                    ': ' +
+                    (survey.submittedDate | date: 'yyyy-MM-dd HH:mm')
+                  "
+                  tooltipPosition="top"
+                />
+              }
+              @if (survey.returnCount) {
+                <span
+                  class="text-xs text-surface-500"
+                  [pTooltip]="t('surveys.fields.returnCount')"
+                  tooltipPosition="top"
+                  >×{{ survey.returnCount }}</span
+                >
+              }
+            </div>
+          </td>
+          <td>{{ t('surveys.source.' + survey.source) }}</td>
+          <td>{{ branchLabel(survey) }}</td>
+          <td>{{ departmentLabel(survey) }}</td>
+          <td>{{ survey.allocatedFieldTeamName || '-' }}</td>
+          <td>{{ survey.customerName || '-' }}</td>
+          <td>{{ survey.faId || '-' }}</td>
+          <td>{{ survey.created ? (survey.created | date: 'yyyy-MM-dd HH:mm') : '-' }}</td>
+          <td>{{ survey.dueDate ? (survey.dueDate | date: 'yyyy-MM-dd') : '-' }}</td>
+          <td>
+            {{ survey.submissionCount ?? 0 }}
+            @if (survey.lastFilledByRole) {
+              <span class="text-surface-500 text-xs">
+                ({{ t('surveys.role.' + survey.lastFilledByRole) }})
+              </span>
+            }
+          </td>
+          <td class="text-right">
+            <p-button
+              icon="pi pi-ellipsis-v"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              (onClick)="toggleMenu($event, survey, rowMenu)"
+            />
+            <p-menu #rowMenu [model]="menuItems" [popup]="true" appendTo="body" />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="13" class="p-8 text-center">
+            <div class="flex flex-col items-center justify-center gap-2 text-surface-500">
+              <i class="pi pi-inbox text-4xl"></i>
+              <span class="font-medium text-base">{{ t('surveys.noSurveys') }}</span>
+              @if (hasFilters) {
+                <p-button
+                  [label]="t('surveys.filters.clear')"
+                  icon="pi pi-filter-slash"
+                  severity="secondary"
+                  [text]="true"
+                  size="small"
+                  (onClick)="clearFilters()"
+                />
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- Right-click anywhere on a row for the same actions as its ellipsis menu. -->
+    <p-contextMenu #rowContextMenu [model]="contextMenuItems" appendTo="body" />
+  </div>
+
+  <app-survey-org-filter-dialog
+    [(visible)]="orgFilterVisible"
+    [location]="orgFilter"
+    (applied)="onOrgFilterApplied($event)"
+  />
+
+  <app-survey-create-dialog [(visible)]="createVisible" (created)="loadSurveys()" />
+
+  <app-survey-allocate-dialog
+    [(visible)]="allocateVisible"
+    [survey]="selectedSurvey()"
+    (allocated)="loadSurveys()"
+  />
+
+  <app-survey-bulk-allocate-dialog
+    [(visible)]="bulkAllocateVisible"
+    [surveyIds]="selectedSurveyIds()"
+    (allocated)="loadSurveys()"
+  />
+
+  <app-survey-action-dialog
+    [(visible)]="actionVisible"
+    [survey]="selectedSurvey()"
+    [action]="currentAction()"
+    (completed)="loadSurveys()"
+  />
+
+  <app-survey-return-dialog
+    [(visible)]="returnVisible"
+    [survey]="selectedSurvey()"
+    (completed)="loadSurveys()"
+  />
+
+  <app-survey-fill-dialog
+    [(visible)]="fillVisible"
+    [surveyId]="selectedSurveyId()"
+    (filled)="loadSurveys()"
+  />
+
+  <app-survey-detail-dialog [(visible)]="detailVisible" [surveyId]="selectedSurveyId()" />
+
+  <app-survey-edit-dialog
+    [(visible)]="editVisible"
+    [survey]="selectedSurvey()"
+    (updated)="loadSurveys()"
+  />
+</ng-container>

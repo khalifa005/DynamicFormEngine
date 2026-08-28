@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>KH.Infrastructure</RootNamespace>
+    <AssemblyName>KH.Infrastructure</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Dapper" />
+    <!-- Used directly by HangfireBackgroundJobScheduler; not left to flow in via Shared.Logs. -->
+    <PackageReference Include="Hangfire.AspNetCore" />
+    <PackageReference Include="System.Security.Cryptography.Xml" />
+    <PackageReference Include="System.DirectoryServices.Protocols" />
+    <PackageReference Include="Sustainsys.Saml2" />
+    <PackageReference Include="Sustainsys.Saml2.AspNetCore2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Core\Shared.Core.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Logs\Shared.Logs.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\FsmsStationSurveyFields.json" />
+    <EmbeddedResource Include="Data\FsmsEasternMainStreetsFields.json" />
+    <EmbeddedResource Include="Data\FsmsContractorSeed.json" />
+    <EmbeddedResource Include="Data\FsmsFieldTeamSeed.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Editable native-SQL templates for the dynamic survey-submission tables. -->
+    <Content Include="sql\survey-submissions.sql.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <!-- Programmable objects applied on startup; CREATE OR ALTER, so re-running is a no-op. -->
+    <Content Include="sql\procedures\*.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

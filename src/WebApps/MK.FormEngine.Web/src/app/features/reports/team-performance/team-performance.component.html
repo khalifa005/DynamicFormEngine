@@ -1,0 +1,161 @@
+<ng-container *transloco="let t">
+  <p-toast />
+  <div class="report-page">
+    <app-report-filter-bar
+      [teamOptions]="teamOptions()"
+      [branchOptions]="branchOptions()"
+      [operationAreaOptions]="operationAreaOptions()"
+      [statusOptions]="statusOptions()"
+      [loading]="loading()"
+      (apply)="onApply($event)"
+      (reset)="onReset()"
+    />
+
+    <div class="report-page-actions">
+      <app-report-export-actions
+        reportNameKey="nav.reportsTeamPerformance"
+        [rowCount]="teamRows().length"
+        [activeFilterCount]="activeFilterCount()"
+        [disabled]="loading()"
+        [exportFn]="exportFn"
+      />
+    </div>
+
+    <!-- KPI summary -->
+    <section class="report-kpi-grid">
+      @if (loading() && !report()) {
+        @for (i of [0, 1, 2, 3, 4, 5]; track i) {
+          <article class="report-kpi-card">
+            <p-skeleton shape="circle" size="2.75rem" />
+            <div class="report-kpi-body">
+              <p-skeleton width="4rem" height="1.5rem" styleClass="mb-2" />
+              <p-skeleton width="7rem" height="0.75rem" />
+            </div>
+          </article>
+        }
+      } @else {
+        @for (kpi of summaryCards(); track kpi.key) {
+          <article class="report-kpi-card">
+            <span class="report-kpi-icon" [style.background]="kpi.accent">
+              <i [class]="kpi.icon"></i>
+            </span>
+            <div class="report-kpi-body">
+              <span class="report-kpi-value">
+                {{ kpi.value | number: '1.0-1' }}@if (kpi.isPercent) {<small>%</small>}@if (kpi.isHours) {<small>{{ t('dashboard.hoursShort') }}</small>}
+              </span>
+              <span class="report-kpi-label">{{ t(kpi.labelKey) }}</span>
+            </div>
+          </article>
+        }
+      }
+    </section>
+
+    <!-- Charts -->
+    <section class="report-grid-2">
+      <div class="report-panel">
+        <div class="report-panel-head">
+          <h3><i class="pi pi-chart-bar mr-2 text-primary"></i>{{ t('reports.charts.teamComparison') }}</h3>
+        </div>
+        <div class="report-chart-wrap">
+          @if (loading() && !report()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="bar" [data]="comparisonData()" [options]="groupedBarOptions()" />
+          }
+        </div>
+      </div>
+
+      <div class="report-panel">
+        <div class="report-panel-head">
+          <h3><i class="pi pi-percentage mr-2 text-primary"></i>{{ t('reports.charts.completionByTeam') }}</h3>
+        </div>
+        <div class="report-chart-wrap">
+          @if (loading() && !report()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="bar" [data]="completionByTeamData()" [options]="horizontalBarOptions()" />
+          }
+        </div>
+      </div>
+
+      <div class="report-panel">
+        <div class="report-panel-head">
+          <h3><i class="pi pi-chart-line mr-2 text-primary"></i>{{ t('reports.charts.tasksCompletedOverTime') }}</h3>
+        </div>
+        <div class="report-chart-wrap">
+          @if (loading() && !report()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="line" [data]="completedOverTimeData()" [options]="lineOptionsWithLegend()" />
+          }
+        </div>
+      </div>
+
+      <div class="report-panel">
+        <div class="report-panel-head">
+          <h3><i class="pi pi-bolt mr-2 text-primary"></i>{{ t('reports.charts.productivityTrend') }}</h3>
+        </div>
+        <div class="report-chart-wrap">
+          @if (loading() && !report()) {
+            <p-skeleton width="100%" height="100%" />
+          } @else {
+            <p-chart type="line" [data]="productivityTrendData()" [options]="lineOptionsNoLegend()" />
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed table -->
+    <section class="report-panel">
+      <div class="report-panel-head">
+        <h3><i class="pi pi-table mr-2 text-primary"></i>{{ t('nav.reportsTeamPerformance') }}</h3>
+      </div>
+      <p-table
+        [value]="teamRows()"
+        [loading]="loading()"
+        [paginator]="true"
+        [rows]="10"
+        styleClass="app-table p-datatable-sm p-datatable-striped"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th>{{ t('reports.table.teamName') }}</th>
+            <th>{{ t('surveys.fields.branch') }}</th>
+            <th class="text-center">{{ t('reports.table.assignedTasks') }}</th>
+            <th class="text-center">{{ t('reports.table.completedTasks') }}</th>
+            <th class="text-center">{{ t('reports.table.pendingTasks') }}</th>
+            <th class="text-center">{{ t('reports.table.returnedTasks') }}</th>
+            <th class="text-center">{{ t('reports.table.completionPercent') }}</th>
+            <th class="text-center">{{ t('reports.table.avgCompletionHours') }}</th>
+            <th class="text-center">{{ t('reports.table.dailyProductivity') }}</th>
+            <th class="text-center">{{ t('dashboard.colOverdue') }}</th>
+            <th class="text-center">{{ t('dashboard.colOnTimeRate') }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td class="font-semibold">{{ row.teamName }}</td>
+            <td>{{ branchDisplay(row.branchCode) }}</td>
+            <td class="text-center">{{ row.assigned | number }}</td>
+            <td class="text-center font-semibold">{{ row.completed | number }}</td>
+            <td class="text-center">{{ (row.pending ?? 0) + (row.inProgress ?? 0) | number }}</td>
+            <td class="text-center">{{ row.returned | number }}</td>
+            <td class="text-center">
+              <p-tag [severity]="completionSeverity(row.completionPercent)" [value]="(row.completionPercent | number: '1.0-1') + '%'" />
+            </td>
+            <td class="text-center">{{ row.avgCompletionHours | number: '1.0-1' }}{{ t('dashboard.hoursShort') }}</td>
+            <td class="text-center">{{ row.dailyProductivity | number: '1.0-1' }}</td>
+            <td class="text-center font-semibold" [class.text-red-500]="row.overdueCount > 0">{{ row.overdueCount | number }}</td>
+            <td class="text-center">{{ row.onTimeRatePercent | number: '1.0-0' }}%</td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="11" class="text-center text-surface-500 py-6">{{ t('reports.table.noTeams') }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+  </div>
+</ng-container>

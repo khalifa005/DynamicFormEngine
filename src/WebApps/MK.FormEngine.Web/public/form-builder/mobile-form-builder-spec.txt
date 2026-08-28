@@ -1,0 +1,506 @@
+================================================================================
+MOBILE & CLIENT FORM BUILDER DYNAMIC SCHEMA SPECIFICATION
+================================================================================
+Audience:   Mobile / client developers rendering forms from `definitionJson`.
+API base:   /api/v1/fsms/field-team
+Reviewed:   2026-08-11
+
+Companion documents:
+  - Docs/business-logic/mobile-field-types-guide.md
+      Deep dive on the two newest types (barcode, file): worked examples, the full
+      barcode format table with names and typical uses, and the server-side
+      validation matrix. Read that alongside sections 1.11, 1.13, 7, 8 and 9 here.
+  - Docs/business-logic/mobile-app-integration-guide.md   (endpoint reference)
+  - Docs/business-logic/mobile-offline-module-guide.md    (offline playbook)
+
+Where definitions come from:
+  `definitionJson` arrives as a JSON *string* in the templates[] array of GET sync.
+  Parse it client-side and match a survey to its definition on
+  (templateId, templateVersionNo).
+
+Common element envelope (every type carries these):
+  type, data_name, label_en, label_ar, description_en, description_ar,
+  default_value, required, hidden, disabled,
+  visible_conditions, required_conditions
+  -> `data_name` is the answer key you send back in `answers`.
+
+Section 1 below lists only the properties each type adds on top of that envelope.
+
+
+1. SUPPORTED FORM ELEMENT TYPES (15 TYPES)
+--------------------------------------------------------------------------------
+1.1 text
+    Description: Single-line or multi-line text input field.
+    Specific Properties:
+    - min_length (integer | null): Minimum required character count.
+    - max_length (integer | null): Maximum allowed character count.
+    - pattern (object | null): Validation regular expression object.
+      Format: { "regex": "...", "description": "..." }
+
+1.2 numeric
+    Description: Numeric input field.
+    Specific Properties:
+    - format (string): "decimal" or "integer".
+    - min (number | null): Minimum numerical value.
+    - max (number | null): Maximum numerical value.
+
+1.3 yes_no
+    Description: Binary radio options.
+    Values: "yes" | "no" (stored as string to support equal 'yes' conditions).
+
+1.4 date
+    Description: Datepicker input.
+    Display Format: dd/mm/yy (emits ISO date string YYYY-MM-DD in payload).
+
+1.5 time
+    Description: Timepicker input.
+    Format: HH:mm (24-hour time format).
+
+1.6 single_choice
+    Description: Single select radio or dropdown field.
+    Specific Properties:
+    - allow_other (boolean): Allows user to input custom text under "Other".
+    - multiple (boolean): Must be false.
+    - parent_field (string | null): data_name of parent choice field for cascading.
+    - choices (array): List of choice objects:
+      {
+        "value": "option_value",
+        "label_en": "English Label",
+        "label_ar": "Arabic Label",
+        "dependency_value": "parent_option_value" | null
+      }
+    Payload Value: the selected option's "value" string.
+
+1.7 multiple_choice
+    Description: Multi-select checkbox or multi-select dropdown field.
+    Specific Properties:
+    - allow_other (boolean): Allows custom write-in text for "Other".
+    - multiple (boolean): Must be true.
+    - parent_field (string | null): data_name of parent choice field for cascading.
+    - choices (array): List of choice objects with optional dependency_value.
+    Payload Value: Array of string values e.g. ["opt1", "opt2"].
+
+1.6b allow_other payload contract (single_choice and multiple_choice)
+    When allow_other is true, offer an extra option whose value is the sentinel
+    "__other__". Selecting it reveals a free-text input. Post BOTH keys:
+
+      {
+        "pipe_material": "__other__",
+        "pipe_material_other": "HDPE"
+      }
+
+    - The companion key is exactly <data_name> + "_other".
+    - Keep the sentinel as the field's own value; do NOT replace it with the typed
+      text. Visibility and required rules match on "__other__".
+    - For multiple_choice, include "__other__" in the array alongside any real
+      values, and send the text in the same companion key.
+    - Drop the companion key when "Other" is no longer selected, so abandoned text
+      is not submitted.
+    - Both keys are stored in their own SQL columns. A key that does not match a
+      column is dropped silently — the submit still succeeds.
+
+    IMPORTANT: build both keys from the TRIMMED data_name. The server trims a
+    data_name when it parses the definition, so a design carrying "leak_type "
+    becomes the column "leak_type" and its companion "leak_type_other". Posting
+    "leak_type _other" (space in the middle) matches no column and is discarded.
+    Newly published templates cannot carry such a name — publish now rejects any
+    data_name that is not ^[A-Za-z_][A-Za-z0-9_]{0,127}$ — but older definitions
+    may still contain one.
+
+1.8 photo
+    Description: Media photo attachment input.
+    Specific Properties:
+    - max_files (integer | null): Max allowed photo attachments (e.g. 5).
+    - max_file_size_mb (integer | null): Max size per file in MB (e.g. 10).
+    - allowed_extensions (array of string): e.g. ["jpg", "jpeg", "png", "heic", "webp"].
+      (Empty array [] = accept any image type "image/*").
+
+1.9 video
+    Description: Media video attachment input.
+    Specific Properties:
+    - max_files (integer | null): Max allowed video attachments (e.g. 1).
+    - max_file_size_mb (integer | null): Max size per file in MB (e.g. 50).
+    - allowed_extensions (array of string): e.g. ["mp4", "mov", "webm"].
+      (Empty array [] = accept any video type "video/*").
+
+1.10 audio
+    Description: Audio recording / voice note attachment input.
+    Specific Properties:
+    - max_files (integer | null): Max allowed audio files (e.g. 1).
+    - max_file_size_mb (integer | null): Max size per file in MB (e.g. 20).
+    - allowed_extensions (array of string): e.g. ["mp3", "wav", "m4a", "ogg"].
+      (Empty array [] = accept any audio type "audio/*").
+
+1.11 file
+    Description: Generic document attachment input (PDF, Office documents, spreadsheets).
+    Behaves exactly like photo/video/audio — same upload endpoint, same payload shape.
+    The only differences are that there is no camera/recorder capture mode (open the
+    document picker) and the default extension list is document-oriented.
+    Specific Properties:
+    - max_files (integer | null): Max allowed attachments (e.g. 3).
+    - max_file_size_mb (integer | null): Max size per file in MB (e.g. 10).
+    - allowed_extensions (array of string): e.g. ["pdf", "doc", "docx", "xls", "xlsx", "csv", "txt"].
+      (Empty array [] = accept any file type "*/*").
+    Payload Value: ALWAYS an array of file references, even when max_files is 1:
+      [ { "fileId": "...", "path": "...", "name": "...", "type": "...", "size": 0 } ]
+    NOTE: allowed_extensions is enforced server-side on upload. A file whose extension is
+    not in this list is rejected with HTTP 400 — validate locally before uploading so the
+    crew sees the error immediately rather than after the bytes are sent.
+    See section 9.1 for a complete element example and the upload flow.
+
+1.12 signature
+    Description: On-screen touch/pen signature drawing field.
+    Preferred Payload Value: a one-item file-reference array — same shape as photo/file:
+        [ { "fileId": "...", "path": "...", "name": "signature.png",
+            "type": "image/png", "size": 12345 } ]
+    Flow: convert the pad to a PNG, POST it to the uploads endpoint with the field's
+    data_name, then put the returned reference in the answer. Block submit until fileId
+    is present.
+    Legacy: a full data:image/...;base64,... string is still accepted on submit — the API
+    stores it as a SubmissionFile and rewrites the answer to a file-ref array. Truncated
+    labels are not accepted. Prefer the upload path.
+
+1.13 barcode
+    Description: Barcode / QR scanner field. Opens the camera scanner, decodes a code and
+    stores the DECODED TEXT as the answer. No file is uploaded.
+    Specific Properties:
+    - barcode_formats (array of string): Symbologies the scanner should accept, e.g.
+      ["qr_code", "code_128", "code_39", "ean_13", "ean_8", "upc_a"].
+      (Empty array [] = accept any symbology the scanner can read.)
+    Payload Value: Plain string, the decoded text e.g. "SA-MTR-4471902".
+    Max Length: 400 characters. The submissions column is NVARCHAR(400); a longer decode
+    must be refused on the device, otherwise the insert fails.
+    Manual Entry: Always offer a keyboard fallback — damaged and dirty tags are common in
+    the field, and the web client is manual-entry only, so both clients write the same shape.
+    Format Names: The values match the Android/iOS scanning SDK constants (and the browser
+    BarcodeDetector API), so the array can be passed to the scanner without translation.
+    Full set: qr_code, code_128, code_39, code_93, ean_13, ean_8, upc_a, upc_e,
+    data_matrix, itf, pdf417, aztec, codabar.
+    See section 8 for the full format table and section 9.2 for a complete element example.
+
+1.14 geolocation
+    Description: Map GPS location pin picker.
+    Specific Properties:
+    - map_zoom (integer | null): Initial map zoom level (e.g. 5, 8, 12).
+    - default_value (string | null): Format "latitude,longitude" e.g. "24.7136,46.6753".
+      A default carries coordinates only — never an address.
+
+    Answer value: an object carrying the point and the address it resolves to.
+
+        "gps_location": {
+          "lat": 24.555838,
+          "lng": 46.385006,
+          "address": "King Fahd Rd, Al Olaya, Riyadh 12214"
+        }
+
+    - lat / lng (number, required): WGS-84, 6 decimal places (~11 cm).
+    - address (string | null, OPTIONAL): reverse-geocoded from the point and
+      editable by the surveyor. Truncated server-side at 250 characters.
+      Omit the key entirely when there is no address — a point without one is a
+      complete, valid answer and is never rejected for it.
+
+    The server also accepts the coordinates as a "lat,lng" string, for clients
+    that have no address to send.
+
+1.15 section
+    Description: Layout grouping container for nested elements.
+    Specific Properties:
+    - display (string): "inline" (embedded visually) or "page" (multi-step step/page).
+    - elements (array of element objects): Array of child form elements.
+
+
+================================================================================
+2. VALIDATION REGULAR EXPRESSION (pattern / regex)
+================================================================================
+Structure:
+  "pattern": {
+    "regex": "^[A-Za-z\\s]{2,100}$",
+    "description": "Letters and spaces only (2 to 100 characters)"
+  }
+
+Built-in / Preset Patterns:
+1. Letters and Spaces Only: ^[A-Za-z\s]{2,100}$
+2. Alphanumeric Only: ^[A-Za-z0-9]+$
+3. Exactly N Letters: ^[A-Za-z]{5}$
+4. Exactly N Characters: ^.{3}$
+5. Digits Only: ^[0-9]+$
+6. Phone Number: ^\+?\d{3}?\)?[-.\s]?\d{3}[-.\s]?\d{4}$ or ^\+?[0-9]{9,15}$
+7. Price / Decimal Number: ^\d+(\.\d{1,2})?$
+8. Year (1900-2099): ^(19|20)\d{2}$
+9. Uppercase Letters Only: ^[A-Z]+$
+10. IPv4 Address: ^(\d{1,3}\.){3}\d{1,3}$
+11. Single Line Text: ^[^\n]*$
+
+
+================================================================================
+3. CONDITIONAL VISIBILITY (visible_conditions)
+================================================================================
+Structure:
+  "visible_conditions": {
+    "match": "all",          // "all" (AND logic) | "any" (OR logic)
+    "preserve_data": false,  // true: keep data when hidden | false: clear data when hidden
+    "conditions": [
+      {
+        "field": "target_element_data_name",
+        "operator": "equal",
+        "value": "major"
+      }
+    ]
+  }
+
+Match Modes:
+- "all": Evaluates to true ONLY IF ALL conditions in the list are true.
+- "any": Evaluates to true IF AT LEAST ONE condition in the list is true.
+
+Preserve Data Flag:
+- true: Retains user input when the field is hidden by condition.
+- false: Resets/clears the field value to null when hidden by condition.
+
+
+================================================================================
+4. CONDITIONAL REQUIREMENT (required_conditions)
+================================================================================
+Structure:
+  "required_conditions": {
+    "match": "all",          // "all" (AND logic) | "any" (OR logic)
+    "conditions": [
+      {
+        "field": "target_element_data_name",
+        "operator": "is_not_empty",
+        "value": ""
+      }
+    ]
+  }
+
+Evaluates whether a field becomes dynamically required based on other fields.
+
+
+================================================================================
+5. RULE OPERATORS (8 OPERATORS)
+================================================================================
+1. equal
+   - Target field value equals `value`.
+   - For multi_choice arrays: true if target array includes `value`.
+   - For yes_no fields: target value string equals "yes" or "no".
+
+2. not_equal
+   - Target field value does NOT equal `value`.
+
+3. contains
+   - Case-insensitive substring match for text fields.
+   - Array inclusion check for multi-choice arrays.
+
+4. starts_with
+   - Case-insensitive prefix match for text strings.
+
+5. greater_than
+   - Target numeric value > `value` (both parsed as floating numbers).
+
+6. less_than
+   - Target numeric value < `value` (both parsed as floating numbers).
+
+7. is_empty
+   - Evaluates to true if target field value is null, undefined, "", or empty array [].
+
+8. is_not_empty
+   - Evaluates to true if target field value is NOT null, undefined, "", or empty array [].
+
+
+================================================================================
+6. CASCADING CHOICE DEPENDENCIES (parent_field & dependency_value)
+================================================================================
+- Parent Choice Field: Has data_name e.g. "leak_source".
+- Child Choice Field: Has "parent_field": "leak_source".
+- Choices inside Child Field:
+  Each choice object specifies "dependency_value": "pipe".
+  When parent field value equals "pipe", this choice option is activated / displayed.
+  When dependency_value is null, option is always displayed regardless of parent.
+
+
+================================================================================
+7. MEDIA ALLOWED EXTENSIONS SPECIFICATION (allowed_extensions)
+================================================================================
+Property: allowed_extensions (Array of Strings)
+Applicable Field Types: photo, video, audio, file
+
+Rules & Mobile Implementation Guidance:
+1. Extension Normalization:
+   - Extensions should be parsed as lowercase strings stripped of leading dots or spaces.
+   - Example: ".JPG " or " JPG" -> "jpg".
+
+2. Default Supported Extensions per Media Type:
+   - photo: ["jpg", "jpeg", "png", "heic", "webp"]
+   - video: ["mp4", "mov", "webm"]
+   - audio: ["mp3", "wav", "m4a", "ogg"]
+   - file:  ["pdf", "doc", "docx", "xls", "xlsx", "csv", "txt"]
+
+3. Wildcard / Fallback Behavior:
+   - An empty array [] (or null/omitted) means "accept ANY format of this media kind":
+     * photo -> accept any image format ("image/*")
+     * video -> accept any video format ("video/*")
+     * audio -> accept any audio format ("audio/*")
+     * file  -> accept any file at all ("*/*")
+
+4. Mobile Native File Pickers:
+   - When launching image/video/audio pickers on Android/iOS:
+     * If allowed_extensions is populated (e.g. ["jpg", "png"]), construct file filter for [.jpg, .png].
+     * If allowed_extensions is empty ([]), construct broad MIME filter (e.g. image/*, video/*, audio/*).
+   - For "file", open the generic document picker (no camera capture mode).
+
+5. Server-Side Enforcement:
+   - The upload endpoint re-checks the uploaded file's extension against the field's own
+     allowed_extensions taken from the published template definition. A mismatch returns
+     HTTP 400 and NOTHING is stored. Client-side filtering is a convenience, not the gate.
+   - A data_name that does not appear in the template definition is not restricted.
+
+
+================================================================================
+8. BARCODE FORMATS SPECIFICATION (barcode_formats)
+================================================================================
+Property: barcode_formats (Array of Strings)
+Applicable Field Types: barcode
+
+Rules & Mobile Implementation Guidance:
+1. Accepted Values — THE COMPLETE LIST (13 formats).
+   These match the Android (ML Kit), iOS (Vision) and browser BarcodeDetector constants,
+   so the array can be handed straight to the scanner configuration with no mapping table.
+
+   VALUE           NAME                        KIND  TYPICAL USE
+   --------------  --------------------------  ----  ------------------------------------
+   qr_code         QR Code                     2D    Asset tags, equipment plates, URLs
+   code_128        Code 128                    1D    Asset/serial numbers, logistics
+                                                     (the common industrial 1D code)
+   code_39         Code 39                     1D    Older asset tags, maintenance labels
+   code_93         Code 93                     1D    Compact variant of Code 39
+   ean_13          EAN-13                      1D    Retail product codes (13 digits)
+   ean_8           EAN-8                       1D    Retail, small packaging (8 digits)
+   upc_a           UPC-A                       1D    Retail, North America (12 digits)
+   upc_e           UPC-E                       1D    Compressed UPC (8 digits)
+   data_matrix     Data Matrix                 2D    Very small parts marking
+   itf             ITF / Interleaved 2 of 5    1D    Cartons, logistics
+   pdf417          PDF417                      2D    ID documents, licences
+   aztec           Aztec                       2D    Tickets, transport
+   codabar         Codabar                     1D    Legacy: libraries, blood banks
+
+2. Default Set (QR + common 1D):
+   ["qr_code", "code_128", "code_39", "ean_13", "ean_8", "upc_a"]
+
+3. Wildcard / Fallback Behavior:
+   - An empty array [] (or null/omitted) means "accept ANY symbology the scanner can read".
+   - Restricting the list reduces misreads; pass it straight to the scanner configuration.
+
+4. Payload:
+   - The answer is the DECODED TEXT as a plain string — never the image, never the symbology.
+   - Maximum 400 characters (the submissions column is NVARCHAR(400)).
+
+5. Manual Entry (required):
+   - Always provide a keyboard fallback next to the scan action. Field tags are frequently
+     damaged, dirty or unreachable, and the web client has no scanner at all.
+
+6. Rules Interoperability:
+   - The answer is an ordinary string, so every rule operator works against a barcode field
+     with no special handling: equal, not_equal, contains, starts_with, is_empty,
+     is_not_empty. A common pattern is a starts_with visibility rule on an asset prefix.
+
+
+================================================================================
+9. WORKED EXAMPLES — THE TWO NEWEST TYPES
+================================================================================
+
+9.1 file — complete element + upload flow
+--------------------------------------------------------------------------------
+Element as it appears inside definitionJson "elements":
+
+  {
+    "type": "file",
+    "data_name": "work_permit",
+    "label_en": "Work Permit",
+    "label_ar": "تصريح العمل",
+    "description_en": "Attach the signed permit PDF.",
+    "description_ar": "أرفق ملف التصريح الموقع.",
+    "default_value": null,
+    "required": true,
+    "hidden": false,
+    "disabled": false,
+    "max_files": 3,
+    "max_file_size_mb": 10,
+    "allowed_extensions": ["pdf", "doc", "docx", "xls", "xlsx", "csv", "txt"],
+    "visible_conditions":  { "match": "all", "conditions": [], "preserve_data": false },
+    "required_conditions": { "match": "all", "conditions": [] }
+  }
+
+Upload flow (bytes NEVER travel inside a submit):
+
+  STEP 1 - upload each picked file
+    POST /api/v1/fsms/field-team/uploads          (multipart/form-data)
+      file       = <bytes>
+      templateId = 12
+      dataName   = "work_permit"
+      surveyId   = 918          (optional)
+
+  STEP 2 - keep the returned reference
+    { "data": { "fileId": "6f2e...", "path": "pending/6f2e....pdf",
+                "name": "permit.pdf", "type": "application/pdf", "size": 184320 } }
+
+  STEP 3 - put the references into the answer (ALWAYS an array)
+    "answers": {
+      "work_permit": [
+        { "fileId": "6f2e...", "path": "pending/6f2e....pdf",
+          "name": "permit.pdf", "type": "application/pdf", "size": 184320 }
+      ]
+    }
+
+  A row stays PENDING until a submission claims it, and only a submission against the
+  SAME template can claim it. To drop an attachment before submitting:
+    DELETE /api/v1/fsms/field-team/uploads/{fileId}
+
+  NEVER submit a half-uploaded file — a reference without a completed upload points at
+  nothing. Hold the submit until every attachment in the fill has a fileId.
+
+Upload rejections (all return the standard error envelope):
+
+  CONDITION                                      HTTP  CODE        MESSAGE
+  ---------------------------------------------  ----  ----------  ------------------------
+  Extension not in the field's allowed_extensions  400  E10001002  'payload.exe' is not an
+                                                                   accepted file for
+                                                                   'work_permit'. Allowed:
+                                                                   pdf, doc, docx, ...
+  File larger than the server cap (25 MB)          400  E10001002  The file exceeds the
+                                                                   25 MB upload limit.
+  Empty file                                       400  E10001002  A file is required.
+  Unknown templateId                               404  E10004000  Template not found.
+
+  Nothing is written when the extension is rejected — the file never reaches storage, so
+  there is no orphan to clean up.
+
+
+9.2 barcode — complete element + payload
+--------------------------------------------------------------------------------
+Element as it appears inside definitionJson "elements":
+
+  {
+    "type": "barcode",
+    "data_name": "meter_serial",
+    "label_en": "Meter Serial",
+    "label_ar": "الرقم التسلسلي للعداد",
+    "description_en": "Scan the barcode on the meter body.",
+    "description_ar": "امسح الباركود الموجود على جسم العداد.",
+    "default_value": null,
+    "required": true,
+    "hidden": false,
+    "disabled": false,
+    "barcode_formats": ["qr_code", "code_128", "code_39", "ean_13", "ean_8", "upc_a"],
+    "visible_conditions":  { "match": "all", "conditions": [], "preserve_data": false },
+    "required_conditions": { "match": "all", "conditions": [] }
+  }
+
+Answer payload — a plain string, the decoded text:
+
+  "answers": {
+    "meter_serial": "SA-MTR-4471902"
+  }
+
+  Unanswered -> omit the key, or send null.
+  Nothing is uploaded. Trim surrounding whitespace. Reject anything over 400 characters
+  on the device: the column is NVARCHAR(400) and a longer value fails the whole submission.
+  `default_value`, when set, is a plain string to pre-fill the field with.

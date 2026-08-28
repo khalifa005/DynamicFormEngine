@@ -1,0 +1,220 @@
+<ng-container *transloco="let t">
+  <p-dialog
+    [visible]="visible()"
+    (visibleChange)="visible.set($event)"
+    (onShow)="onShow()"
+    [header]="t('surveys.create.title')"
+    [modal]="true"
+    [maximizable]="true"
+    [draggable]="true"
+    [resizable]="false"
+    [style]="{ width: '560px' }"
+    [breakpoints]="{ '640px': '95vw' }"
+  >
+    <form [formGroup]="form" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="survey-template" class="text-sm font-medium">
+          {{ t('surveys.fields.template') }} <span class="text-red-500">*</span>
+        </label>
+        <p-select
+          inputId="survey-template"
+          formControlName="templateId"
+          [options]="templates()"
+          optionLabel="label"
+          optionValue="value"
+          [filter]="true"
+          filterBy="label"
+          [loading]="loadingOptions()"
+          [placeholder]="t('surveys.create.templatePlaceholder')"
+          appendTo="body"
+          styleClass="w-full"
+        />
+        @if (form.controls.templateId.touched && form.controls.templateId.invalid) {
+          <small class="text-red-500">{{ t('surveys.validation.templateRequired') }}</small>
+        }
+        <small class="text-surface-500">{{ t('surveys.create.publishedOnlyHint') }}</small>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="flex flex-col gap-2">
+          <label for="survey-fa-id" class="text-sm font-medium">{{ t('surveys.fields.faId') }}</label>
+          <input pInputText id="survey-fa-id" formControlName="faId" class="w-full" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="survey-task-code" class="text-sm font-medium">{{ t('surveys.fields.taskCode') }}</label>
+          <input pInputText id="survey-task-code" formControlName="taskCode" class="w-full" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="survey-fa-type" class="text-sm font-medium">{{ t('surveys.fields.faType') }}</label>
+          <p-select
+            inputId="survey-fa-type"
+            formControlName="faTypeCode"
+            [options]="faTypes()"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            filterBy="label"
+            [showClear]="true"
+            [loading]="loadingOptions()"
+            appendTo="body"
+            styleClass="w-full"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="survey-task-type" class="text-sm font-medium">{{ t('surveys.fields.taskType') }}</label>
+          <p-select
+            inputId="survey-task-type"
+            formControlName="taskTypeId"
+            [options]="taskTypes()"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            filterBy="label"
+            [showClear]="true"
+            [loading]="loadingOptions()"
+            appendTo="body"
+            styleClass="w-full"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="survey-customer-name" class="text-sm font-medium">{{ t('surveys.fields.customerName') }}</label>
+          <input pInputText id="survey-customer-name" formControlName="customerName" class="w-full" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="survey-customer-phone" class="text-sm font-medium">{{ t('surveys.fields.customerPhone') }}</label>
+          <!-- type="tel" for the numeric keypad on mobile; the value is stored as typed, so no
+               pattern is enforced here — inbound phone numbers arrive in several shapes. -->
+          <input
+            pInputText
+            id="survey-customer-phone"
+            type="tel"
+            formControlName="customerPhone"
+            class="w-full"
+            dir="ltr"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="survey-customer-type" class="text-sm font-medium">{{ t('surveys.fields.customerType') }}</label>
+          <p-select
+            inputId="survey-customer-type"
+            formControlName="customerTypeId"
+            [options]="customerTypes()"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            filterBy="label"
+            [showClear]="true"
+            [loading]="loadingOptions()"
+            appendTo="body"
+            styleClass="w-full"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="survey-meter-number" class="text-sm font-medium">{{ t('surveys.fields.meterNumber') }}</label>
+          <input pInputText id="survey-meter-number" formControlName="meterNumber" class="w-full" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="survey-hcn" class="text-sm font-medium">{{ t('surveys.fields.hcn') }}</label>
+          <input pInputText id="survey-hcn" formControlName="hcn" class="w-full" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="survey-department" class="text-sm font-medium">{{ t('surveys.fields.department') }}</label>
+          <p-select
+            inputId="survey-department"
+            formControlName="departmentId"
+            [options]="departments()"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            filterBy="label"
+            [showClear]="true"
+            [loading]="loadingOptions()"
+            appendTo="body"
+            styleClass="w-full"
+          />
+        </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="survey-due-date" class="text-sm font-medium">{{ t('surveys.fields.fillDueDate') }}</label>
+            <p-datepicker
+              inputId="survey-due-date"
+              formControlName="dueDate"
+              dateFormat="yy-mm-dd"
+              [showTime]="true"
+              [showIcon]="true"
+              appendTo="body"
+              styleClass="w-full"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="survey-completion-due-date" class="text-sm font-medium">{{
+              t('surveys.fields.completionDueDate')
+            }}</label>
+            <p-datepicker
+              inputId="survey-completion-due-date"
+              formControlName="completionDueDate"
+              dateFormat="yy-mm-dd"
+              [showTime]="true"
+              [showIcon]="true"
+              appendTo="body"
+              styleClass="w-full"
+            />
+          </div>
+      </div>
+    </form>
+
+    <div class="mt-4 flex flex-col gap-2 border-t border-surface-200 pt-4 dark:border-surface-700">
+      <span class="text-sm font-semibold">{{ t('org.location') }}</span>
+      <app-org-scope-selector
+        mode="single"
+        [initialLocation]="locationSeed()"
+        [disabled]="saving()"
+        (locationChange)="onLocationChange($event)"
+      />
+    </div>
+
+    <div class="mt-4 flex flex-col gap-2 border-t border-surface-200 pt-4 dark:border-surface-700">
+      <span class="text-sm font-semibold">
+        {{ t('surveys.fields.coordinates') }} <span class="text-red-500">*</span>
+      </span>
+      <!-- A survey stores latitude/longitude only, so the address row is off; the
+           search box still helps find the place. -->
+      <app-geo-map
+        [value]="locationPoint()"
+        (valueChange)="onLocationPointChange($event)"
+        [showAddress]="false"
+        height="300px"
+      />
+      @if (locationTouched() && locationPoint() == null) {
+        <small class="text-red-500">{{ t('surveys.validation.coordinatesRequired') }}</small>
+      }
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        [label]="t('surveys.actions.cancel')"
+        severity="secondary"
+        [text]="true"
+        [disabled]="saving()"
+        (onClick)="cancel()"
+      />
+      <p-button
+        [label]="t('surveys.actions.create')"
+        icon="pi pi-check"
+        [loading]="saving()"
+        [disabled]="saving()"
+        (onClick)="save()"
+      />
+    </ng-template>
+  </p-dialog>
+</ng-container>

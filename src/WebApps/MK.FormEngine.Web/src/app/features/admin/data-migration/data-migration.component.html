@@ -1,0 +1,281 @@
+<ng-container *transloco="let t">
+  <p-toast />
+
+  <div class="flex flex-col gap-4">
+    <p-card>
+      <ng-template #title>{{ t('dataMigration.start.title') }}</ng-template>
+      <ng-template #subtitle>{{ t('dataMigration.start.subtitle') }}</ng-template>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium">{{ t('dataMigration.start.source') }}</label>
+          <p-select
+            [options]="sources()"
+            [(ngModel)]="selectedSourceCode"
+            optionValue="code"
+            optionLabel="nameEn"
+            appendTo="body"
+            [loading]="loadingSources()"
+            [placeholder]="t('dataMigration.start.sourcePlaceholder')"
+            styleClass="w-full"
+          />
+
+          <label class="text-sm font-medium mt-2">{{ t('dataMigration.start.template') }}</label>
+          <p-select
+            [options]="templates()"
+            [(ngModel)]="templateId"
+            optionValue="value"
+            optionLabel="label"
+            appendTo="body"
+            [filter]="true"
+            [disabled]="starting()"
+            [placeholder]="t('dataMigration.start.templatePlaceholder')"
+            styleClass="w-full"
+          />
+          <small class="text-color-secondary">{{ t('dataMigration.start.templateHint') }}</small>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium">{{ t('dataMigration.start.file') }}</label>
+          <input
+            type="file"
+            class="p-2 border-round surface-border border-1"
+            [accept]="acceptedExtensions()"
+            [disabled]="starting()"
+            (change)="onFileSelected($event)"
+          />
+          @if (file(); as picked) {
+            <small class="text-color-secondary">{{ picked.name }}</small>
+          } @else {
+            <small class="text-color-secondary">
+              {{ t('dataMigration.start.fileHint', { extensions: acceptedExtensions() }) }}
+            </small>
+          }
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <label class="text-sm font-medium">{{ t('dataMigration.start.placement') }}</label>
+        <p class="text-xs text-color-secondary mt-1 mb-2">
+          {{ t('dataMigration.start.placementHint') }}
+        </p>
+        <app-org-scope-selector
+          mode="single"
+          layout="row"
+          [disabled]="starting()"
+          (locationChange)="onLocationChange($event)"
+        />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium">{{ t('dataMigration.start.department') }}</label>
+          <p-select
+            [options]="departments()"
+            [(ngModel)]="departmentId"
+            optionValue="value"
+            optionLabel="label"
+            appendTo="body"
+            [showClear]="true"
+            [disabled]="starting()"
+            [placeholder]="t('dataMigration.start.departmentPlaceholder')"
+            styleClass="w-full"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium">{{ t('dataMigration.start.team') }}</label>
+          <p-select
+            [options]="teams()"
+            [(ngModel)]="fieldTeamId"
+            optionValue="value"
+            optionLabel="label"
+            appendTo="body"
+            [showClear]="true"
+            [disabled]="starting()"
+            [placeholder]="t('dataMigration.start.teamPlaceholder')"
+            styleClass="w-full"
+          />
+          <small class="text-color-secondary">{{ t('dataMigration.start.teamHint') }}</small>
+        </div>
+
+        <!--
+          Mode picker hidden for now — the page always imports. The API still accepts VALIDATE and the
+          grid still renders validate runs made earlier, so restoring this is uncommenting the block
+          below; `modeOptions` and the `mode` signal are both still here for it.
+
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium">{{ t('dataMigration.start.mode') }}</label>
+          <p-selectbutton
+            [options]="modeOptions"
+            [(ngModel)]="mode"
+            optionValue="value"
+            [allowEmpty]="false"
+            [disabled]="starting()"
+          >
+            <ng-template #item let-option>{{ t(option.label) }}</ng-template>
+          </p-selectbutton>
+          <small class="text-color-secondary">{{ t('dataMigration.start.modeHint') }}</small>
+        </div>
+        -->
+      </div>
+
+      <!--
+        The archive is the one thing an operator cannot discover for themselves, so it is stated
+        outright: the exact folder on the server, and whether it is there yet.
+      -->
+      <div class="mt-4">
+        <label class="text-sm font-medium">{{ t('dataMigration.start.archive') }}</label>
+        @if (archiveExists()) {
+          <p class="text-xs text-color-secondary mt-1 break-all">
+            {{ t('dataMigration.start.archiveHint') }} <code>{{ archivePath() }}</code>
+          </p>
+        } @else {
+          <p-message severity="warn" styleClass="mt-1">
+            {{ t('dataMigration.blocked.noArchive') }} <code>{{ archivePath() }}</code>
+          </p-message>
+        }
+      </div>
+
+      <div class="flex items-center gap-3 mt-4">
+        <p-button
+          [label]="
+            uploadPercent() > 0 && uploadPercent() < 100
+              ? t('dataMigration.start.uploading', { percent: uploadPercent() })
+              : t('dataMigration.start.action')
+          "
+          icon="pi pi-upload"
+          [loading]="starting()"
+          [disabled]="!canStart()"
+          (onClick)="start()"
+        />
+        @if (blockingReasonKey(); as reason) {
+          <small class="text-color-secondary">{{ t(reason) }}</small>
+        }
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template #title>{{ t('dataMigration.runs.title') }}</ng-template>
+
+      <p-table
+        [value]="runs()"
+        [lazy]="true"
+        (onLazyLoad)="onRunsLazyLoad($event)"
+        [paginator]="true"
+        [rows]="pageSize"
+        [totalRecords]="totalRuns()"
+        [loading]="loadingRuns()"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        dataKey="id"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template #header>
+          <tr>
+            <th style="width: 6rem">{{ t('dataMigration.runs.id') }}</th>
+            <th>{{ t('dataMigration.runs.source') }}</th>
+            <th>{{ t('dataMigration.runs.template') }}</th>
+            <th>{{ t('dataMigration.runs.file') }}</th>
+            <th style="width: 8rem">{{ t('dataMigration.runs.mode') }}</th>
+            <th style="width: 9rem">{{ t('dataMigration.runs.status') }}</th>
+            <th style="width: 14rem">{{ t('dataMigration.runs.progress') }}</th>
+            <th style="width: 12rem">{{ t('dataMigration.runs.outcome') }}</th>
+            <th style="width: 6rem"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-run>
+          <tr>
+            <td>{{ run.id }}</td>
+            <td>{{ run.sourceCode }}</td>
+            <td class="text-xs">{{ run.templateCode }}</td>
+            <td class="text-xs break-all">{{ run.fileName }}</td>
+            <td>{{ t(modeKey(run.mode)) }}</td>
+            <td>
+              <!-- The reason rides on the tag rather than waiting in the detail dialog. A run that
+                   says only "Failed" gives the operator nothing to act on, and the reason is almost
+                   always something they can fix themselves. -->
+              <p-tag
+                [value]="t(runStatusKey(run.status))"
+                [severity]="runStatusSeverity(run.status)"
+                [pTooltip]="run.errorMessage || ''"
+                tooltipPosition="top"
+              />
+              @if (run.errorMessage) {
+                <div class="mt-1 text-xs text-red-500 max-w-[22rem] whitespace-normal">
+                  {{ run.errorMessage }}
+                </div>
+              }
+            </td>
+            <td>
+              <p-progressbar [value]="run.progressPercent" [showValue]="true" />
+              <small class="text-color-secondary">{{ run.processedCount }} / {{ run.totalRecords }}</small>
+              <!-- Elapsed while it runs, total once it stops — and a rough projection of what is
+                   left, which is the number an operator watching a long file actually wants. -->
+              @if (formatDuration(run.durationSeconds); as elapsed) {
+                <small class="block text-color-secondary">
+                  <i class="pi pi-clock text-xs"></i> {{ elapsed }}
+                  @if (formatDuration(run.estimatedSecondsRemaining); as remaining) {
+                    <span> · {{ t('dataMigration.runs.remaining', { time: remaining }) }}</span>
+                  }
+                </small>
+              }
+            </td>
+            <td class="text-xs">
+              <!-- A validate run writes nothing, so its outcome is what it checked, not what it wrote.
+                   A backfill writes only media, so its outcome is how many surveys gained a file. -->
+              @if (run.mode === validateMode) {
+                <span class="text-blue-600">{{ run.validatedCount }}</span>
+                <span class="text-color-secondary"> {{ t('dataMigration.stats.checked') }}</span>
+              } @else if (run.mode === backfillMode) {
+                <span class="text-green-600">{{ run.importedCount }}</span>
+                <span class="text-color-secondary"> {{ t('dataMigration.stats.updated') }}</span>
+              } @else {
+                <span class="text-green-600">{{ run.importedCount }}</span>
+                /
+                <span>{{ run.skippedCount }}</span>
+                /
+                <span class="text-red-500">{{ run.failedCount }}</span>
+              }
+              <div class="text-color-secondary">
+                {{ t('dataMigration.runs.files', { imported: run.filesImported, missing: run.filesMissing }) }}
+              </div>
+            </td>
+            <td class="whitespace-nowrap">
+              <p-button
+                icon="pi pi-search"
+                severity="secondary"
+                [text]="true"
+                [ariaLabel]="t('dataMigration.runs.view')"
+                [pTooltip]="t('dataMigration.runs.view')"
+                (onClick)="openRun(run)"
+              />
+              <!-- Only on a finished import that came up short a file: the case where the photos
+                   arrived on the server after the surveys did. -->
+              @if (canRetryMedia(run)) {
+                <p-button
+                  icon="pi pi-refresh"
+                  severity="secondary"
+                  [text]="true"
+                  [ariaLabel]="t('dataMigration.runs.retryMedia')"
+                  [pTooltip]="t('dataMigration.runs.retryMediaHint')"
+                  [loading]="retryingRunId() === run.id"
+                  [disabled]="retryingRunId() !== null"
+                  (onClick)="retryMedia(run)"
+                />
+              }
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="9" class="text-center p-4">{{ t('dataMigration.runs.empty') }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+  <app-migration-run-detail-dialog [(visible)]="detailVisible" [runId]="detailRunId()" />
+</ng-container>

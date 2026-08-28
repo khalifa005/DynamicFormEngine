@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>MK.FormEngine</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0891b2">
+  <link rel="icon" type="image/png" href="assets/logo-sv.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <!--
+    Google Maps JS API. Loaded synchronously (no `loading=async`) so
+    `window.google.maps` is ready before Angular bootstraps; `region=SA` biases
+    the map towards Saudi Arabia.
+
+    `libraries=places` backs the address search box on the geolocation picker.
+    Reverse geocoding (coordinate -> address) needs no extra library, but the
+    **Geocoding API** must be enabled on this key in Google Cloud Console.
+  -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_KEY&region=SA&libraries=places"></script>
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>

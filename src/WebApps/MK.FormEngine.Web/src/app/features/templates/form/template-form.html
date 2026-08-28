@@ -1,0 +1,150 @@
+<ng-container *transloco="let t">
+  <p-toast></p-toast>
+  <div class="p-4">
+    @if (loading()) {
+      <div class="flex items-center justify-center gap-2 py-10">
+        <p-progressSpinner styleClass="w-8 h-8" strokeWidth="4"></p-progressSpinner>
+        <span class="text-surface-500">{{ t('common.loading') }}</span>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="flex flex-col gap-4" [class.hidden]="loading()">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Code -->
+        <div class="flex flex-col gap-2">
+          <label for="templateCode" class="font-semibold">{{ t('templates.code') }} *</label>
+          <input pInputText id="templateCode" formControlName="templateCode" />
+          <small class="text-red-500" *ngIf="form.get('templateCode')?.invalid && form.get('templateCode')?.touched">
+            {{ t('templates.codeRequired') }}
+          </small>
+        </div>
+
+        <!-- Category -->
+        <div class="flex flex-col gap-2">
+          <label for="category" class="font-semibold">{{ t('templates.category') }} *</label>
+          <p-select id="category" formControlName="category" [options]="categories" optionLabel="label" optionValue="value" appendTo="body" styleClass="w-full"></p-select>
+          <small class="text-red-500" *ngIf="form.get('category')?.invalid && form.get('category')?.touched">
+            {{ t('templates.categoryRequired') }}
+          </small>
+        </div>
+
+        <!-- FA Type -->
+        <div class="flex flex-col gap-2">
+          <label for="faTypeCode" class="font-semibold">{{ t('templates.faType') }}</label>
+          <p-select
+            id="faTypeCode"
+            formControlName="faTypeCode"
+            [options]="faTypeOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            filterBy="label"
+            [showClear]="true"
+            [loading]="lookupsLoading()"
+            [placeholder]="t('templates.selectFaType')"
+            [emptyMessage]="t('templates.noLookupData')"
+            [emptyFilterMessage]="t('templates.noLookupData')"
+            appendTo="body"
+            styleClass="w-full"></p-select>
+          <small class="text-surface-500">{{ t('templates.faTypeHint') }}</small>
+        </div>
+
+        <!-- Name En -->
+        <div class="flex flex-col gap-2">
+          <label for="templateNameEn" class="font-semibold">{{ t('templates.nameEn') }} *</label>
+          <input pInputText id="templateNameEn" formControlName="templateNameEn" />
+          <small class="text-red-500" *ngIf="form.get('templateNameEn')?.invalid && form.get('templateNameEn')?.touched">
+            {{ t('templates.nameEnRequired') }}
+          </small>
+        </div>
+
+        <!-- Name Ar -->
+        <div class="flex flex-col gap-2">
+          <label for="templateNameAr" class="font-semibold">{{ t('templates.nameAr') }} *</label>
+          <input pInputText id="templateNameAr" formControlName="templateNameAr" />
+          <small class="text-red-500" *ngIf="form.get('templateNameAr')?.invalid && form.get('templateNameAr')?.touched">
+            {{ t('templates.nameArRequired') }}
+          </small>
+        </div>
+
+        <!-- Department -->
+        <div class="flex flex-col gap-2">
+          <label for="departmentId" class="font-semibold">{{ t('templates.department') }}</label>
+          <p-select
+            id="departmentId"
+            formControlName="departmentId"
+            [options]="departmentOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            filterBy="label"
+            [showClear]="true"
+            [loading]="lookupsLoading()"
+            [placeholder]="t('templates.selectDepartment')"
+            [emptyMessage]="t('templates.noLookupData')"
+            [emptyFilterMessage]="t('templates.noLookupData')"
+            appendTo="body"
+            styleClass="w-full"></p-select>
+        </div>
+
+        <!-- Team fill SLA -->
+        <div class="flex flex-col gap-2">
+          <label for="teamFillSlaHours" class="font-semibold">{{ t('templates.teamFillSlaHours') }} *</label>
+          <input pInputText id="teamFillSlaHours" type="number" min="1" formControlName="teamFillSlaHours" />
+          <small class="text-surface-500">{{ t('templates.teamFillSlaHoursHint') }}</small>
+          <small class="text-red-500" *ngIf="form.get('teamFillSlaHours')?.invalid && form.get('teamFillSlaHours')?.touched">
+            {{ t('templates.slaHoursRequired') }}
+          </small>
+        </div>
+
+        <!-- Completion SLA -->
+        <div class="flex flex-col gap-2">
+          <label for="completionSlaHours" class="font-semibold">{{ t('templates.completionSlaHours') }} *</label>
+          <input pInputText id="completionSlaHours" type="number" min="1" formControlName="completionSlaHours" />
+          <small class="text-surface-500">{{ t('templates.completionSlaHoursHint') }}</small>
+          <small class="text-red-500" *ngIf="form.get('completionSlaHours')?.invalid && form.get('completionSlaHours')?.touched">
+            {{ t('templates.slaHoursRequired') }}
+          </small>
+        </div>
+
+      </div>
+
+      <!-- Auto-migrate surveys when a new version is published -->
+      <div class="mt-4 flex flex-col gap-2 border-t border-surface-200 pt-4 dark:border-surface-700">
+        <div class="flex items-center gap-2">
+          <p-checkbox
+            inputId="autoMigrateSurveysOnPublish"
+            formControlName="autoMigrateSurveysOnPublish"
+            [binary]="true"
+            [disabled]="saving() || loading()"
+          />
+          <label for="autoMigrateSurveysOnPublish" class="font-semibold cursor-pointer">
+            {{ t('templates.autoMigrateSurveys') }}
+          </label>
+        </div>
+        <small class="text-surface-500">{{ t('templates.autoMigrateSurveysHint') }}</small>
+      </div>
+
+      <!-- Where the template may be used -->
+      <div class="mt-4 flex flex-col gap-2 border-t border-surface-200 pt-4 dark:border-surface-700">
+        <span class="font-semibold">{{ t('templates.scopes') }}</span>
+        <app-org-scope-selector
+          mode="multi"
+          [initialScopes]="initialScopes()"
+          [disabled]="saving() || loading()"
+          (scopesChange)="onScopesChange($event)"
+        />
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <p-button [label]="t('templates.cancel')" severity="secondary" (onClick)="cancel()" [disabled]="saving()"></p-button>
+        <p-button
+          [label]="t('templates.save')"
+          type="submit"
+          [loading]="saving()"
+          [disabled]="form.invalid || saving() || loading()"></p-button>
+      </div>
+    </form>
+  </div>
+</ng-container>

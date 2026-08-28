@@ -1,0 +1,41 @@
+<ng-container *transloco="let t">
+  <p-dialog
+    [visible]="visible()"
+    (visibleChange)="visible.set($event)"
+    (onShow)="onShow()"
+    [header]="t('org.filterByOrg')"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '620px' }"
+    [breakpoints]="{ '720px': '95vw' }"
+  >
+    <p class="mb-4 text-sm text-[var(--p-text-muted-color)]">
+      {{ t('surveys.filters.organisationHint') }}
+    </p>
+
+    <app-org-scope-selector
+      mode="single"
+      [initialLocation]="seed()"
+      (locationChange)="onDraftChange($event)"
+    />
+
+    <ng-template pTemplate="footer">
+      <p-button
+        [label]="t('common.reset')"
+        icon="pi pi-filter-slash"
+        severity="secondary"
+        [text]="true"
+        [disabled]="!canApply()"
+        (onClick)="reset()"
+      />
+      <p-button
+        [label]="t('surveys.actions.cancel')"
+        severity="secondary"
+        [text]="true"
+        (onClick)="cancel()"
+      />
+      <p-button [label]="t('surveys.filters.apply')" icon="pi pi-check" (onClick)="apply()" />
+    </ng-template>
+  </p-dialog>
+</ng-container>

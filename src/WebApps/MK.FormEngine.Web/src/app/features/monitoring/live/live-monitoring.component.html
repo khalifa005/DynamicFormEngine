@@ -1,0 +1,184 @@
+<ng-container *transloco="let t">
+  <p-toast />
+
+  <div class="monitoring-page">
+    <!-- Left: surveys -->
+    <aside class="side-panel side-panel--left">
+      <div class="panel-header">
+        <div class="panel-title-row">
+          <h2 class="panel-title">{{ t('monitoring.surveys') }}</h2>
+          <span class="panel-count">{{ filteredSurveys().length }}</span>
+        </div>
+        <p-button
+          icon="pi pi-refresh"
+          [text]="true"
+          size="small"
+          [loading]="loading()"
+          [disabled]="loading()"
+          [pTooltip]="t('monitoring.refresh')"
+          [ariaLabel]="t('monitoring.refresh')"
+          (onClick)="refresh()"
+        />
+      </div>
+
+      @if (selectedTeamId() !== null) {
+        <div class="filter-chip">
+          <span>{{ t('monitoring.filteredByTeam') }}</span>
+          <button type="button" class="clear-filter" (click)="clearTeamFilter()">
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+      }
+
+      <p-iconfield class="panel-search">
+        <p-inputicon styleClass="pi pi-search" />
+        <input
+          pInputText
+          type="text"
+          class="w-full"
+          [placeholder]="t('monitoring.searchSurveys')"
+          [ngModel]="surveySearch()"
+          (ngModelChange)="onSurveySearch($event)"
+        />
+      </p-iconfield>
+
+      <div class="panel-list">
+        @if (loading() && surveys().length === 0) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <p-skeleton height="4.5rem" styleClass="mb-2 rounded-lg" />
+          }
+        } @else if (filteredSurveys().length === 0) {
+          <div class="empty-panel">
+            <i class="pi pi-inbox"></i>
+            <p>{{ t('monitoring.noSurveys') }}</p>
+          </div>
+        } @else {
+          @for (survey of mappedSurveys(); track survey.surveyId) {
+            <button
+              type="button"
+              class="list-card"
+              [class.list-card--active]="selectedSurveyId() === survey.surveyId"
+              (click)="selectSurvey(survey.surveyId!)"
+            >
+              <div class="list-card__top">
+                <span class="list-card__code">{{ survey.surveyCode }}</span>
+                <p-tag
+                  [value]="t('surveys.status.' + survey.status)"
+                  [severity]="statusSeverity(survey.status)"
+                  styleClass="text-[0.65rem]"
+                />
+              </div>
+              @if (survey.faId) {
+                <div class="list-card__meta">{{ survey.faId }}</div>
+              }
+              <div class="list-card__team">
+                @if (survey.allocatedFieldTeamId) {
+                  <i class="pi pi-users"></i>
+                  <span>{{ survey.allocatedFieldTeamName || t('monitoring.unknownTeam') }}</span>
+                } @else {
+                  <span class="muted">{{ t('monitoring.unallocated') }}</span>
+                }
+              </div>
+            </button>
+          }
+
+          @if (unmappedSurveys().length > 0) {
+            <div class="section-label">{{ t('monitoring.noLocation') }}</div>
+            @for (survey of unmappedSurveys(); track survey.surveyId) {
+              <div class="list-card list-card--muted">
+                <div class="list-card__top">
+                  <span class="list-card__code">{{ survey.surveyCode }}</span>
+                  <p-tag
+                    [value]="t('surveys.status.' + survey.status)"
+                    [severity]="statusSeverity(survey.status)"
+                    styleClass="text-[0.65rem]"
+                  />
+                </div>
+                <div class="list-card__team">
+                  @if (survey.allocatedFieldTeamId) {
+                    <i class="pi pi-users"></i>
+                    <span>{{ survey.allocatedFieldTeamName || t('monitoring.unknownTeam') }}</span>
+                  } @else {
+                    <span class="muted">{{ t('monitoring.unallocated') }}</span>
+                  }
+                </div>
+              </div>
+            }
+          }
+        }
+      </div>
+    </aside>
+
+    <!-- Center: map -->
+    <section class="map-panel">
+      <app-monitoring-map
+        [surveys]="surveyMarkers()"
+        [teams]="teamMarkers()"
+        [(selectedSurveyId)]="selectedSurveyId"
+        [(selectedTeamId)]="selectedTeamId"
+        (surveySelected)="selectSurvey($event)"
+        (teamSelected)="selectTeam($event)"
+      />
+    </section>
+
+    <!-- Right: teams -->
+    <aside class="side-panel side-panel--right">
+      <div class="panel-header">
+        <div class="panel-title-row">
+          <h2 class="panel-title">{{ t('monitoring.teams') }}</h2>
+          <span class="panel-count">{{ filteredTeams().length }}</span>
+        </div>
+      </div>
+
+      <p-iconfield class="panel-search">
+        <p-inputicon styleClass="pi pi-search" />
+        <input
+          pInputText
+          type="text"
+          class="w-full"
+          [placeholder]="t('monitoring.searchTeams')"
+          [ngModel]="teamSearch()"
+          (ngModelChange)="onTeamSearch($event)"
+        />
+      </p-iconfield>
+
+      <div class="panel-list">
+        @if (loading() && teams().length === 0) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <p-skeleton height="4rem" styleClass="mb-2 rounded-lg" />
+          }
+        } @else if (filteredTeams().length === 0) {
+          <div class="empty-panel">
+            <i class="pi pi-users"></i>
+            <p>{{ t('monitoring.noTeams') }}</p>
+          </div>
+        } @else {
+          @for (team of filteredTeams(); track team.teamId) {
+            <button
+              type="button"
+              class="list-card"
+              [class.list-card--active]="selectedTeamId() === team.teamId"
+              (click)="selectTeam(team.teamId!)"
+            >
+              <div class="list-card__top">
+                <span class="list-card__code">{{ team.name }}</span>
+                <span
+                  class="online-dot"
+                  [class.online-dot--on]="isTeamOnline(team.teamId)"
+                  [attr.title]="
+                    isTeamOnline(team.teamId) ? t('monitoring.online') : t('monitoring.offline')
+                  "
+                ></span>
+              </div>
+              <div class="list-card__meta">{{ team.userCode }}</div>
+              <div class="list-card__team">
+                <i class="pi pi-clipboard"></i>
+                <span>{{ t('monitoring.openSurveys', { count: teamOpenCount(team.teamId) }) }}</span>
+              </div>
+            </button>
+          }
+        }
+      </div>
+    </aside>
+  </div>
+</ng-container>

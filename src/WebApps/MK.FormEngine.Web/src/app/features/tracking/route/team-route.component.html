@@ -1,0 +1,358 @@
+<ng-container *transloco="let t">
+  <p-toast />
+
+  <!-- 1. Hero Filter Control Card -->
+  <div class="card p-5 mb-5 shadow-sm border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] rounded-2xl bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)]">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-4 pb-3 border-b border-[var(--p-surface-100)] dark:border-[var(--p-surface-800)]">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/50 flex items-center justify-center text-[var(--p-primary-color)] shadow-inner">
+          <i class="pi pi-compass text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-base font-bold m-0 text-[var(--p-text-color)]">{{ t('tracking.title') }}</h2>
+          <p class="text-xs text-[var(--p-text-muted-color)] m-0">{{ t('tracking.subtitle') }}</p>
+        </div>
+      </div>
+
+      <!-- Quick Preset Pills -->
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          (click)="setToday()"
+          [class]="isToday() ? 'bg-[var(--p-primary-color)] text-white shadow-sm' : 'bg-[var(--p-surface-100)] dark:bg-[var(--p-surface-800)] text-[var(--p-text-muted-color)] hover:bg-[var(--p-surface-200)] dark:hover:bg-[var(--p-surface-700)]'"
+          class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-1.5"
+        >
+          <i class="pi pi-calendar text-xs"></i>
+          {{ t('tracking.today') }}
+        </button>
+        <button
+          type="button"
+          (click)="setYesterday()"
+          [class]="isYesterday() ? 'bg-[var(--p-primary-color)] text-white shadow-sm' : 'bg-[var(--p-surface-100)] dark:bg-[var(--p-surface-800)] text-[var(--p-text-muted-color)] hover:bg-[var(--p-surface-200)] dark:hover:bg-[var(--p-surface-700)]'"
+          class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-1.5"
+        >
+          <i class="pi pi-history text-xs"></i>
+          {{ t('tracking.yesterday') }}
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-end gap-4">
+      <!-- Team Select -->
+      <div class="flex flex-col gap-1.5 flex-1 min-w-[240px]">
+        <label for="team-route-team" class="text-xs font-semibold text-[var(--p-text-muted-color)] flex items-center gap-1.5">
+          <i class="pi pi-users text-xs text-[var(--p-primary-color)]"></i>
+          {{ t('tracking.team') }}
+        </label>
+        <p-select
+          inputId="team-route-team"
+          [(ngModel)]="teamId"
+          [options]="teams()"
+          optionLabel="label"
+          optionValue="value"
+          [filter]="true"
+          filterBy="label"
+          [showClear]="true"
+          [loading]="teamsLoading()"
+          [disabled]="teamsLoading() || loading()"
+          [placeholder]="t('tracking.teamPlaceholder')"
+          styleClass="w-full"
+        />
+      </div>
+
+      <!-- Date Picker -->
+      <div class="flex flex-col gap-1.5 w-full sm:w-56">
+        <label for="team-route-date" class="text-xs font-semibold text-[var(--p-text-muted-color)] flex items-center gap-1.5">
+          <i class="pi pi-calendar text-xs text-[var(--p-primary-color)]"></i>
+          {{ t('tracking.date') }}
+        </label>
+        <p-datepicker
+          inputId="team-route-date"
+          [(ngModel)]="date"
+          dateFormat="yy-mm-dd"
+          [showIcon]="true"
+          [disabled]="loading()"
+          styleClass="w-full"
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <p-button
+        [label]="t('tracking.show')"
+        icon="pi pi-search"
+        [loading]="loading()"
+        [disabled]="loading() || teamId === null || !date"
+        (onClick)="loadRoute()"
+        styleClass="px-6 py-2 rounded-xl font-semibold shadow-sm"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="card p-6 rounded-2xl border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] shadow-sm space-y-4">
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        @for (i of [1,2,3,4,5]; track i) {
+          <p-skeleton height="5.5rem" styleClass="rounded-2xl" />
+        }
+      </div>
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <p-skeleton height="580px" styleClass="xl:col-span-2 rounded-2xl" />
+        <p-skeleton height="580px" styleClass="rounded-2xl" />
+      </div>
+    </div>
+  } @else if (!searched()) {
+    <!-- Empty Initial Prompt -->
+    <div class="card p-12 flex flex-col items-center justify-center text-center rounded-2xl border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] shadow-sm bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)]">
+      <div class="w-20 h-20 rounded-full bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center mb-4 text-[var(--p-primary-color)] shadow-inner">
+        <i class="pi pi-map-marker text-4xl"></i>
+      </div>
+      <h3 class="text-xl font-bold mb-2 text-[var(--p-text-color)]">{{ t('tracking.selectTeamPrompt') }}</h3>
+      <p class="text-sm text-[var(--p-text-muted-color)] max-w-md m-0 leading-relaxed">
+        {{ t('tracking.selectTeamPromptDescription') || 'Select a field team and date from the top controls to load their daily trajectory, stop statistics, and interactive route map.' }}
+      </p>
+    </div>
+  } @else if (stops().length === 0) {
+    <!-- No Data Found -->
+    <div class="card p-12 flex flex-col items-center justify-center text-center rounded-2xl border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] shadow-sm bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)]">
+      <div class="w-20 h-20 rounded-full bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center mb-4 text-amber-500 shadow-inner">
+        <i class="pi pi-inbox text-4xl"></i>
+      </div>
+      <h3 class="text-xl font-bold mb-2 text-[var(--p-text-color)]">{{ t('tracking.noStops') }}</h3>
+      <p class="text-sm text-[var(--p-text-muted-color)] max-w-md m-0 leading-relaxed">
+        No survey stops were recorded for this field team on the selected date.
+      </p>
+    </div>
+  } @else {
+    <!-- 2. KPI Summary Widgets -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+      <!-- Total Stops -->
+      <div class="card p-4 rounded-2xl shadow-sm border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)] hover:-translate-y-0.5 transition-all duration-300">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-[var(--p-text-muted-color)] uppercase tracking-wider">
+            {{ t('tracking.stops') }}
+          </span>
+          <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+            <i class="pi pi-map-marker text-lg"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span class="text-3xl font-extrabold text-[var(--p-text-color)] tracking-tight">
+            {{ route()?.totalStopCount ?? 0 }}
+          </span>
+          <span class="text-xs font-semibold text-[var(--p-text-muted-color)]">Stops Recorded</span>
+        </div>
+      </div>
+
+      <!-- Mapped Stops -->
+      <div class="card p-4 rounded-2xl shadow-sm border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)] hover:-translate-y-0.5 transition-all duration-300">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-[var(--p-text-muted-color)] uppercase tracking-wider">
+            {{ t('tracking.mappedStops') }}
+          </span>
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+            <i class="pi pi-check-circle text-lg"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline justify-between">
+          <span class="text-3xl font-extrabold text-[var(--p-text-color)] tracking-tight">
+            {{ route()?.mappedStopCount ?? 0 }}
+          </span>
+          <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            {{ t('tracking.mappedPercentage', { value: mappedPercentage() }) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- First Stop -->
+      <div class="card p-4 rounded-2xl shadow-sm border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)] hover:-translate-y-0.5 transition-all duration-300">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-[var(--p-text-muted-color)] uppercase tracking-wider">
+            {{ t('tracking.firstStop') }}
+          </span>
+          <div class="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center">
+            <i class="pi pi-clock text-lg"></i>
+          </div>
+        </div>
+        <div class="text-2xl font-extrabold text-[var(--p-text-color)] tracking-tight">
+          {{ formatTime(route()?.firstStopAt) }}
+        </div>
+      </div>
+
+      <!-- Last Stop -->
+      <div class="card p-4 rounded-2xl shadow-sm border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)] hover:-translate-y-0.5 transition-all duration-300">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-[var(--p-text-muted-color)] uppercase tracking-wider">
+            {{ t('tracking.lastStop') }}
+          </span>
+          <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+            <i class="pi pi-history text-lg"></i>
+          </div>
+        </div>
+        <div class="text-2xl font-extrabold text-[var(--p-text-color)] tracking-tight">
+          {{ formatTime(route()?.lastStopAt) }}
+        </div>
+      </div>
+
+      <!-- Total Distance -->
+      <div class="card p-4 rounded-2xl shadow-sm border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)] hover:-translate-y-0.5 transition-all duration-300">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-[var(--p-text-muted-color)] uppercase tracking-wider">
+            {{ t('tracking.totalDistance') }}
+          </span>
+          <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center">
+            <i class="pi pi-directions text-lg"></i>
+          </div>
+        </div>
+        <div class="text-2xl font-extrabold text-[var(--p-text-color)] tracking-tight">
+          {{ formatDistance(route()?.totalDistanceMeters) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Smart Notice Strip -->
+    <div class="mb-5 p-4 rounded-2xl border border-[var(--p-surface-200)] dark:border-[var(--p-surface-800)] bg-[var(--p-surface-50)] dark:bg-[var(--p-surface-900)] shadow-sm flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--p-text-muted-color)]">
+      <div class="flex flex-wrap items-center gap-4">
+        <span class="flex items-center gap-2 font-medium">
+          <i class="pi pi-info-circle text-[var(--p-primary-color)]"></i>
+          {{ t('tracking.plannedLocationNote') }}
+        </span>
+        <span class="flex items-center gap-2 font-medium">
+          <i class="pi pi-info-circle text-[var(--p-primary-color)]"></i>
+          {{ t('tracking.straightLineNote') }}
+        </span>
+      </div>
+      @if (hasUnmappedStops()) {
+        <span class="px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1.5">
+          <i class="pi pi-exclamation-triangle"></i>
+          {{
+            t('tracking.partialRoute', {
+              mapped: route()?.mappedStopCount ?? 0,
+              total: route()?.totalStopCount ?? 0,
+            })
+          }}
+        </span>
+      }
+    </div>
+
+    <!-- 4. Workspace: Interactive Map & Timeline Table -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      <!-- Map Column -->
+      <div class="xl:col-span-2 shadow-sm rounded-2xl overflow-hidden border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)] flex flex-col">
+        <div class="px-5 py-3 border-b border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] bg-[var(--p-surface-50)] dark:bg-[var(--p-surface-900)] flex items-center justify-between">
+          <h3 class="text-sm font-bold m-0 flex items-center gap-2 text-[var(--p-text-color)]">
+            <i class="pi pi-map text-[var(--p-primary-color)]"></i>
+            {{ t('tracking.mapView') }}
+          </h3>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[var(--p-surface-200)] dark:bg-[var(--p-surface-800)] text-[var(--p-text-muted-color)]">
+            {{ mappedStops().length }} / {{ stops().length }} {{ t('tracking.mappedStops') }}
+          </span>
+        </div>
+        <div class="flex-1 min-h-[580px]">
+          <app-route-map [stops]="mappedStops()" [(activeStopId)]="activeStopId" height="580px" />
+        </div>
+      </div>
+
+      <!-- Timeline Stops Table Column -->
+      <div class="card p-0 overflow-hidden shadow-sm border border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] rounded-2xl flex flex-col h-[635px] bg-[var(--p-surface-0)] dark:bg-[var(--p-surface-900)]">
+        <div class="p-4 border-b border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] bg-[var(--p-surface-50)] dark:bg-[var(--p-surface-900)] flex items-center justify-between">
+          <h3 class="text-sm font-bold m-0 flex items-center gap-2 text-[var(--p-text-color)]">
+            <i class="pi pi-list-check text-[var(--p-primary-color)]"></i>
+            {{ t('tracking.stopsTimeline') }}
+          </h3>
+          <p-tag [value]="stops().length.toString() + ' ' + t('tracking.stops')" severity="secondary" styleClass="text-xs" />
+        </div>
+
+        <div class="flex-1 overflow-hidden">
+          <p-table
+            [value]="stops()"
+            dataKey="surveyId"
+            styleClass="app-table p-datatable-sm p-datatable-striped"
+            [rowHover]="true"
+            [scrollable]="true"
+            scrollHeight="100%"
+            [tableStyle]="{ 'min-width': '34rem' }"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="w-12 text-center">#</th>
+                <th>{{ t('tracking.survey') }}</th>
+                <th>{{ t('tracking.submittedAt') }}</th>
+                <th class="text-right">{{ t('tracking.distance') }}</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-stop let-rowIndex="rowIndex">
+              <tr
+                [class.cursor-pointer]="stop.latitude !== null && stop.latitude !== undefined"
+                [class.stop-row-active]="isActive(stop)"
+                (click)="selectStop(stop)"
+                class="transition-colors duration-150"
+              >
+                <!-- Sequence Badge / Timeline Node -->
+                <td class="text-center">
+                  <span
+                    class="w-7 h-7 rounded-full inline-flex items-center justify-center font-extrabold text-xs text-white shadow-sm"
+                    [class.bg-emerald-600]="rowIndex === 0"
+                    [class.bg-rose-600]="rowIndex === stops().length - 1 && stops().length > 1"
+                    [class.bg-sky-600]="rowIndex > 0 && (rowIndex < stops().length - 1 || stops().length === 1)"
+                  >
+                    {{ stop.sequence }}
+                  </span>
+                </td>
+
+                <!-- Survey Details -->
+                <td class="py-2">
+                  <div class="font-bold text-sm text-[var(--p-text-color)] mb-0.5">
+                    {{ stop.surveyCode }}
+                  </div>
+                  <div
+                    class="text-xs text-[var(--p-text-muted-color)] mb-1.5 line-clamp-1"
+                    [pTooltip]="templateName(stop)"
+                    tooltipPosition="top"
+                  >
+                    {{ templateName(stop) }}
+                  </div>
+                  <p-tag
+                    [value]="t('surveys.status.' + stop.status)"
+                    [severity]="statusSeverity(stop.status)"
+                    styleClass="text-[11px] px-2 py-0.5"
+                  />
+                </td>
+
+                <!-- Time & Gap -->
+                <td class="py-2">
+                  <div class="font-semibold text-sm text-[var(--p-text-color)] flex items-center gap-1">
+                    <i class="pi pi-clock text-xs text-[var(--p-text-muted-color)]"></i>
+                    {{ formatTime(stop.submittedDate) }}
+                  </div>
+                  @if (stop.minutesFromPreviousStop !== null && stop.minutesFromPreviousStop !== undefined) {
+                    <div class="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 mt-1">
+                      <i class="pi pi-arrow-up-right text-[10px]"></i>
+                      +{{ formatGap(stop.minutesFromPreviousStop) }}
+                    </div>
+                  }
+                </td>
+
+                <!-- Distance & Coordinate Status -->
+                <td class="text-right py-2">
+                  @if (stop.latitude === null || stop.latitude === undefined) {
+                    <span class="text-[11px] text-[var(--p-text-muted-color)] italic bg-[var(--p-surface-100)] dark:bg-[var(--p-surface-800)] px-2 py-1 rounded-md inline-flex items-center gap-1">
+                      <i class="pi pi-slash text-[10px]"></i>
+                      {{ t('tracking.noLocation') }}
+                    </span>
+                  } @else {
+                    <span class="font-bold text-xs text-[var(--p-text-color)] bg-primary-50 dark:bg-primary-950/40 text-[var(--p-primary-color)] px-2.5 py-1 rounded-lg inline-block">
+                      {{ formatDistance(stop.distanceFromPreviousMeters) }}
+                    </span>
+                  }
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  }
+</ng-container>
+

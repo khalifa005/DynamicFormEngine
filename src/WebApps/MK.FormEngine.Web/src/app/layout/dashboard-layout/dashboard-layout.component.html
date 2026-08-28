@@ -1,0 +1,114 @@
+<ng-container *transloco="let t">
+  <div class="layout" [class.sidebar-collapsed]="!sidebarOpen()">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <!-- Custom SVG Water Logo (NWC substitute) -->
+        <svg class="brand-logo nwc-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer border/gear suggestion -->
+          <circle cx="50" cy="50" r="42" stroke="#0369a1" stroke-width="8" stroke-dasharray="16 6" />
+          <circle cx="50" cy="50" r="32" stroke="#0284c7" stroke-width="2" />
+          <!-- Water Drop -->
+          <path d="M50 25 C50 25, 32 48, 32 62 C32 71.94 40.06 80 50 80 C59.94 80 68 71.94 68 62 C68 48, 50 25, 50 25 Z" fill="url(#water-grad)"/>
+          <defs>
+            <linearGradient id="water-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="100%" stop-color="#0284c7" />
+            </linearGradient>
+          </defs>
+        </svg>
+        @if (sidebarOpen()) {
+        <span class="brand-text">{{ t('common.appName') }}</span>
+        }
+      </div>
+      <nav class="sidebar-nav">
+        @for (item of navItems; track item.route ?? item.labelKey) {
+        <ng-container *ngxPermissionsOnly="item.permissions">
+          @if (item.children) {
+          <button type="button" class="nav-item nav-group-toggle" (click)="toggleGroup(item)"
+            [class.active]="isGroupActive(item)" [attr.title]="t(item.labelKey)">
+            <i [class]="item.icon"></i>
+            @if (sidebarOpen()) {
+            <span>{{ t(item.labelKey) }}</span>
+            <i class="pi pi-angle-down nav-chevron" [class.expanded]="isGroupExpanded(item)"></i>
+            }
+          </button>
+          @if (sidebarOpen() && isGroupExpanded(item)) {
+          <div class="nav-subgroup">
+            @for (child of item.children; track child.route) {
+            <ng-container *ngxPermissionsOnly="child.permissions">
+              <a class="nav-item nav-subitem" [routerLink]="child.route" routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: false }">
+                <span>{{ t(child.labelKey) }}</span>
+              </a>
+            </ng-container>
+            }
+          </div>
+          }
+          } @else {
+          <a class="nav-item" [routerLink]="item.route" routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: false }" [attr.title]="t(item.labelKey)">
+            <i [class]="item.icon"></i>
+            @if (sidebarOpen()) {
+            <span>{{ t(item.labelKey) }}</span>
+            }
+          </a>
+          }
+        </ng-container>
+        }
+      </nav>
+
+      <div class="sidebar-footer" style="margin-top: auto; padding: 0.5rem; display: flex; flex-direction: column;">
+        <a class="nav-item" (click)="logout()" style="cursor: pointer;" [attr.title]="t('common.logout')">
+          <i class="pi pi-sign-out"></i>
+          @if (sidebarOpen()) {
+          <span>{{ t('common.logout') }}</span>
+          }
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-start">
+          <button type="button" class="icon-btn" (click)="toggleSidebar()" aria-label="menu">
+            <i class="pi pi-bars"></i>
+          </button>
+          <div class="page-heading">
+            <h1 class="page-title">
+              {{ pageHeader.header().titleText || t(pageHeader.header().titleKey || 'common.appName') }}
+            </h1>
+            @if (pageHeader.header().subtitleText || pageHeader.header().subtitleKey) {
+            <p class="page-subtitle">
+              {{ pageHeader.header().subtitleText || t(pageHeader.header().subtitleKey!) }}
+            </p>
+            }
+          </div>
+        </div>
+
+        <div class="topbar-end">
+          <button type="button" class="icon-btn" (click)="toggleLanguage()" [attr.aria-label]="t('common.language')">
+            <i class="pi pi-globe"></i>
+            <span class="lang-code">{{ language.current() === 'ar' ? 'EN' : 'ع' }}</span>
+          </button>
+
+          <button type="button" class="icon-btn" (click)="toggleTheme()" [attr.aria-label]="t('common.toggleTheme')">
+            <i class="pi" [class.pi-moon]="theme.mode() === 'light'" [class.pi-sun]="theme.mode() === 'dark'"></i>
+          </button>
+
+          <button type="button" class="user-chip" (click)="menu.toggle($event)">
+            <span class="avatar">{{ initials() }}</span>
+            <span class="user-name">{{ store.userName() }}</span>
+            <i class="pi pi-angle-down"></i>
+          </button>
+          <p-menu #menu [model]="userMenu()" [popup]="true" appendTo="body" />
+        </div>
+      </header>
+
+      <main class="content">
+        <router-outlet />
+      </main>
+    </div>
+  </div>
+</ng-container>

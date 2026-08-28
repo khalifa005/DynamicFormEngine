@@ -1,0 +1,504 @@
+<ng-container *transloco="let t">
+  <p-dialog
+    [visible]="visible()"
+    (visibleChange)="visible.set($event)"
+    [header]="t('surveys.detail.title')"
+    [modal]="true"
+    [maximizable]="true"
+    [draggable]="true"
+    [resizable]="false"
+    [style]="{ width: '960px' }"
+    [breakpoints]="{ '960px': '95vw' }"
+  >
+    @if (loading()) {
+      <div class="flex justify-center p-10">
+        <p-progressSpinner styleClass="h-12 w-12" [attr.aria-label]="t('common.loading')" />
+      </div>
+    } @else if (loadFailed()) {
+      <p class="p-6 text-center text-surface-500">{{ t('surveys.detail.loadFailed') }}</p>
+    } @else if (survey(); as s) {
+      <div class="flex flex-col gap-4">
+        <!-- Identity banner: the code and everything that qualifies its state,
+             lifted onto its own surface so it reads as the subject of the
+             dialog rather than the first row of the facts grid. -->
+        <div
+          class="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-alt)] px-4 py-3"
+        >
+          <span class="font-mono text-lg font-semibold tracking-tight">{{ s.surveyCode }}</span>
+          <p-tag [value]="t('surveys.status.' + s.status)" [severity]="statusSeverity(s.status)" />
+          @if (s.returnReasonCode) {
+            <p-tag
+              [value]="t('surveys.returnReasons.' + s.returnReasonCode)"
+              [severity]="returnReasonSeverity(s.returnReasonCode)"
+              [pTooltip]="s.returnReason || ''"
+              tooltipPosition="top"
+            />
+          }
+          @if (wasSubmittedAgain(s)) {
+            <p-tag
+              [value]="t('surveys.tags.submittedAgain')"
+              severity="info"
+              [pTooltip]="
+                t('surveys.fields.returnedDate') +
+                ': ' +
+                (s.returnedDate | date: 'yyyy-MM-dd HH:mm') +
+                ' · ' +
+                t('surveys.fields.submittedDate') +
+                ': ' +
+                (s.submittedDate | date: 'yyyy-MM-dd HH:mm')
+              "
+              tooltipPosition="top"
+            />
+          }
+          <p-tag [value]="t('surveys.source.' + s.source)" severity="secondary" />
+          <div class="ms-auto flex items-center gap-2">
+            <!-- Always offered, whatever the status. Reading back what was submitted is most
+                 often wanted precisely when the survey is closed and can no longer be filled. -->
+            <p-button
+              [label]="t('surveys.actions.previewForm')"
+              icon="pi pi-eye"
+              severity="secondary"
+              [outlined]="true"
+              size="small"
+              (onClick)="openPreview()"
+            />
+            <p-button
+              [label]="t('surveys.actions.exportPdf')"
+              icon="pi pi-file-pdf"
+              severity="secondary"
+              [outlined]="true"
+              size="small"
+              [loading]="exporting()"
+              (onClick)="exportToPdf()"
+            />
+          </div>
+        </div>
+
+        <!-- The source system's instruction to the crew. Above the grid rather than as a row inside
+             it: it is a sentence someone wrote, not a label/value pair, and it is the one thing on
+             this dialog that says what the activity is actually for. -->
+        @if (s.sourceComment) {
+          <div
+            class="flex items-start gap-2 rounded-xl border-s-[3px] p-3 text-sm"
+            style="
+              background: var(--acc-info-bg, var(--p-content-hover-background));
+              border-color: var(--p-primary-color);
+            "
+          >
+            <i class="pi pi-comment mt-0.5 text-[var(--p-primary-color)]"></i>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs font-semibold uppercase tracking-wide text-[var(--p-text-muted-color)]">
+                {{ t('surveys.fields.sourceComment') }}
+              </span>
+              <span class="font-medium">{{ s.sourceComment }}</span>
+            </div>
+          </div>
+        }
+
+        <!-- Sixteen label/value pairs in one flat two-column grid gave no clue
+             which facts belonged together, so reading it meant scanning every
+             cell. They are grouped by subject instead: what the task is, who
+             it is for, which part of the org owns it, and when it is due. -->
+        <div class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+          <section class="rounded-xl border border-[var(--app-border)] p-3">
+            <h4 class="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[var(--p-text-muted-color)]">
+              <i class="pi pi-file-edit text-[var(--p-primary-color)]"></i>
+              {{ t('surveys.detail.groups.task') }}
+            </h4>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.template') }}</span>
+              <span class="text-end font-medium">
+                {{ s.templateCode }} — {{ s.templateNameEn }}
+                @if (s.templateVersionNo) {
+                  <span class="app-badge app-badge--code ms-1">v{{ s.templateVersionNo }}</span>
+                }
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.taskCode') }}</span>
+              <span class="text-end font-medium">{{ s.taskCode || '-' }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.faId') }}</span>
+              <span class="text-end font-medium">{{ s.faId || '-' }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.faType') }}</span>
+              <span class="text-end font-medium">{{ s.faTypeCode || '-' }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.taskType') }}</span>
+              <span class="text-end font-medium">{{ taskTypeLabel(s) }}</span>
+            </div>
+          </section>
+
+          <section class="rounded-xl border border-[var(--app-border)] p-3">
+            <h4 class="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[var(--p-text-muted-color)]">
+              <i class="pi pi-user text-[var(--p-primary-color)]"></i>
+              {{ t('surveys.detail.groups.customer') }}
+            </h4>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.customerName') }}</span>
+              <span class="text-end font-medium">{{ s.customerName || '-' }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.customerPhone') }}</span>
+              <!-- Offered as a tel: link so a dispatcher on a tablet can place the call from here.
+                   dir="ltr" keeps the digits in order under the Arabic layout. -->
+              @if (s.customerPhone) {
+                <a
+                  class="text-end font-medium text-[var(--p-primary-color)] hover:underline"
+                  dir="ltr"
+                  [href]="'tel:' + s.customerPhone"
+                >{{ s.customerPhone }}</a>
+              } @else {
+                <span class="text-end font-medium">-</span>
+              }
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.customerType') }}</span>
+              <span class="text-end font-medium">{{ customerTypeLabel(s) }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.meterNumber') }}</span>
+              <span class="text-end font-medium">{{ s.meterNumber || '-' }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.hcn') }}</span>
+              <span class="text-end font-medium">{{ s.hcn || '-' }}</span>
+            </div>
+          </section>
+
+          <section class="rounded-xl border border-[var(--app-border)] p-3">
+            <h4 class="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[var(--p-text-muted-color)]">
+              <i class="pi pi-sitemap text-[var(--p-primary-color)]"></i>
+              {{ t('surveys.detail.groups.organisation') }}
+            </h4>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.branch') }}</span>
+              <span class="text-end font-medium">{{ branchLabel(s) }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.department') }}</span>
+              <span class="text-end font-medium">{{ departmentLabel(s) }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.isExternalTask') }}</span>
+              <span class="text-end font-medium">
+                @if (s.isExternalTask) {
+                  <p-tag [value]="t('surveys.fields.isExternalTask')" severity="info" />
+                } @else {
+                  -
+                }
+              </span>
+            </div>
+          </section>
+
+          <section class="rounded-xl border border-[var(--app-border)] p-3">
+            <h4 class="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[var(--p-text-muted-color)]">
+              <i class="pi pi-clock text-[var(--p-primary-color)]"></i>
+              {{ t('surveys.detail.groups.schedule') }}
+            </h4>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.created') }}</span>
+              <span class="text-end font-medium">{{ s.created | date: 'yyyy-MM-dd HH:mm' }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.fillDueDate') }}</span>
+              <span class="text-end font-medium">{{ s.dueDate ? (s.dueDate | date: 'yyyy-MM-dd HH:mm') : '-' }}</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 border-b border-dashed border-[var(--app-border)] py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.completionDueDate') }}</span>
+              <span class="text-end font-medium">
+                {{ s.completionDueDate ? (s.completionDueDate | date: 'yyyy-MM-dd HH:mm') : '-' }}
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between gap-4 py-1.5">
+              <span class="shrink-0 text-[var(--p-text-muted-color)]">{{ t('surveys.fields.fills') }}</span>
+              <span class="text-end font-medium">
+                {{ s.submissionCount ?? 0 }}
+                @if (s.lastFilledByRole) {
+                  <span class="text-[var(--p-text-muted-color)]">({{ t('surveys.role.' + s.lastFilledByRole) }})</span>
+                }
+              </span>
+            </div>
+          </section>
+        </div>
+
+        @if (s.returnReason) {
+          <!-- Uses the shared danger accent rather than raw `red-*` utilities,
+               which do not flip cleanly between the two themes. -->
+          <div
+            class="flex flex-col gap-2 rounded-xl border-s-[3px] p-3 text-sm"
+            style="
+              background: var(--acc-danger-bg);
+              border-color: var(--acc-danger-fg);
+            "
+          >
+            <div class="flex flex-wrap items-center gap-2">
+              @if (s.returnReasonCode) {
+                <p-tag
+                  [value]="t('surveys.returnReasons.' + s.returnReasonCode)"
+                  [severity]="returnReasonSeverity(s.returnReasonCode)"
+                />
+              }
+              @if (wasSubmittedAgain(s)) {
+                <p-tag [value]="t('surveys.tags.submittedAgain')" severity="info" />
+              }
+              @if (s.returnedDate) {
+                <span class="text-surface-500">
+                  {{ t('surveys.fields.returnedDate') }}: {{ s.returnedDate | date: 'yyyy-MM-dd HH:mm' }}
+                </span>
+              }
+              @if (s.returnCount) {
+                <span class="text-surface-500">
+                  {{ t('surveys.fields.returnCount') }}: {{ s.returnCount }}
+                </span>
+              }
+            </div>
+            <div>
+              <span class="font-medium">{{ t('surveys.fields.reason') }}:</span> {{ s.returnReason }}
+            </div>
+          </div>
+        }
+
+        @if (latestFill(); as latest) {
+          <section class="flex flex-col gap-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="text-sm font-semibold">{{ t('surveys.detail.latestFill') }}</h3>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+              <span class="font-medium">
+                @if (latest.fill.filledBy) {
+                  {{ t('surveys.detail.latestFillBy', { user: userName(latest.fill.filledBy) }) }}
+                } @else {
+                  {{ t('surveys.detail.latestFillByUnknown') }}
+                }
+              </span>
+              <p-tag [value]="t('surveys.role.' + latest.role)" severity="secondary" />
+            </div>
+            <ng-container *ngTemplateOutlet="fillCard; context: { $implicit: latest.fill }" />
+          </section>
+        }
+
+        <p-tabs value="0">
+          <p-tablist>
+            <p-tab value="0">{{ t('surveys.detail.tabs.timeline') }}</p-tab>
+            <p-tab value="1">{{ t('surveys.detail.tabs.summary') }}</p-tab>
+            <p-tab value="2">{{ t('surveys.detail.tabs.assignments') }}</p-tab>
+            <p-tab value="3">{{ t('surveys.detail.tabs.files') }}</p-tab>
+            <p-tab value="4">{{ t('surveys.detail.tabs.location') }}</p-tab>
+          </p-tablist>
+
+          <p-tabpanels>
+            <!-- Status trail -->
+            <p-tabpanel value="0">
+              @if (timelineLoading()) {
+                <div class="flex justify-center p-6">
+                  <p-progressSpinner styleClass="h-8 w-8" [attr.aria-label]="t('common.loading')" />
+                </div>
+              } @else if (timeline().length === 0) {
+                <p class="p-4 text-center text-surface-500">{{ t('surveys.detail.noTimeline') }}</p>
+              } @else {
+                <p-timeline [value]="timeline()" align="left" styleClass="app-timeline-directional pt-2">
+                  <ng-template pTemplate="content" let-entry>
+                    <div class="pb-4">
+                      <div class="flex flex-wrap items-center gap-2">
+                        @if (entry.fromStatus && entry.fromStatus !== entry.toStatus) {
+                          <span class="text-surface-500">{{ t('surveys.status.' + entry.fromStatus) }}</span>
+                          <!-- The row reads right-to-left in Arabic, so the arrow has to point that way too. -->
+                          <i
+                            class="pi text-xs text-surface-400"
+                            [class.pi-arrow-right]="!isRtl()"
+                            [class.pi-arrow-left]="isRtl()"
+                          ></i>
+                        }
+                        <p-tag
+                          [value]="t('surveys.status.' + entry.toStatus)"
+                          [severity]="statusSeverity(entry.toStatus)"
+                        />
+                      </div>
+                      <div class="mt-1 text-xs text-surface-500">
+                        {{ entry.changedDate | date: 'yyyy-MM-dd HH:mm' }}
+                        @if (entry.changedBy) {
+                          — {{ entry.changedByName || entry.changedBy }}
+                        }
+                      </div>
+                      @if (entry.note) {
+                        <div class="mt-1 text-sm">{{ entry.note }}</div>
+                      }
+                    </div>
+                  </ng-template>
+                </p-timeline>
+              }
+            </p-tabpanel>
+
+            <!-- Earlier fills — the latest answers sit above the tabs. -->
+            <p-tabpanel value="1">
+              @if (summaries().length === 0) {
+                <p class="p-4 text-center text-surface-500">{{ t('surveys.detail.noSummary') }}</p>
+              } @else if (historicalSummaries().length === 0) {
+                <p class="p-4 text-center text-surface-500">{{ t('surveys.detail.noEarlierFills') }}</p>
+              } @else {
+                <div class="flex flex-col gap-4 pt-2">
+                  @for (group of historicalSummaries(); track group.role) {
+                    <div>
+                      <h4 class="mb-2 font-semibold">{{ t('surveys.role.' + group.role) }}</h4>
+                      <div class="flex flex-col gap-3">
+                        @for (fill of group.fills; track fill.submissionId) {
+                          <ng-container *ngTemplateOutlet="fillCard; context: { $implicit: fill }" />
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+                <p class="mt-3 text-xs text-surface-500">{{ t('surveys.detail.summaryHint') }}</p>
+              }
+            </p-tabpanel>
+
+            <!-- Allocations -->
+            <p-tabpanel value="2">
+              @if (!s.assignments || s.assignments.length === 0) {
+                <p class="p-4 text-center text-surface-500">{{ t('surveys.detail.noAssignments') }}</p>
+              } @else {
+                <div class="overflow-x-auto pt-2">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="border-b border-surface-200 text-left dark:border-surface-700">
+                        <th class="py-2">{{ t('surveys.fields.fieldTeam') }}</th>
+                        <th class="py-2">{{ t('surveys.fields.status') }}</th>
+                        <th class="py-2">{{ t('surveys.fields.assignedDate') }}</th>
+                        <th class="py-2">{{ t('surveys.fields.dueDate') }}</th>
+                        <th class="py-2">{{ t('surveys.fields.submittedDate') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (a of s.assignments; track a.assignmentId) {
+                        <tr class="border-b border-surface-100 dark:border-surface-800">
+                          <td class="py-2">{{ a.fieldTeamName || a.fieldTeamId }}</td>
+                          <td class="py-2">{{ t('surveys.assignmentStatus.' + a.status) }}</td>
+                          <td class="py-2">{{ a.assignedDate | date: 'yyyy-MM-dd' }}</td>
+                          <td class="py-2">{{ a.dueDate ? (a.dueDate | date: 'yyyy-MM-dd') : '-' }}</td>
+                          <td class="py-2">{{ a.submittedDate ? (a.submittedDate | date: 'yyyy-MM-dd HH:mm') : '-' }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </p-tabpanel>
+
+            <!-- Files -->
+            <p-tabpanel value="3">
+              @if (filesLoading()) {
+                <div class="flex justify-center p-6">
+                  <p-progressSpinner styleClass="h-8 w-8" [attr.aria-label]="t('common.loading')" />
+                </div>
+              } @else if (files().length === 0) {
+                <p class="p-4 text-center text-surface-500">{{ t('surveys.detail.noFiles') }}</p>
+              } @else {
+                <div class="grid grid-cols-2 gap-3 pt-2 sm:grid-cols-3 lg:grid-cols-4">
+                  @for (card of fileCards(); track card.item.fileId; let i = $index) {
+                    <div class="flex flex-col gap-2 rounded-lg border border-[var(--app-border)] p-2">
+                      <app-media-thumbnail size="md" [item]="card.item" (open)="openViewer(i)" />
+                      <div class="min-w-0">
+                        <div class="truncate text-sm font-medium" [title]="card.item.name">
+                          {{ card.item.name }}
+                        </div>
+                        <div class="truncate text-[11px] text-[var(--p-text-muted-color)]">
+                          {{ formatBytes(card.item.sizeBytes ?? 0) }} ·
+                          {{ card.created | date: 'yyyy-MM-dd HH:mm' }}
+                        </div>
+                        @if (card.dataName) {
+                          <div class="truncate text-[11px] text-[var(--p-text-muted-color)]" [title]="card.dataName">
+                            {{ card.dataName }}
+                          </div>
+                        }
+                      </div>
+                      <div class="flex justify-end">
+                        <p-button
+                          icon="pi pi-download"
+                          [text]="true"
+                          size="small"
+                          severity="secondary"
+                          [ariaLabel]="t('common.download')"
+                          [loading]="isDownloading(card.item)"
+                          [disabled]="isDownloading(card.item)"
+                          (onClick)="downloadFile(card.item)"
+                        />
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <app-media-viewer-dialog
+                  [(visible)]="viewerVisible"
+                  [items]="viewerItems()"
+                  [startIndex]="viewerIndex()"
+                />
+              }
+            </p-tabpanel>
+
+            <!-- Survey location — lazy so the map is built once the panel is visible;
+                 a hidden panel would size the Google canvas to 0×0. -->
+            <p-tabpanel value="4" [lazy]="true">
+              <div class="pt-2">
+                @if (locationPoint(); as point) {
+                  <app-geo-map [value]="point" [readonly]="true" height="360px" />
+                } @else {
+                  <p class="p-4 text-center text-surface-500">{{ t('surveys.detail.noLocation') }}</p>
+                }
+              </div>
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
+
+        <ng-template #fillCard let-fill>
+          <div class="rounded border border-surface-200 p-3 dark:border-surface-700">
+            <div class="mb-2 text-xs text-surface-500">
+              #{{ fill.submissionId }} · {{ fill.filledAt | date: 'yyyy-MM-dd HH:mm' }}
+              @if (fill.filledBy) {
+                · {{ userName(fill.filledBy) }}
+              }
+              · {{ t('surveys.detail.answerCount', { count: fill.answerCount ?? 0 }) }}
+            </div>
+            <div class="grid grid-cols-1 gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+              @for (entry of answerEntries(fill.answers); track $index) {
+                <div class="flex items-center justify-between gap-3 border-b border-dashed border-surface-200 py-1 dark:border-surface-700">
+                  <span class="text-surface-500">{{ entry.label }}</span>
+                  <span class="flex items-center gap-1 font-medium">
+                    {{ entry.value }}
+                    @if (entry.point) {
+                      <p-button
+                        icon="pi pi-map-marker"
+                        size="small"
+                        [text]="true"
+                        [rounded]="true"
+                        [pTooltip]="t('surveys.detail.viewOnMap')"
+                        [ariaLabel]="t('surveys.detail.viewOnMap')"
+                        (onClick)="openAnswerMap(entry)"
+                      />
+                    }
+                  </span>
+                </div>
+              } @empty {
+                <div class="text-surface-500">{{ t('surveys.detail.noDigest') }}</div>
+              }
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    }
+  </p-dialog>
+
+  <!-- Outside the detail dialog for the same reason as the map: a form long enough to scroll must
+       not be clipped by the container it was opened from. -->
+  <app-survey-preview-dialog [(visible)]="previewVisible" [surveyId]="surveyId()" />
+
+  <!-- Sits outside the detail dialog so the map is not clipped by its scroll container. -->
+  <app-answer-map-dialog
+    [(visible)]="answerMapVisible"
+    [point]="answerMapPoint()"
+    [label]="answerMapLabel()"
+  />
+</ng-container>

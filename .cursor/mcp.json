@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "postman": {
+      "command": "npx",
+      "args": ["-y", "@postman/postman-mcp-server"],
+      "envFile": "${workspaceFolder}/.cursor/mcp.local.env"
+    }
+  }
+}

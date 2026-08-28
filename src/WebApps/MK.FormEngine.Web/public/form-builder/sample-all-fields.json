@@ -1,0 +1,473 @@
+{
+  "name_en": "Water Leakage Quality",
+  "name_ar": "جودة تسرب المياه",
+  "elements": [
+    {
+      "type": "text",
+      "label_en": "Reporter Name",
+      "label_ar": "اسم المبلغ",
+      "data_name": "reporter_name",
+      "description_en": "Enter the name of the person reporting the leak.",
+      "description_ar": "أدخل اسم الشخص الذي أبلغ عن التسرب.",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "min_length": 2,
+      "max_length": 100,
+      "pattern": {
+        "regex": "^[A-Za-z\\s]{2,100}$",
+        "description": "Letters and spaces only"
+      },
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "numeric",
+      "label_en": "Estimated Leak Volume (Liters/hour)",
+      "label_ar": "حجم التسرب التقديري (لتر/ساعة)",
+      "data_name": "leak_volume",
+      "description_en": "Estimate the volume of water leaking.",
+      "description_ar": "قدّر حجم المياه المتسربة.",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "format": "decimal",
+      "min": 0.1,
+      "max": 10000,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": [
+          {
+            "field": "reporter_name",
+            "operator": "is_not_empty",
+            "value": ""
+          }
+        ]
+      }
+    },
+    {
+      "type": "yes_no",
+      "label_en": "Is the water discolored?",
+      "label_ar": "هل لون الماء متغير؟",
+      "data_name": "water_discolored",
+      "description_en": "",
+      "description_ar": "",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "date",
+      "label_en": "Date of Incident",
+      "label_ar": "تاريخ الحادثة",
+      "data_name": "incident_date",
+      "description_en": "When did the leak start?",
+      "description_ar": "متى بدأ التسرب؟",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "time",
+      "label_en": "Time of Discovery",
+      "label_ar": "وقت الاكتشاف",
+      "data_name": "discovery_time",
+      "description_en": "Time the leak was found.",
+      "description_ar": "الوقت الذي تم فيه العثور على التسرب.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "single_choice",
+      "label_en": "Leak Source",
+      "label_ar": "مصدر التسرب",
+      "data_name": "leak_source",
+      "description_en": "Select the main source of the leak.",
+      "description_ar": "اختر المصدر الرئيسي للتسرب.",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "allow_other": true,
+      "multiple": false,
+      "parent_field": null,
+      "choices": [
+        {
+          "value": "pipe",
+          "label_en": "Main Pipe",
+          "label_ar": "الأنبوب الرئيسي",
+          "dependency_value": null
+        },
+        {
+          "value": "valve",
+          "label_en": "Valve",
+          "label_ar": "صمام",
+          "dependency_value": null
+        },
+        {
+          "value": "meter",
+          "label_en": "Water Meter",
+          "label_ar": "عداد المياه",
+          "dependency_value": null
+        }
+      ],
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "single_choice",
+      "label_en": "Leak Sub-source",
+      "label_ar": "مصدر التسرب الفرعي",
+      "data_name": "leak_subsource",
+      "description_en": "Options filtered by the selected leak source.",
+      "description_ar": "يتم تصفية الخيارات حسب مصدر التسرب المختار.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "allow_other": false,
+      "multiple": false,
+      "parent_field": "leak_source",
+      "choices": [
+        {
+          "value": "main_line",
+          "label_en": "Main Line",
+          "label_ar": "الخط الرئيسي",
+          "dependency_value": "pipe"
+        },
+        {
+          "value": "service_line",
+          "label_en": "Service Line",
+          "label_ar": "خط الخدمة",
+          "dependency_value": "pipe"
+        },
+        {
+          "value": "gate_valve",
+          "label_en": "Gate Valve",
+          "label_ar": "صمام بوابة",
+          "dependency_value": "valve"
+        },
+        {
+          "value": "butterfly_valve",
+          "label_en": "Butterfly Valve",
+          "label_ar": "صمام فراشة",
+          "dependency_value": "valve"
+        }
+      ],
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [
+          {
+            "field": "leak_source",
+            "operator": "is_not_empty",
+            "value": ""
+          }
+        ],
+        "preserve_data": true
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "multiple_choice",
+      "label_en": "Water Quality Issues",
+      "label_ar": "مشاكل جودة المياه",
+      "data_name": "water_quality_issues",
+      "description_en": "Select all observed issues.",
+      "description_ar": "حدد جميع المشاكل الملحوظة.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "allow_other": true,
+      "multiple": true,
+      "parent_field": null,
+      "choices": [
+        {
+          "value": "odor",
+          "label_en": "Bad Odor",
+          "label_ar": "رائحة كريهة",
+          "dependency_value": null
+        },
+        {
+          "value": "taste",
+          "label_en": "Strange Taste",
+          "label_ar": "طعم غريب",
+          "dependency_value": null
+        },
+        {
+          "value": "cloudy",
+          "label_en": "Cloudy/Milky",
+          "label_ar": "عكر/حليبي",
+          "dependency_value": null
+        }
+      ],
+      "visible_conditions": {
+        "match": "any",
+        "conditions": [
+          {
+            "field": "water_discolored",
+            "operator": "equal",
+            "value": "yes"
+          }
+        ],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "photo",
+      "label_en": "Leak Photos",
+      "label_ar": "صور التسرب",
+      "data_name": "leak_photos",
+      "description_en": "Attach photos of the leak.",
+      "description_ar": "أرفق صورًا للتسرب.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      },
+      "max_files": 5,
+      "max_file_size_mb": 10,
+      "allowed_extensions": [
+        "jpg",
+        "jpeg",
+        "png"
+      ]
+    },
+    {
+      "type": "video",
+      "label_en": "Leak Video",
+      "label_ar": "فيديو التسرب",
+      "data_name": "leak_video",
+      "description_en": "Optional short video of the leak.",
+      "description_ar": "فيديو قصير اختياري للتسرب.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      },
+      "max_files": 1,
+      "max_file_size_mb": 50,
+      "allowed_extensions": [
+        "mp4",
+        "mov"
+      ]
+    },
+    {
+      "type": "audio",
+      "label_en": "Voice Description",
+      "label_ar": "وصف صوتي",
+      "data_name": "voice_description",
+      "description_en": "Optional audio describing the leak or sound.",
+      "description_ar": "صوت اختياري يصف التسرب أو الصوت.",
+      "default_value": null,
+      "required": false,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      },
+      "max_files": 1,
+      "max_file_size_mb": 20,
+      "allowed_extensions": [
+        "mp3",
+        "m4a",
+        "wav"
+      ]
+    },
+    {
+      "type": "signature",
+      "label_en": "Reporter Signature",
+      "label_ar": "توقيع المبلغ",
+      "data_name": "reporter_signature",
+      "description_en": "Sign to confirm the details.",
+      "description_ar": "وقّع لتأكيد التفاصيل.",
+      "default_value": null,
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": [
+          {
+            "field": "incident_date",
+            "operator": "is_not_empty",
+            "value": ""
+          }
+        ]
+      }
+    },
+    {
+      "type": "geolocation",
+      "label_en": "Leak Location",
+      "label_ar": "موقع التسرب",
+      "data_name": "leak_location",
+      "description_en": "Mark the exact location on the map.",
+      "description_ar": "حدد الموقع الدقيق على الخريطة.",
+      "default_value": "24.7136,46.6753",
+      "required": true,
+      "hidden": false,
+      "disabled": false,
+      "map_zoom": 12,
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "required_conditions": {
+        "match": "all",
+        "conditions": []
+      }
+    },
+    {
+      "type": "section",
+      "label_en": "Resolution Status",
+      "label_ar": "حالة الحل",
+      "data_name": "resolution_status",
+      "description_en": "Details regarding actions taken.",
+      "description_ar": "تفاصيل حول الإجراءات المتخذة.",
+      "hidden": false,
+      "display": "inline",
+      "visible_conditions": {
+        "match": "all",
+        "conditions": [],
+        "preserve_data": false
+      },
+      "elements": [
+        {
+          "type": "text",
+          "label_en": "Actions Taken",
+          "label_ar": "الإجراءات المتخذة",
+          "data_name": "actions_taken",
+          "description_en": "",
+          "description_ar": "",
+          "default_value": null,
+          "required": false,
+          "hidden": false,
+          "disabled": false,
+          "min_length": null,
+          "max_length": 1000,
+          "pattern": null,
+          "visible_conditions": {
+            "match": "all",
+            "conditions": [],
+            "preserve_data": false
+          },
+          "required_conditions": {
+            "match": "all",
+            "conditions": []
+          }
+        },
+        {
+          "type": "numeric",
+          "label_en": "Repair Priority (1-5)",
+          "label_ar": "أولوية الإصلاح (1-5)",
+          "data_name": "repair_priority",
+          "description_en": "1 = Low, 5 = Critical.",
+          "description_ar": "1 = منخفض، 5 = حرج.",
+          "default_value": null,
+          "required": false,
+          "hidden": false,
+          "disabled": false,
+          "format": "integer",
+          "min": 1,
+          "max": 5,
+          "visible_conditions": {
+            "match": "all",
+            "conditions": [],
+            "preserve_data": false
+          },
+          "required_conditions": {
+            "match": "all",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  ]
+}

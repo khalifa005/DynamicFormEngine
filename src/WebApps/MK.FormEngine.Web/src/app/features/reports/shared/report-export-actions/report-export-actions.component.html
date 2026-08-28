@@ -1,0 +1,23 @@
+<ng-container *transloco="let t">
+  <p-toast />
+  <div class="export-actions">
+    <p-button
+      [label]="t('reports.export.excel')"
+      icon="pi pi-file-excel"
+      severity="success"
+      [outlined]="true"
+      [loading]="exporting() === 'excel'"
+      [disabled]="disabled() || !!exporting()"
+      (onClick)="export('excel')"
+    />
+    <p-button
+      [label]="t('reports.export.pdf')"
+      icon="pi pi-file-pdf"
+      severity="danger"
+      [outlined]="true"
+      [loading]="exporting() === 'pdf'"
+      [disabled]="disabled() || !!exporting()"
+      (onClick)="export('pdf')"
+    />
+  </div>
+</ng-container>

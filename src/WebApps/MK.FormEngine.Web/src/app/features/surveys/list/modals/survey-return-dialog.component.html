@@ -1,0 +1,110 @@
+<ng-container *transloco="let t">
+  <p-dialog
+    [visible]="visible()"
+    (visibleChange)="visible.set($event)"
+    (onShow)="onShow()"
+    [header]="t('surveys.return.title')"
+    [modal]="true"
+    [maximizable]="true"
+    [draggable]="true"
+    [resizable]="false"
+    [style]="{ width: '520px' }"
+    [breakpoints]="{ '640px': '95vw' }"
+  >
+    @if (survey(); as current) {
+      <p class="mb-4 text-sm text-surface-500">
+        {{ t('surveys.return.subtitle', { code: current.surveyCode }) }}
+      </p>
+    }
+
+    <form [formGroup]="form" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="return-reason-code" class="text-sm font-medium">
+          {{ t('surveys.fields.returnReasonCode') }} <span class="text-red-500">*</span>
+        </label>
+        <p-select
+          inputId="return-reason-code"
+          formControlName="reasonCode"
+          [options]="reasons()"
+          optionLabel="label"
+          optionValue="value"
+          [loading]="loadingOptions()"
+          [placeholder]="t('surveys.return.reasonCodePlaceholder')"
+          appendTo="body"
+          styleClass="w-full"
+        />
+        <small class="text-surface-500">{{ t('surveys.return.reasonCodeHint') }}</small>
+        @if (form.controls.reasonCode.touched && form.controls.reasonCode.invalid) {
+          <small class="text-red-500">{{ t('surveys.validation.reasonCodeRequired') }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="return-reason" class="text-sm font-medium">
+          {{ t('surveys.fields.reason') }} <span class="text-red-500">*</span>
+        </label>
+        <textarea
+          pTextarea
+          id="return-reason"
+          formControlName="reason"
+          rows="4"
+          class="w-full"
+          [placeholder]="t('surveys.return.notePlaceholder')"
+        ></textarea>
+        @if (form.controls.reason.touched && form.controls.reason.hasError('required')) {
+          <small class="text-red-500">{{ t('surveys.validation.reasonRequired') }}</small>
+        }
+        @if (form.controls.reason.hasError('maxlength')) {
+          <small class="text-red-500">{{ t('surveys.validation.reasonTooLong') }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="return-team" class="text-sm font-medium">
+          {{ t('surveys.return.reassignTo') }}
+        </label>
+        <p-select
+          inputId="return-team"
+          formControlName="reassignToFieldTeamId"
+          [options]="teams()"
+          optionLabel="label"
+          optionValue="value"
+          [filter]="true"
+          filterBy="label"
+          [showClear]="true"
+          [loading]="loadingOptions()"
+          [placeholder]="t('surveys.return.reassignPlaceholder')"
+          appendTo="body"
+          styleClass="w-full"
+        />
+        <small class="text-surface-500">{{ t('surveys.return.reassignHint') }}</small>
+      </div>
+
+      @if (form.controls.reassignToFieldTeamId.value) {
+        <p-message
+          severity="warn"
+          [text]="t('surveys.return.reassignWarning')"
+          styleClass="w-full"
+        />
+      }
+    </form>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        [label]="t('surveys.actions.cancel')"
+        severity="secondary"
+        [text]="true"
+        [disabled]="saving()"
+        (onClick)="cancel()"
+      />
+      <p-button
+        [label]="t('surveys.actions.return')"
+        icon="pi pi-replay"
+        severity="danger"
+        [loading]="saving()"
+        [disabled]="saving()"
+        (onClick)="confirm()"
+      />
+    </ng-template>
+  </p-dialog>
+</ng-container>

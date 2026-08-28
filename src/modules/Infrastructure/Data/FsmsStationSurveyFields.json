@@ -1,0 +1,3326 @@
+﻿[
+    {
+        "dataName":  "cluster",
+        "type":  "single_choice",
+        "labelEn":  "Cluster",
+        "labelAr":  "القطاع",
+        "required":  true,
+        "section":  "station",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "القطاع الأوسط",
+                            "labelEn":  "Central Cluster",
+                            "labelAr":  "القطاع الأوسط"
+                        },
+                        {
+                            "value":  "القطاع الغربي",
+                            "labelEn":  "Western Cluster",
+                            "labelAr":  "القطاع الغربي"
+                        },
+                        {
+                            "value":  "القطاع الشمالي الغربي",
+                            "labelEn":  "Northwestern Cluster",
+                            "labelAr":  "القطاع الشمالي الغربي"
+                        },
+                        {
+                            "value":  "القطاع الجنوبي",
+                            "labelEn":  "Southern Cluster",
+                            "labelAr":  "القطاع الجنوبي"
+                        },
+                        {
+                            "value":  "القطاع الشمالي",
+                            "labelEn":  "Northern Cluster",
+                            "labelAr":  "القطاع الشمالي"
+                        },
+                        {
+                            "value":  "القطاع الشرقي",
+                            "labelEn":  "Eastern Cluster",
+                            "labelAr":  "القطاع الشرقي"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "business_unit",
+        "type":  "single_choice",
+        "labelEn":  "Business Unit (BU)",
+        "labelAr":  "وحدة الأعمال",
+        "required":  true,
+        "section":  "station",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "وحدة أعمال الرياض",
+                            "labelEn":  "Riyadh Business Unit (RCBU)",
+                            "labelAr":  "وحدة أعمال الرياض"
+                        },
+                        {
+                            "value":  "وحدة أعمال محافظات الرياض",
+                            "labelEn":  "Riyadh Governorates Business Unit (RI)",
+                            "labelAr":  "وحدة أعمال محافظات الرياض"
+                        },
+                        {
+                            "value":  "وحدة أعمال جدة",
+                            "labelEn":  "Jeddah Business Unit (JCBU)",
+                            "labelAr":  "وحدة أعمال جدة"
+                        },
+                        {
+                            "value":  "وحدة أعمال مكة",
+                            "labelEn":  "Makkah Business Unit (MCBU)",
+                            "labelAr":  "وحدة أعمال مكة"
+                        },
+                        {
+                            "value":  "وحدة أعمال الطائف",
+                            "labelEn":  "Taif Business Unit (TCBU)",
+                            "labelAr":  "وحدة أعمال الطائف"
+                        },
+                        {
+                            "value":  "وحدة أعمال محافظات مكة",
+                            "labelEn":  "Makkah Governorates Business Unit (MK)",
+                            "labelAr":  "وحدة أعمال محافظات مكة"
+                        },
+                        {
+                            "value":  "وحدة أعمال المدينة المنورة",
+                            "labelEn":  "Madinah Business Unit (MD)",
+                            "labelAr":  "وحدة أعمال المدينة المنورة"
+                        },
+                        {
+                            "value":  "وحدة أعمال تبوك",
+                            "labelEn":  "Tabuk Business Unit (TB)",
+                            "labelAr":  "وحدة أعمال تبوك"
+                        },
+                        {
+                            "value":  "وحدة أعمال حائل",
+                            "labelEn":  "Hail Business Unit (HA)",
+                            "labelAr":  "وحدة أعمال حائل"
+                        },
+                        {
+                            "value":  "وحدة أعمال القصيم",
+                            "labelEn":  "Qassim Business Unit (QS)",
+                            "labelAr":  "وحدة أعمال القصيم"
+                        },
+                        {
+                            "value":  "وحدة أعمال الجوف",
+                            "labelEn":  "Al-Jouf Business Unit (JF)",
+                            "labelAr":  "وحدة أعمال الجوف"
+                        },
+                        {
+                            "value":  "وحدة أعمال الحدود الشمالية",
+                            "labelEn":  "Northern Borders Business Unit (HS)",
+                            "labelAr":  "وحدة أعمال الحدود الشمالية"
+                        },
+                        {
+                            "value":  "وحدة أعمال عسير",
+                            "labelEn":  "Asir Business Unit (AS)",
+                            "labelAr":  "وحدة أعمال عسير"
+                        },
+                        {
+                            "value":  "وحدة أعمال الباحة",
+                            "labelEn":  "Al-Baha Business Unit (BA)",
+                            "labelAr":  "وحدة أعمال الباحة"
+                        },
+                        {
+                            "value":  "وحدة أعمال جازان",
+                            "labelEn":  "Jazan Business Unit (JZBU)",
+                            "labelAr":  "وحدة أعمال جازان"
+                        },
+                        {
+                            "value":  "وحدة أعمال نجران",
+                            "labelEn":  "Najran Business Unit (NJ)",
+                            "labelAr":  "وحدة أعمال نجران"
+                        },
+                        {
+                            "value":  "وحدة أعمال الشرقية",
+                            "labelEn":  "Eastern Region Business Unit (SH)",
+                            "labelAr":  "وحدة أعمال الشرقية"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "city",
+        "type":  "text",
+        "labelEn":  "City",
+        "labelAr":  "المدينة",
+        "required":  true,
+        "section":  "station",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "station_name_ar",
+        "type":  "text",
+        "labelEn":  "Station Name in Arabic",
+        "labelAr":  "اسم المحطة بالعربية",
+        "required":  true,
+        "section":  "station",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "station_status",
+        "type":  "single_choice",
+        "labelEn":  "Station Status",
+        "labelAr":  "حالة المحطة",
+        "required":  true,
+        "section":  "station",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "مفتوح",
+                            "labelEn":  "Open",
+                            "labelAr":  "مفتوح"
+                        },
+                        {
+                            "value":  "مغلق (للطوارئ فقط)",
+                            "labelEn":  "Closed (Emergency Use Only)",
+                            "labelAr":  "مغلق (للطوارئ فقط)"
+                        },
+                        {
+                            "value":  "تحت الإنشاء",
+                            "labelEn":  "Under Construction",
+                            "labelAr":  "تحت الإنشاء"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "site_photo",
+        "type":  "photo",
+        "labelEn":  "Station Photos",
+        "labelAr":  "صور المحطة",
+        "required":  true,
+        "section":  "station",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  5
+    },
+    {
+        "dataName":  "latitude",
+        "type":  "numeric",
+        "labelEn":  "Location (Latitude)",
+        "labelAr":  "الموقع (خط العرض)",
+        "required":  true,
+        "section":  "station",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "longitude",
+        "type":  "numeric",
+        "labelEn":  "Location (Longitude)",
+        "labelAr":  "الموقع (خط الطول)",
+        "required":  true,
+        "section":  "station",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "water_supply_source",
+        "type":  "single_choice",
+        "labelEn":  "Water Supply Source",
+        "labelAr":  "مصدر التغذية",
+        "required":  true,
+        "section":  "supply",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "خط شبكة توزيع",
+                            "labelEn":  "Distribution Network Line",
+                            "labelAr":  "خط شبكة توزيع"
+                        },
+                        {
+                            "value":  "خط نقل",
+                            "labelEn":  "Transmission Line",
+                            "labelAr":  "خط نقل"
+                        },
+                        {
+                            "value":  "خزان تشغيلي",
+                            "labelEn":  "Operational Storage Tank",
+                            "labelAr":  "خزان تشغيلي"
+                        },
+                        {
+                            "value":  "خزان استراتيجي",
+                            "labelEn":  "Strategic Storage Tank",
+                            "labelAr":  "خزان استراتيجي"
+                        },
+                        {
+                            "value":  "خزان محطة تنقية",
+                            "labelEn":  "Water Treatment Plant Tank",
+                            "labelAr":  "خزان محطة تنقية"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "hydraulic_operating_method",
+        "type":  "single_choice",
+        "labelEn":  "Hydraulic Operating Method",
+        "labelAr":  "طريقة التشغيل الهيدروليكية",
+        "required":  true,
+        "section":  "supply",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ضغط الخط",
+                            "labelEn":  "Line Pressure",
+                            "labelAr":  "ضغط الخط"
+                        },
+                        {
+                            "value":  "محطة ضخ مخصصة",
+                            "labelEn":  "Dedicated Pump Station",
+                            "labelAr":  "محطة ضخ مخصصة"
+                        },
+                        {
+                            "value":  "بالجاذبية",
+                            "labelEn":  "Gravity-Fed",
+                            "labelAr":  "بالجاذبية"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "alt_water_supply_source",
+        "type":  "single_choice",
+        "labelEn":  "Alternative Water Supply Source",
+        "labelAr":  "مصدر التغذية البديل",
+        "required":  false,
+        "section":  "supply",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "خط شبكة توزيع",
+                            "labelEn":  "Distribution Network Line",
+                            "labelAr":  "خط شبكة توزيع"
+                        },
+                        {
+                            "value":  "خط نقل",
+                            "labelEn":  "Transmission Line",
+                            "labelAr":  "خط نقل"
+                        },
+                        {
+                            "value":  "خزان تشغيلي",
+                            "labelEn":  "Operational Storage Tank",
+                            "labelAr":  "خزان تشغيلي"
+                        },
+                        {
+                            "value":  "خزان استراتيجي",
+                            "labelEn":  "Strategic Storage Tank",
+                            "labelAr":  "خزان استراتيجي"
+                        },
+                        {
+                            "value":  "خزان محطة تنقية",
+                            "labelEn":  "Water Treatment Plant Tank",
+                            "labelAr":  "خزان محطة تنقية"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "alt_hydraulic_operating_method",
+        "type":  "single_choice",
+        "labelEn":  "Alternative Hydraulic Operating Method",
+        "labelAr":  "طريقة التشغيل الهيدروليكية البديلة",
+        "required":  false,
+        "section":  "supply",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ضغط الخط",
+                            "labelEn":  "Line Pressure",
+                            "labelAr":  "ضغط الخط"
+                        },
+                        {
+                            "value":  "محطة ضخ مخصصة",
+                            "labelEn":  "Dedicated Pump Station",
+                            "labelAr":  "محطة ضخ مخصصة"
+                        },
+                        {
+                            "value":  "بالجاذبية",
+                            "labelEn":  "Gravity-Fed",
+                            "labelAr":  "بالجاذبية"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "design_capacity_m3_day",
+        "type":  "numeric",
+        "labelEn":  "Design Capacity (m³/day)",
+        "labelAr":  "الطاقة التصميمية (م³/يوم)",
+        "required":  true,
+        "section":  "supply",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "daily_distribution_m3_day",
+        "type":  "numeric",
+        "labelEn":  "Daily Water Distribution Volume (m³/day)",
+        "labelAr":  "كمية المياه الموزعة يوميًا (م³/يوم)",
+        "required":  true,
+        "section":  "supply",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "tms_integration",
+        "type":  "yes_no",
+        "labelEn":  "Integration with TMS",
+        "labelAr":  "الربط بنظام TMS",
+        "required":  true,
+        "section":  "supply",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "hayah_c2m_integration",
+        "type":  "yes_no",
+        "labelEn":  "Integration with the Hayah / C2M System",
+        "labelAr":  "الربط بنظام حياة / C2M",
+        "required":  true,
+        "section":  "supply",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "account_no",
+        "type":  "text",
+        "labelEn":  "Account Number",
+        "labelAr":  "رقم الحساب",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "meter_no",
+        "type":  "text",
+        "labelEn":  "Meter Number",
+        "labelAr":  "رقم العداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "meter_size_mm",
+        "type":  "single_choice",
+        "labelEn":  "Meter Size (mm)",
+        "labelAr":  "مقاس العداد (ملم)",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "80",
+                            "labelEn":  "80",
+                            "labelAr":  "80"
+                        },
+                        {
+                            "value":  "100",
+                            "labelEn":  "100",
+                            "labelAr":  "100"
+                        },
+                        {
+                            "value":  "150",
+                            "labelEn":  "150",
+                            "labelAr":  "150"
+                        },
+                        {
+                            "value":  "200",
+                            "labelEn":  "200",
+                            "labelAr":  "200"
+                        },
+                        {
+                            "value":  "250",
+                            "labelEn":  "250",
+                            "labelAr":  "250"
+                        },
+                        {
+                            "value":  "300",
+                            "labelEn":  "300",
+                            "labelAr":  "300"
+                        },
+                        {
+                            "value":  "350",
+                            "labelEn":  "350",
+                            "labelAr":  "350"
+                        },
+                        {
+                            "value":  "400",
+                            "labelEn":  "400",
+                            "labelAr":  "400"
+                        },
+                        {
+                            "value":  "500",
+                            "labelEn":  "500",
+                            "labelAr":  "500"
+                        },
+                        {
+                            "value":  "700",
+                            "labelEn":  "700",
+                            "labelAr":  "700"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "station_meter_type",
+        "type":  "single_choice",
+        "labelEn":  "Meter Type",
+        "labelAr":  "نوع العداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "إلكتروني",
+                            "labelEn":  "Electronic",
+                            "labelAr":  "إلكتروني"
+                        },
+                        {
+                            "value":  "ميكانيكي",
+                            "labelEn":  "Mechanical",
+                            "labelAr":  "ميكانيكي"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "meter_status",
+        "type":  "single_choice",
+        "labelEn":  "Meter Condition",
+        "labelAr":  "حالة العداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "يعمل",
+                            "labelEn":  "Operational",
+                            "labelAr":  "يعمل"
+                        },
+                        {
+                            "value":  "لا يعمل",
+                            "labelEn":  "Not Operational",
+                            "labelAr":  "لا يعمل"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "meter_photo",
+        "type":  "photo",
+        "labelEn":  "Meter Photos",
+        "labelAr":  "صور العداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "meter_display_condition",
+        "type":  "single_choice",
+        "labelEn":  "Meter Display Condition",
+        "labelAr":  "حالة شاشة العداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "تعمل",
+                            "labelEn":  "Operational",
+                            "labelAr":  "تعمل"
+                        },
+                        {
+                            "value":  "لا تعمل",
+                            "labelEn":  "Not Operational",
+                            "labelAr":  "لا تعمل"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "meter_display_photos",
+        "type":  "photo",
+        "labelEn":  "Meter Display Photos",
+        "labelAr":  "صور شاشة العداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "meter_accessories_condition",
+        "type":  "single_choice",
+        "labelEn":  "Meter Accessories Condition",
+        "labelAr":  "حالة ملحقات العداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "تعمل",
+                            "labelEn":  "Operational",
+                            "labelAr":  "تعمل"
+                        },
+                        {
+                            "value":  "لا تعمل",
+                            "labelEn":  "Not Operational",
+                            "labelAr":  "لا تعمل"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "meter_accessories_photos",
+        "type":  "photo",
+        "labelEn":  "Meter Accessories Photos",
+        "labelAr":  "صور ملحقات العداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "meter_manufacturer",
+        "type":  "single_choice",
+        "labelEn":  "Meter Manufacturer",
+        "labelAr":  "الشركة المصنعة للعداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "BADGER",
+                            "labelEn":  "BADGER",
+                            "labelAr":  "BADGER"
+                        },
+                        {
+                            "value":  "ABB",
+                            "labelEn":  "ABB",
+                            "labelAr":  "ABB"
+                        },
+                        {
+                            "value":  "SENSUS",
+                            "labelEn":  "SENSUS",
+                            "labelAr":  "SENSUS"
+                        },
+                        {
+                            "value":  "KROHNE",
+                            "labelEn":  "KROHNE",
+                            "labelAr":  "KROHNE"
+                        },
+                        {
+                            "value":  "OTHER",
+                            "labelEn":  "OTHER",
+                            "labelAr":  "OTHER"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "other_meter_manufacturer",
+        "type":  "text",
+        "labelEn":  "Other Meter Manufacturer Name",
+        "labelAr":  "اسم الشركة المصنعة الأخرى للعداد",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "meter_manufacturer",
+                            "op":  "equal",
+                            "value":  "OTHER"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "amr_integration",
+        "type":  "yes_no",
+        "labelEn":  "Integration with the AMR System",
+        "labelAr":  "الربط بنظام AMR",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "signal_device_available",
+        "type":  "yes_no",
+        "labelEn":  "Signal Transmission Device Available",
+        "labelAr":  "وجود جهاز لنقل الإشارة",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "signal_device_photos",
+        "type":  "photo",
+        "labelEn":  "Signal Transmission Device Photos",
+        "labelAr":  "صور جهاز نقل الإشارة",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "signal_device_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "signal_device_serial",
+        "type":  "text",
+        "labelEn":  "Signal Transmission Device Serial Number",
+        "labelAr":  "الرقم التسلسلي لجهاز نقل الإشارة",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "signal_device_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "signal_device_type",
+        "type":  "single_choice",
+        "labelEn":  "Signal Transmission Device Type",
+        "labelAr":  "نوع جهاز نقل الإشارة",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "signal_device_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+                        {
+                            "value":  "RTU",
+                            "labelEn":  "RTU",
+                            "labelAr":  "RTU"
+                        },
+                        {
+                            "value":  "Data Logger",
+                            "labelEn":  "Data Logger",
+                            "labelAr":  "Data Logger"
+                        },
+                        {
+                            "value":  "OTHER",
+                            "labelEn":  "OTHER",
+                            "labelAr":  "OTHER"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "other_signal_device_type",
+        "type":  "text",
+        "labelEn":  "Other Signal Transmission Device Type",
+        "labelAr":  "نوع جهاز نقل الإشارة الآخر",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "signal_device_type",
+                            "op":  "equal",
+                            "value":  "OTHER"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "communication_status",
+        "type":  "single_choice",
+        "labelEn":  "Communication Status",
+        "labelAr":  "حالة الاتصال",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "signal_device_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ONLINE",
+                            "labelEn":  "ONLINE",
+                            "labelAr":  "ONLINE"
+                        },
+                        {
+                            "value":  "OFFLINE",
+                            "labelEn":  "OFFLINE",
+                            "labelAr":  "OFFLINE"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "data_sim_serial",
+        "type":  "text",
+        "labelEn":  "Data SIM Card Serial Number",
+        "labelAr":  "الرقم التسلسلي لشريحة البيانات",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "signal_device_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "data_sim_serial_photos",
+        "type":  "photo",
+        "labelEn":  "Data SIM Card Serial Number Photos",
+        "labelAr":  "صور الرقم التسلسلي لشريحة البيانات",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "signal_device_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "is_meter_smart",
+        "type":  "yes_no",
+        "labelEn":  "Is the Meter Smart?",
+        "labelAr":  "هل العداد ذكي؟",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "flow_meter_chamber_available",
+        "type":  "yes_no",
+        "labelEn":  "Flow Meter Chamber Available",
+        "labelAr":  "توفر غرفة لعدادات قياس التدفق",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "flow_meter_chamber_condition",
+        "type":  "single_choice",
+        "labelEn":  "Flow Meter Chamber Condition",
+        "labelAr":  "حالة غرفة عدادات قياس التدفق",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "flow_meter_chamber_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ممتازة",
+                            "labelEn":  "Excellent",
+                            "labelAr":  "ممتازة"
+                        },
+                        {
+                            "value":  "جيدة",
+                            "labelEn":  "Good",
+                            "labelAr":  "جيدة"
+                        },
+                        {
+                            "value":  "متهالكة",
+                            "labelEn":  "Deteriorated",
+                            "labelAr":  "متهالكة"
+                        },
+                        {
+                            "value":  "لا يوجد",
+                            "labelEn":  "Not Available",
+                            "labelAr":  "لا يوجد"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "flow_meter_chamber_photos",
+        "type":  "photo",
+        "labelEn":  "Flow Meter Chamber Photos",
+        "labelAr":  "صور غرفة عدادات قياس التدفق",
+        "required":  true,
+        "section":  "meter",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "flow_meter_chamber_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "entrance_gate_available",
+        "type":  "yes_no",
+        "labelEn":  "Entrance Gate Available",
+        "labelAr":  "وجود بوابة للدخول",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "entrance_gate_photos",
+        "type":  "photo",
+        "labelEn":  "Entrance Gate Photos",
+        "labelAr":  "صور لبوابة الدخول",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "entrance_width_m",
+        "type":  "numeric",
+        "labelEn":  "Entrance Width (m)",
+        "labelAr":  "عرض المدخل (م)",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "electronic_entrance_gate_available",
+        "type":  "yes_no",
+        "labelEn":  "Electronic Entrance Gate Available",
+        "labelAr":  "وجود بوابة إلكترونية للدخول",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "entrance_gate_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "exit_gate_available",
+        "type":  "yes_no",
+        "labelEn":  "Exit Gate Available",
+        "labelAr":  "وجود بوابة للخروج",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "exit_gate_photos",
+        "type":  "photo",
+        "labelEn":  "Exit Gate Photos",
+        "labelAr":  "صور لبوابة الخروج",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "exit_width_m",
+        "type":  "numeric",
+        "labelEn":  "Exit Width (m)",
+        "labelAr":  "عرض المخرج (م)",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "electronic_exit_gate_available",
+        "type":  "yes_no",
+        "labelEn":  "Electronic Exit Gate Available",
+        "labelAr":  "وجود بوابة إلكترونية للخروج",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "exit_gate_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "emergency_exits_available",
+        "type":  "yes_no",
+        "labelEn":  "Emergency Exits Available",
+        "labelAr":  "وجود مخارج طوارئ",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "emergency_exits_photos",
+        "type":  "photo",
+        "labelEn":  "Emergency Exits Photos",
+        "labelAr":  "صور لمخارج الطوارئ",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "emergency_exits_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "entrance_exit_drainage_available",
+        "type":  "yes_no",
+        "labelEn":  "Water Drainage at Entrances and Exits Available",
+        "labelAr":  "وجود تصريف مياه للمداخل والمخارج",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "entrance_exit_drainage_photos",
+        "type":  "photo",
+        "labelEn":  "Entrance and Exit Water Drainage Photos",
+        "labelAr":  "صور لوجود تصريف مياه للمداخل والمخارج",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "entrance_exit_drainage_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "entrance_exit_drainage_connection",
+        "type":  "single_choice",
+        "labelEn":  "Entrance and Exit Drainage Connection",
+        "labelAr":  "ربط تصريف المياه للمداخل والمخارج",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "entrance_exit_drainage_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+                        {
+                            "value":  "خزان مستقل",
+                            "labelEn":  "Independent Tank",
+                            "labelAr":  "خزان مستقل"
+                        },
+                        {
+                            "value":  "شبكة الصرف الصحي",
+                            "labelEn":  "Sewer Network",
+                            "labelAr":  "شبكة الصرف الصحي"
+                        },
+                        {
+                            "value":  "أخرى",
+                            "labelEn":  "Other",
+                            "labelAr":  "أخرى"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "other_entrance_exit_drainage_connection",
+        "type":  "text",
+        "labelEn":  "Other Entrance and Exit Drainage Connection",
+        "labelAr":  "جهة الربط الأخرى لتصريف مياه المداخل والمخارج",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "entrance_exit_drainage_connection",
+                            "op":  "equal",
+                            "value":  "أخرى"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "filling_point_drainage_available",
+        "type":  "yes_no",
+        "labelEn":  "Drainage for Filling Points Available",
+        "labelAr":  "وجود تصريف مياه للمناهل",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "filling_point_drainage_photos",
+        "type":  "photo",
+        "labelEn":  "Filling Point Drainage Photos",
+        "labelAr":  "صور لوجود تصريف مياه للمناهل",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "filling_point_drainage_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "filling_point_drainage_connection",
+        "type":  "single_choice",
+        "labelEn":  "Filling Point Drainage Connection",
+        "labelAr":  "ربط تصريف المياه للمناهل",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "filling_point_drainage_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+                        {
+                            "value":  "خزان مستقل",
+                            "labelEn":  "Independent Tank",
+                            "labelAr":  "خزان مستقل"
+                        },
+                        {
+                            "value":  "شبكة الصرف الصحي",
+                            "labelEn":  "Sewer Network",
+                            "labelAr":  "شبكة الصرف الصحي"
+                        },
+                        {
+                            "value":  "أخرى",
+                            "labelEn":  "Other",
+                            "labelAr":  "أخرى"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "other_filling_point_drainage_connection",
+        "type":  "text",
+        "labelEn":  "Other Filling Point Drainage Connection",
+        "labelAr":  "جهة الربط الأخرى لتصريف مياه المناهل",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "filling_point_drainage_connection",
+                            "op":  "equal",
+                            "value":  "أخرى"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "bilingual_entrance_exit_signs_available",
+        "type":  "yes_no",
+        "labelEn":  "Bilingual Reflective Entrance/Exit Signs Available",
+        "labelAr":  "توفر لوحات عاكسة ثنائية اللغة للمداخل والمخارج",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "bilingual_entrance_exit_signs_photos",
+        "type":  "photo",
+        "labelEn":  "Bilingual Reflective Entrance/Exit Signs Photos",
+        "labelAr":  "صور اللوحات العاكسة ثنائية اللغة للمداخل والمخارج",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "bilingual_entrance_exit_signs_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "lighting_fixtures_condition",
+        "type":  "single_choice",
+        "labelEn":  "Lighting Fixtures Condition",
+        "labelAr":  "حالة مصابيح الإضاءة",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ممتازة",
+                            "labelEn":  "Excellent",
+                            "labelAr":  "ممتازة"
+                        },
+                        {
+                            "value":  "جيدة",
+                            "labelEn":  "Good",
+                            "labelAr":  "جيدة"
+                        },
+                        {
+                            "value":  "متهالكة",
+                            "labelEn":  "Deteriorated",
+                            "labelAr":  "متهالكة"
+                        },
+                        {
+                            "value":  "لا يوجد",
+                            "labelEn":  "Not Available",
+                            "labelAr":  "لا يوجد"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "road_signage_condition",
+        "type":  "single_choice",
+        "labelEn":  "Road Directional Signage Condition",
+        "labelAr":  "حالة اللوحات الإرشادية على الطريق",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ممتازة",
+                            "labelEn":  "Excellent",
+                            "labelAr":  "ممتازة"
+                        },
+                        {
+                            "value":  "جيدة",
+                            "labelEn":  "Good",
+                            "labelAr":  "جيدة"
+                        },
+                        {
+                            "value":  "متهالكة",
+                            "labelEn":  "Deteriorated",
+                            "labelAr":  "متهالكة"
+                        },
+                        {
+                            "value":  "لا يوجد",
+                            "labelEn":  "Not Available",
+                            "labelAr":  "لا يوجد"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "road_signage_photos",
+        "type":  "photo",
+        "labelEn":  "Road Directional Signage Photos",
+        "labelAr":  "صور اللوحات الإرشادية على الطريق",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "any",
+        "visible":  [
+                        {
+                            "field":  "road_signage_condition",
+                            "op":  "equal",
+                            "value":  "ممتازة"
+                        },
+                        {
+                            "field":  "road_signage_condition",
+                            "op":  "equal",
+                            "value":  "جيدة"
+                        },
+                        {
+                            "field":  "road_signage_condition",
+                            "op":  "equal",
+                            "value":  "متهالكة"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "road_to_station_condition",
+        "type":  "single_choice",
+        "labelEn":  "Condition of Road Leading to the Station",
+        "labelAr":  "حالة الطريق المؤدي للمحطة",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "مسفلت",
+                            "labelEn":  "Asphalt-Paved",
+                            "labelAr":  "مسفلت"
+                        },
+                        {
+                            "value":  "ترابي",
+                            "labelEn":  "Unpaved",
+                            "labelAr":  "ترابي"
+                        },
+                        {
+                            "value":  "لا يوجد",
+                            "labelEn":  "Not Available",
+                            "labelAr":  "لا يوجد"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "road_to_station_photos",
+        "type":  "photo",
+        "labelEn":  "Road Leading to the Station Photos",
+        "labelAr":  "صور الطريق المؤدي للمحطة",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "paved_access_road_available",
+        "type":  "yes_no",
+        "labelEn":  "Paved Access Road Available",
+        "labelAr":  "توفر طريق وصول مرصوف إلى المحطة",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "paved_access_road_photos",
+        "type":  "photo",
+        "labelEn":  "Paved Access Road Photos",
+        "labelAr":  "صور طريق الوصول المرصوف إلى المحطة",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "paved_access_road_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "road_markings_available",
+        "type":  "yes_no",
+        "labelEn":  "Road Markings Available",
+        "labelAr":  "توفر علامات أرضية على الطريق",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "internal_directional_signs_available",
+        "type":  "yes_no",
+        "labelEn":  "Internal Directional Signs Available",
+        "labelAr":  "توفر لوحات إرشادية داخل المحطة",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "internal_directional_signs_photos",
+        "type":  "photo",
+        "labelEn":  "Internal Directional Signs Photos",
+        "labelAr":  "صور اللوحات الإرشادية داخل المحطة",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "internal_directional_signs_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "identification_sign_available",
+        "type":  "yes_no",
+        "labelEn":  "Identification Sign Available",
+        "labelAr":  "توفر لوحة تعريفية للمحطة",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "identification_sign_photos",
+        "type":  "photo",
+        "labelEn":  "Identification Sign Photos",
+        "labelAr":  "صور اللوحة التعريفية",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "identification_sign_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "identification_sign_compliance",
+        "type":  "single_choice",
+        "labelEn":  "Identification Sign Compliance with Visual Identity Requirements",
+        "labelAr":  "التزام اللوحة التعريفية بمتطلبات الهوية البصرية",
+        "required":  true,
+        "section":  "access",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ملتزم",
+                            "labelEn":  "Compliant",
+                            "labelAr":  "ملتزم"
+                        },
+                        {
+                            "value":  "غير ملتزم",
+                            "labelEn":  "Non-Compliant",
+                            "labelAr":  "غير ملتزم"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "fence_type",
+        "type":  "single_choice",
+        "labelEn":  "Fence Type",
+        "labelAr":  "نوع السور",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "خرساني",
+                            "labelEn":  "Concrete",
+                            "labelAr":  "خرساني"
+                        },
+                        {
+                            "value":  "سياج حديدي",
+                            "labelEn":  "Metal Fence",
+                            "labelAr":  "سياج حديدي"
+                        },
+                        {
+                            "value":  "لا يوجد",
+                            "labelEn":  "Not Available",
+                            "labelAr":  "لا يوجد"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "fence_photos",
+        "type":  "photo",
+        "labelEn":  "Fence Photos",
+        "labelAr":  "صور للسور",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "fence_overall_condition",
+        "type":  "single_choice",
+        "labelEn":  "Overall Fence Condition",
+        "labelAr":  "الحالة العامة للسور",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ممتازة",
+                            "labelEn":  "Excellent",
+                            "labelAr":  "ممتازة"
+                        },
+                        {
+                            "value":  "جيدة",
+                            "labelEn":  "Good",
+                            "labelAr":  "جيدة"
+                        },
+                        {
+                            "value":  "متهالكة",
+                            "labelEn":  "Deteriorated",
+                            "labelAr":  "متهالكة"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "fence_finishes_condition",
+        "type":  "single_choice",
+        "labelEn":  "Fence Finishes and Paint Condition",
+        "labelAr":  "حالة تشطيبات الأسوار ودهاناتها",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ممتازة",
+                            "labelEn":  "Excellent",
+                            "labelAr":  "ممتازة"
+                        },
+                        {
+                            "value":  "جيدة",
+                            "labelEn":  "Good",
+                            "labelAr":  "جيدة"
+                        },
+                        {
+                            "value":  "متهالكة",
+                            "labelEn":  "Deteriorated",
+                            "labelAr":  "متهالكة"
+                        },
+                        {
+                            "value":  "لا يوجد",
+                            "labelEn":  "Not Available",
+                            "labelAr":  "لا يوجد"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "yard_paving_available",
+        "type":  "yes_no",
+        "labelEn":  "Yard Paving Available",
+        "labelAr":  "توفر رصف للساحات",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "yard_paving_photos",
+        "type":  "photo",
+        "labelEn":  "Yard Paving Photos",
+        "labelAr":  "صور رصف الساحات",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "yard_paving_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  3
+    },
+    {
+        "dataName":  "yard_markings_available",
+        "type":  "yes_no",
+        "labelEn":  "Yard Markings Available",
+        "labelAr":  "توفر تخطيط أرضي للساحات",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "yard_markings_photos",
+        "type":  "photo",
+        "labelEn":  "Yard Markings Photos",
+        "labelAr":  "صور التخطيط الأرضي للساحات",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "yard_markings_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "yard_surface_type",
+        "type":  "single_choice",
+        "labelEn":  "Yard Surface Type",
+        "labelAr":  "نوع سطح الساحة",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "مسفلت",
+                            "labelEn":  "Asphalt-Paved",
+                            "labelAr":  "مسفلت"
+                        },
+                        {
+                            "value":  "ترابي",
+                            "labelEn":  "Unpaved",
+                            "labelAr":  "ترابي"
+                        },
+                        {
+                            "value":  "لا يوجد",
+                            "labelEn":  "Not Available",
+                            "labelAr":  "لا يوجد"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "small_vehicle_parking_available",
+        "type":  "yes_no",
+        "labelEn":  "Small-Vehicle Parking Available",
+        "labelAr":  "توفر مواقف للمركبات الصغيرة",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "small_vehicle_parking_photos",
+        "type":  "photo",
+        "labelEn":  "Small-Vehicle Parking Photos",
+        "labelAr":  "صور مواقف المركبات الصغيرة",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "small_vehicle_parking_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "yard_lighting_available",
+        "type":  "yes_no",
+        "labelEn":  "Yard Lighting Available",
+        "labelAr":  "توفر إنارة للساحات",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "high_mast_lighting_available",
+        "type":  "yes_no",
+        "labelEn":  "High-Mast Lighting Available at Entrances and Exits",
+        "labelAr":  "توفر أعمدة إنارة عالية عند المداخل والمخارج",
+        "required":  true,
+        "section":  "yard",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "filling_points_count",
+        "type":  "numeric",
+        "labelEn":  "Number of Filling Points",
+        "labelAr":  "عدد المناهل",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "integer"
+    },
+    {
+        "dataName":  "filling_point_photos",
+        "type":  "photo",
+        "labelEn":  "Filling Point Photos",
+        "labelAr":  "صور المناهل",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  5
+    },
+    {
+        "dataName":  "operational_filling_points_count",
+        "type":  "numeric",
+        "labelEn":  "Number of Operational Filling Points",
+        "labelAr":  "عدد المناهل العاملة",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "integer"
+    },
+    {
+        "dataName":  "filling_points_condition",
+        "type":  "single_choice",
+        "labelEn":  "Filling Points Condition",
+        "labelAr":  "حالة المناهل",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "تعمل",
+                            "labelEn":  "Operational",
+                            "labelAr":  "تعمل"
+                        },
+                        {
+                            "value":  "لا تعمل",
+                            "labelEn":  "Not Operational",
+                            "labelAr":  "لا تعمل"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "filling_point_height_m",
+        "type":  "numeric",
+        "labelEn":  "Filling Point Height (m)",
+        "labelAr":  "ارتفاع المنهل (م)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "filling_point_diameter_mm",
+        "type":  "numeric",
+        "labelEn":  "Filling Point Diameter (mm)",
+        "labelAr":  "قطر المنهل (ملم)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "integer"
+    },
+    {
+        "dataName":  "flow_rate_m3_s",
+        "type":  "numeric",
+        "labelEn":  "Flow Rate (m³/s)",
+        "labelAr":  "معدل التدفق (م³/ث)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal",
+        "descriptionEn":  "Calculated separately for each filling point; a station may have more than one filling point.",
+        "descriptionAr":  "يُحتسب لكل منهل على حدة؛ وقد تحتوي المحطة على أكثر من منهل."
+    },
+    {
+        "dataName":  "pump_flow_rate_m3_s",
+        "type":  "numeric",
+        "labelEn":  "Pump Flow Rate (m³/s)",
+        "labelAr":  "معدل تصريف المضخة (م³/ث)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "emergency_filling_points_available",
+        "type":  "yes_no",
+        "labelEn":  "Are Emergency Filling Points Available?",
+        "labelAr":  "هل توجد مناهل للطوارئ؟",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "emergency_filling_points_count",
+        "type":  "numeric",
+        "labelEn":  "Number of Emergency Filling Points",
+        "labelAr":  "عدد مناهل الطوارئ",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "emergency_filling_points_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "integer"
+    },
+    {
+        "dataName":  "emergency_filling_point_photos",
+        "type":  "photo",
+        "labelEn":  "Emergency Filling Point Photos",
+        "labelAr":  "صور مناهل الطوارئ",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "emergency_filling_points_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  5
+    },
+    {
+        "dataName":  "emergency_filling_points_condition",
+        "type":  "single_choice",
+        "labelEn":  "Emergency Filling Points Condition",
+        "labelAr":  "حالة مناهل الطوارئ",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "emergency_filling_points_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+                        {
+                            "value":  "تعمل",
+                            "labelEn":  "Operational",
+                            "labelAr":  "تعمل"
+                        },
+                        {
+                            "value":  "لا تعمل",
+                            "labelEn":  "Not Operational",
+                            "labelAr":  "لا تعمل"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "emergency_filling_point_height_m",
+        "type":  "numeric",
+        "labelEn":  "Emergency Filling Point Height (m)",
+        "labelAr":  "ارتفاع منهل الطوارئ (م)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "emergency_filling_points_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "emergency_filling_point_diameter_mm",
+        "type":  "numeric",
+        "labelEn":  "Emergency Filling Point Diameter (mm)",
+        "labelAr":  "قطر منهل الطوارئ (ملم)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "emergency_filling_points_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "integer"
+    },
+    {
+        "dataName":  "filling_point_column_type",
+        "type":  "single_choice",
+        "labelEn":  "Filling Point Column Type",
+        "labelAr":  "نوع عمود المنهل",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "خرساني",
+                            "labelEn":  "Concrete",
+                            "labelAr":  "خرساني"
+                        },
+                        {
+                            "value":  "حديد",
+                            "labelEn":  "Steel",
+                            "labelAr":  "حديد"
+                        },
+                        {
+                            "value":  "أخرى",
+                            "labelEn":  "Other",
+                            "labelAr":  "أخرى"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "other_filling_point_column_type",
+        "type":  "text",
+        "labelEn":  "Other Filling Point Column Type",
+        "labelAr":  "نوع آخر لعمود المنهل",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "filling_point_column_type",
+                            "op":  "equal",
+                            "value":  "أخرى"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "filling_point_column_photos",
+        "type":  "photo",
+        "labelEn":  "Filling Point Column Photos",
+        "labelAr":  "صور عمود المنهل",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "filling_point_protection_if_not_concrete",
+        "type":  "yes_no",
+        "labelEn":  "If the Filling Point Is Not Concrete, Is Protection Provided?",
+        "labelAr":  "في حال كان المنهل غير خرساني، هل تتوفر حماية؟",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "curbs_between_filling_points_available",
+        "type":  "yes_no",
+        "labelEn":  "Are Curbs/Walkways Available Between Filling Points?",
+        "labelAr":  "هل توجد أرصفة بين نقاط التعبئة؟",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "curb_between_filling_points_width_m",
+        "type":  "numeric",
+        "labelEn":  "Width of Curb/Walkway Between Filling Points (m)",
+        "labelAr":  "عرض الرصيف بين نقاط التعبئة (م)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "curb_between_filling_points_photos",
+        "type":  "photo",
+        "labelEn":  "Curb/Walkway Between Filling Points Photos",
+        "labelAr":  "صور الرصيف بين نقاط التعبئة",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "curbs_between_filling_points_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "filling_area_side_stairway_available",
+        "type":  "yes_no",
+        "labelEn":  "Is a Side Stairway Available at the Filling Area?",
+        "labelAr":  "هل يوجد درج جانبي لمنطقة التعبئة",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "filling_area_side_stairway_photos",
+        "type":  "photo",
+        "labelEn":  "Filling Area Side Stairway Photos",
+        "labelAr":  "صور الدرج الجانبي لمنطقة التعبئة",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "filling_area_side_stairway_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "filling_area_side_stairway_width_cm",
+        "type":  "numeric",
+        "labelEn":  "Filling Area Side Stairway Width (cm)",
+        "labelAr":  "عرض الدرج الجانبي لمنطقة التعبئة (سم)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "integer"
+    },
+    {
+        "dataName":  "tanker_area_concrete_slabs_available",
+        "type":  "yes_no",
+        "labelEn":  "Concrete Slabs Available in the Tanker Filling Area",
+        "labelAr":  "توفر بلاطات خرسانية في منطقة تعبئة الصهاريج",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "tanker_area_concrete_slabs_photos",
+        "type":  "photo",
+        "labelEn":  "Concrete Slabs in Tanker Filling Area Photos",
+        "labelAr":  "صور البلاطات الخرسانية في منطقة تعبئة الصهاريج",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "tanker_area_concrete_slabs_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "tanker_area_concrete_slabs_condition",
+        "type":  "single_choice",
+        "labelEn":  "Concrete Slabs Condition in Tanker Filling Area",
+        "labelAr":  "حالة البلاطات الخرسانية في منطقة تعبئة الصهاريج",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "ممتازة",
+                            "labelEn":  "Excellent",
+                            "labelAr":  "ممتازة"
+                        },
+                        {
+                            "value":  "جيدة",
+                            "labelEn":  "Good",
+                            "labelAr":  "جيدة"
+                        },
+                        {
+                            "value":  "متهالكة",
+                            "labelEn":  "Deteriorated",
+                            "labelAr":  "متهالكة"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "tanker_area_asphalt_available",
+        "type":  "yes_no",
+        "labelEn":  "Asphalt Available in the Tanker Filling Area",
+        "labelAr":  "توفر أسفلت في منطقة تعبئة الصهاريج",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "tanker_area_asphalt_photos",
+        "type":  "photo",
+        "labelEn":  "Asphalt in Tanker Filling Area Photos",
+        "labelAr":  "صور الأسفلت في منطقة تعبئة الصهاريج",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "tanker_area_asphalt_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "filling_area_drainage_slopes_available",
+        "type":  "yes_no",
+        "labelEn":  "Adequate Drainage Slopes Provided Before and After the Filling Area",
+        "labelAr":  "توفر ميول تصريف مناسبة قبل منطقة التعبئة وبعدها",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "tanker_parking_available",
+        "type":  "yes_no",
+        "labelEn":  "Is Tanker Parking Available Inside the Station?",
+        "labelAr":  "هل توجد مواقف للصهاريج داخل المحطة؟",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "tanker_parking_photos",
+        "type":  "photo",
+        "labelEn":  "Tanker Parking Photos",
+        "labelAr":  "صور مواقف الصهاريج داخل المحطة",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "tanker_parking_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "tanker_parking_spaces_count",
+        "type":  "numeric",
+        "labelEn":  "Number of Tanker Parking Spaces Inside the Station",
+        "labelAr":  "عدد مواقف الصهاريج داخل المحطة",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "tanker_parking_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "integer"
+    },
+    {
+        "dataName":  "tanker_parking_space_length_m",
+        "type":  "numeric",
+        "labelEn":  "Tanker Parking Space Length (m)",
+        "labelAr":  "طول موقف الصهريج (م)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "tanker_parking_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "tanker_parking_space_width_m",
+        "type":  "numeric",
+        "labelEn":  "Tanker Parking Space Width (m)",
+        "labelAr":  "عرض موقف الصهريج (م)",
+        "required":  true,
+        "section":  "filling_points",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "tanker_parking_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "accessible_restrooms_available",
+        "type":  "yes_no",
+        "labelEn":  "Accessibility-Compliant Restrooms Available",
+        "labelAr":  "توفر دورات مياه مهيأة للأشخاص ذوي الإعاقة",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "accessible_restrooms_photos",
+        "type":  "photo",
+        "labelEn":  "Accessibility-Compliant Restrooms Photos",
+        "labelAr":  "صور دورات المياه المهيأة للأشخاص ذوي الإعاقة",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "accessible_restrooms_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "accessible_walkways_available",
+        "type":  "yes_no",
+        "labelEn":  "Accessible Walkways Available",
+        "labelAr":  "توفر ممرات مهيأة للأشخاص ذوي الإعاقة",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "accessible_walkways_photos",
+        "type":  "photo",
+        "labelEn":  "Accessible Walkways Photos",
+        "labelAr":  "صور الممرات المهيأة للأشخاص ذوي الإعاقة",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "accessible_walkways_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "accessible_parking_available",
+        "type":  "yes_no",
+        "labelEn":  "Accessible Parking Spaces Available",
+        "labelAr":  "توفر مواقف مخصصة للأشخاص ذوي الإعاقة",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "accessible_parking_photos",
+        "type":  "photo",
+        "labelEn":  "Accessible Parking Spaces Photos",
+        "labelAr":  "صور المواقف المخصصة للأشخاص ذوي الإعاقة",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "accessible_parking_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "sewer_connection_exists",
+        "type":  "yes_no",
+        "labelEn":  "Sewer Network Connection Available at the Site",
+        "labelAr":  "توفر اتصال الموقع بشبكة الصرف الصحي",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "sewer_connection_photos",
+        "type":  "photo",
+        "labelEn":  "Photos Showing Sewer Network Connection",
+        "labelAr":  "صور توضح اتصال الموقع بشبكة الصرف الصحي",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "sewer_connection_exists",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "internet_available",
+        "type":  "yes_no",
+        "labelEn":  "Internet Connectivity Available",
+        "labelAr":  "توفر اتصال بالإنترنت",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "internet_equipment_photos",
+        "type":  "photo",
+        "labelEn":  "Internet Communication Equipment Photos",
+        "labelAr":  "صور معدات الاتصال بالإنترنت",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "internet_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "power_source",
+        "type":  "single_choice",
+        "labelEn":  "Power Source",
+        "labelAr":  "مصدر الطاقة",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "السعودية للطاقة",
+                            "labelEn":  "Saudi Energy (SE)",
+                            "labelAr":  "السعودية للطاقة"
+                        },
+                        {
+                            "value":  "مولدات كهربائية",
+                            "labelEn":  "Electric Generators",
+                            "labelAr":  "مولدات كهربائية"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "power_source_photos",
+        "type":  "photo",
+        "labelEn":  "Power Source Photos",
+        "labelAr":  "صور مصدر الطاقة",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "alt_power_sources_available",
+        "type":  "yes_no",
+        "labelEn":  "Are Alternative Power Sources Available?",
+        "labelAr":  "هل تتوفر مصادر بديلة للطاقة؟",
+        "required":  false,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "alt_power_source_photos",
+        "type":  "photo",
+        "labelEn":  "Alternative Power Source Photos",
+        "labelAr":  "صور مصادر الطاقة البديلة",
+        "required":  false,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "alt_power_sources_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "electricity_meter_no",
+        "type":  "text",
+        "labelEn":  "Electricity Meter Number",
+        "labelAr":  "رقم عداد الكهرباء",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "power_source",
+                            "op":  "equal",
+                            "value":  "السعودية للطاقة"
+                        }
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "electricity_meter_number_photos",
+        "type":  "photo",
+        "labelEn":  "Electricity Meter Number Photos",
+        "labelAr":  "صور رقم عداد الكهرباء",
+        "required":  true,
+        "section":  "utilities",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "power_source",
+                            "op":  "equal",
+                            "value":  "السعودية للطاقة"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "calendar_with_hours",
+        "type":  "calendar_with_hours",
+        "labelEn":  "Working Hours",
+        "labelAr":  "ساعات العمل",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "tanks_count",
+        "type":  "numeric",
+        "labelEn":  "Number of Tanks",
+        "labelAr":  "عدد الخزانات",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "any",
+        "visible":  [
+                        {
+                            "field":  "water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان تشغيلي"
+                        },
+                        {
+                            "field":  "water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان استراتيجي"
+                        },
+                        {
+                            "field":  "water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان محطة تنقية"
+                        },
+                        {
+                            "field":  "alt_water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان تشغيلي"
+                        },
+                        {
+                            "field":  "alt_water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان استراتيجي"
+                        },
+                        {
+                            "field":  "alt_water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان محطة تنقية"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "integer"
+    },
+    {
+        "dataName":  "tank_photos",
+        "type":  "photo",
+        "labelEn":  "Tank Photos",
+        "labelAr":  "صور الخزانات",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "any",
+        "visible":  [
+                        {
+                            "field":  "water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان تشغيلي"
+                        },
+                        {
+                            "field":  "water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان استراتيجي"
+                        },
+                        {
+                            "field":  "water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان محطة تنقية"
+                        },
+                        {
+                            "field":  "alt_water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان تشغيلي"
+                        },
+                        {
+                            "field":  "alt_water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان استراتيجي"
+                        },
+                        {
+                            "field":  "alt_water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان محطة تنقية"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "storage_capacity_m3",
+        "type":  "numeric",
+        "labelEn":  "Storage Capacity (m³)",
+        "labelAr":  "السعة التخزينية (م³)",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "any",
+        "visible":  [
+                        {
+                            "field":  "water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان تشغيلي"
+                        },
+                        {
+                            "field":  "water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان استراتيجي"
+                        },
+                        {
+                            "field":  "water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان محطة تنقية"
+                        },
+                        {
+                            "field":  "alt_water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان تشغيلي"
+                        },
+                        {
+                            "field":  "alt_water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان استراتيجي"
+                        },
+                        {
+                            "field":  "alt_water_supply_source",
+                            "op":  "equal",
+                            "value":  "خزان محطة تنقية"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "decimal"
+    },
+    {
+        "dataName":  "station_customers",
+        "type":  "single_choice",
+        "labelEn":  "Station Customers",
+        "labelAr":  "عملاء المحطة",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+                        {
+                            "value":  "سكني",
+                            "labelEn":  "Residential",
+                            "labelAr":  "سكني"
+                        },
+                        {
+                            "value":  "تجاري",
+                            "labelEn":  "Commercial",
+                            "labelAr":  "تجاري"
+                        },
+                        {
+                            "value":  "حكومي",
+                            "labelEn":  "Government",
+                            "labelAr":  "حكومي"
+                        },
+                        {
+                            "value":  "سكني وتجاري",
+                            "labelEn":  "Residential and Commercial",
+                            "labelAr":  "سكني وتجاري"
+                        },
+                        {
+                            "value":  "سكني وحكومي",
+                            "labelEn":  "Residential and Government",
+                            "labelAr":  "سكني وحكومي"
+                        },
+                        {
+                            "value":  "تجاري وحكومي",
+                            "labelEn":  "Commercial and Government",
+                            "labelAr":  "تجاري وحكومي"
+                        },
+                        {
+                            "value":  "سكني وتجاري وحكومي",
+                            "labelEn":  "Residential, Commercial, and Government",
+                            "labelAr":  "سكني وتجاري وحكومي"
+                        }
+                    ]
+    },
+    {
+        "dataName":  "admin_building_available",
+        "type":  "yes_no",
+        "labelEn":  "Administrative Building Available",
+        "labelAr":  "توفر مبنى إداري",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "admin_building_photos",
+        "type":  "photo",
+        "labelEn":  "Administrative Building Photos",
+        "labelAr":  "صور المبنى الإداري",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "admin_building_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "security_guardhouse_available",
+        "type":  "yes_no",
+        "labelEn":  "Security Guardhouse Available",
+        "labelAr":  "توفر مبنى للحراسة الأمنية",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "security_guardhouse_photos",
+        "type":  "photo",
+        "labelEn":  "Security Guardhouse Photos",
+        "labelAr":  "صور مبنى الحراسة الأمنية",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "security_guardhouse_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "landscaping_available",
+        "type":  "yes_no",
+        "labelEn":  "Is Landscaping Available at the Site?",
+        "labelAr":  "هل يتوفر تشجير في الموقع؟",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "landscaping_photos",
+        "type":  "photo",
+        "labelEn":  "Site Landscaping Photos",
+        "labelAr":  "صور تشجير الموقع",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "landscaping_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "filling_area_drainage_network_available",
+        "type":  "yes_no",
+        "labelEn":  "Is a Drainage Network Available in Filling Areas?",
+        "labelAr":  "هل توجد شبكة تصريف في مناطق التعبئة؟",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "filling_area_drainage_network_photos",
+        "type":  "photo",
+        "labelEn":  "Filling Area Drainage Network Photos",
+        "labelAr":  "صور شبكة التصريف في مناطق التعبئة",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "filling_area_drainage_network_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "reject_waste_loading_bay_available",
+        "type":  "yes_no",
+        "labelEn":  "Is a Dedicated Loading Bay Available for Reject Water and Chemical Waste?",
+        "labelAr":  "هل توجد منطقة تحميل مخصصة للمياه الراجعة والمخلفات الكيميائية؟",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "reject_waste_loading_bay_photos",
+        "type":  "photo",
+        "labelEn":  "Dedicated Reject Water and Chemical Waste Loading Bay Photos",
+        "labelAr":  "صور منطقة تحميل المياه الراجعة والمخلفات الكيميائية",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "reject_waste_loading_bay_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  2
+    },
+    {
+        "dataName":  "cctv_available",
+        "type":  "yes_no",
+        "labelEn":  "Are CCTV Cameras Available at the Site?",
+        "labelAr":  "هل توجد كاميرات مراقبة في الموقع؟",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+
+                    ],
+        "choices":  [
+
+                    ]
+    },
+    {
+        "dataName":  "cctv_cameras_count",
+        "type":  "numeric",
+        "labelEn":  "Number of CCTV Cameras at the Site",
+        "labelAr":  "عدد كاميرات المراقبة في الموقع",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "cctv_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "numericFormat":  "integer"
+    },
+    {
+        "dataName":  "cctv_photos",
+        "type":  "photo",
+        "labelEn":  "Site CCTV Camera Photos",
+        "labelAr":  "صور كاميرات المراقبة في الموقع",
+        "required":  true,
+        "section":  "site_services",
+        "visMatch":  "all",
+        "visible":  [
+                        {
+                            "field":  "cctv_available",
+                            "op":  "equal",
+                            "value":  "yes"
+                        }
+                    ],
+        "choices":  [
+
+                    ],
+        "maxFiles":  3
+    }
+]

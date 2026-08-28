@@ -1,0 +1,150 @@
+<ng-container *transloco="let t">
+  <p-dialog
+    [visible]="visible()"
+    (visibleChange)="visible.set($event)"
+    (onShow)="onShow()"
+    [header]="t('surveys.allocate.title')"
+    [modal]="true"
+    [maximizable]="true"
+    [draggable]="true"
+    [resizable]="false"
+    [style]="{ width: '480px' }"
+    [breakpoints]="{ '640px': '95vw' }"
+  >
+    @if (survey(); as current) {
+      <p class="mb-2 text-sm text-surface-500">
+        {{ t('surveys.allocate.subtitle', { code: current.surveyCode }) }}
+      </p>
+      @if (current.allocatedFieldTeamId) {
+        <!-- Re-allocating takes the survey off the current crew; say so before they commit. -->
+        <p-message
+          severity="warn"
+          [text]="
+            t('surveys.allocate.reallocateHint', { team: current.allocatedFieldTeamName || '' })
+          "
+          styleClass="w-full mb-4"
+        />
+      }
+    }
+
+    <form [formGroup]="form" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="allocate-team" class="text-sm font-medium">
+          {{ t('surveys.fields.fieldTeam') }} <span class="text-red-500">*</span>
+        </label>
+        <p-select
+          inputId="allocate-team"
+          formControlName="fieldTeamId"
+          [options]="teams()"
+          optionLabel="label"
+          optionValue="value"
+          [filter]="true"
+          filterBy="label"
+          [loading]="loadingTeams()"
+          [placeholder]="t('surveys.allocate.teamPlaceholder')"
+          appendTo="body"
+          styleClass="w-full"
+        >
+          <!-- The crew's current load, so a busy crew is visible before it is picked. -->
+          <ng-template pTemplate="selectedItem" let-selected>
+            <div class="flex items-center gap-2">
+              <span>{{ selected.label }}</span>
+              <p-tag
+                [value]="selected.activeAssignmentCount"
+                [severity]="selected.activeAssignmentCount > 0 ? 'info' : 'secondary'"
+              />
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="item" let-team>
+            <div class="flex w-full items-center justify-between gap-3">
+              <span>{{ team.label }}</span>
+              <p-tag
+                [value]="team.activeAssignmentCount"
+                [severity]="team.activeAssignmentCount > 0 ? 'info' : 'secondary'"
+                [pTooltip]="
+                  t('surveys.allocate.activeAssignments', { count: team.activeAssignmentCount })
+                "
+                tooltipPosition="left"
+              />
+            </div>
+          </ng-template>
+        </p-select>
+        @if (form.controls.fieldTeamId.touched && form.controls.fieldTeamId.invalid) {
+          <small class="text-red-500">{{ t('surveys.validation.teamRequired') }}</small>
+        }
+        <!-- The picker only lists crews scoped to this survey; an empty list is a coverage gap. -->
+        @if (!loadingTeams() && teams().length === 0) {
+          <p-message
+            severity="warn"
+            [text]="t('surveys.allocate.noEligibleTeams')"
+            styleClass="w-full"
+          />
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="allocate-due-date" class="text-sm font-medium">{{
+          t('surveys.fields.fillDueDate')
+        }}</label>
+        <p-datepicker
+          inputId="allocate-due-date"
+          formControlName="dueDate"
+          dateFormat="yy-mm-dd"
+          [showTime]="true"
+          [showIcon]="true"
+          appendTo="body"
+          styleClass="w-full"
+        />
+        <small class="text-surface-500">{{ t('surveys.allocate.fillDueDateHint') }}</small>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="allocate-completion-due-date" class="text-sm font-medium">{{
+          t('surveys.fields.completionDueDate')
+        }}</label>
+        <p-datepicker
+          inputId="allocate-completion-due-date"
+          formControlName="completionDueDate"
+          dateFormat="yy-mm-dd"
+          [showTime]="true"
+          [showIcon]="true"
+          appendTo="body"
+          styleClass="w-full"
+        />
+        <small class="text-surface-500">{{ t('surveys.allocate.completionDueDateHint') }}</small>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="allocate-note" class="text-sm font-medium">{{
+          t('surveys.fields.note')
+        }}</label>
+        <textarea
+          pTextarea
+          id="allocate-note"
+          formControlName="note"
+          rows="3"
+          class="w-full"
+          [placeholder]="t('surveys.allocate.notePlaceholder')"
+        ></textarea>
+      </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        [label]="t('surveys.actions.cancel')"
+        severity="secondary"
+        [text]="true"
+        [disabled]="saving()"
+        (onClick)="cancel()"
+      />
+      <p-button
+        [label]="t('surveys.actions.allocate')"
+        icon="pi pi-send"
+        [loading]="saving()"
+        [disabled]="saving()"
+        (onClick)="allocate()"
+      />
+    </ng-template>
+  </p-dialog>
+</ng-container>

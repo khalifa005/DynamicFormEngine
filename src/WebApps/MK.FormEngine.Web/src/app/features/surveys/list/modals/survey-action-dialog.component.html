@@ -1,0 +1,51 @@
+<ng-container *transloco="let t">
+  <p-dialog
+    [visible]="visible()"
+    (visibleChange)="visible.set($event)"
+    [header]="t('surveys.' + action() + '.title')"
+    [modal]="true"
+    [maximizable]="true"
+    [draggable]="true"
+    [resizable]="false"
+    [style]="{ width: '460px' }"
+    [breakpoints]="{ '640px': '95vw' }"
+  >
+    @if (survey(); as current) {
+      <p class="mb-4 text-sm text-surface-500">
+        {{ t('surveys.' + action() + '.subtitle', { code: current.surveyCode }) }}
+      </p>
+    }
+
+    <form [formGroup]="form" class="flex flex-col gap-2">
+      <label for="action-note" class="text-sm font-medium">{{ t('surveys.fields.note') }}</label>
+      <textarea
+        pTextarea
+        id="action-note"
+        formControlName="note"
+        rows="4"
+        class="w-full"
+        [placeholder]="t('surveys.' + action() + '.notePlaceholder')"
+      ></textarea>
+      @if (form.controls.note.hasError('maxlength')) {
+        <small class="text-red-500">{{ t('surveys.validation.noteTooLong') }}</small>
+      }
+    </form>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        [label]="t('surveys.actions.cancel')"
+        severity="secondary"
+        [text]="true"
+        [disabled]="saving()"
+        (onClick)="cancel()"
+      />
+      <p-button
+        [label]="t('surveys.actions.' + action())"
+        [severity]="action() === 'expire' ? 'danger' : 'primary'"
+        [loading]="saving()"
+        [disabled]="saving()"
+        (onClick)="confirm()"
+      />
+    </ng-template>
+  </p-dialog>
+</ng-container>

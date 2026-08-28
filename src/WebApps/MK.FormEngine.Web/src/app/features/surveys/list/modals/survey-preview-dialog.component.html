@@ -1,0 +1,71 @@
+<ng-container *transloco="let t">
+  <p-dialog
+    [visible]="visible()"
+    (visibleChange)="visible.set($event)"
+    [header]="t('surveys.preview.title')"
+    [modal]="true"
+    [draggable]="true"
+    [maximizable]="true"
+    [style]="{ width: '68rem' }"
+    [contentStyle]="{ overflow: 'auto' }"
+    [breakpoints]="{ '960px': '95vw' }"
+  >
+    @if (loading()) {
+      <div class="flex justify-center py-10">
+        <p-progressSpinner styleClass="w-10 h-10" strokeWidth="4" />
+      </div>
+    } @else if (loadFailed()) {
+      <p-message severity="error" [text]="t('surveys.preview.loadFailed')" styleClass="w-full" />
+    } @else if (survey(); as current) {
+      <div class="mb-3 flex flex-wrap items-center gap-2 text-sm">
+        <span class="font-medium">{{ current.surveyCode }}</span>
+        <p-tag
+          [value]="t('surveys.status.' + current.status)"
+          [severity]="statusSeverity(current.status)"
+        />
+        @if (templateName()) {
+          <span class="text-surface-500">
+            {{ templateName() }}
+            @if (current.templateVersionNo) {
+              <span>v{{ current.templateVersionNo }}</span>
+            }
+          </span>
+        }
+      </div>
+
+      @if (fill(); as latest) {
+        <p-message
+          severity="info"
+          [text]="
+            t('surveys.preview.filledBy', {
+              role: t('surveys.role.' + latest.filledByRole),
+              date: (latest.submittedDate | date: 'yyyy-MM-dd HH:mm') || '',
+            })
+          "
+          styleClass="w-full mb-3"
+        />
+      } @else {
+        <p-message severity="warn" [text]="t('surveys.preview.noFill')" styleClass="w-full mb-3" />
+      }
+
+      <p class="mb-4 m-0 text-sm text-[var(--p-text-muted-color)]">
+        <i class="pi pi-eye me-1.5 text-[var(--p-primary-color)]"></i>
+        {{ t('surveys.preview.subtitle') }}
+      </p>
+
+      <!-- The version pinned to the survey, rendered read-only. templateId and surveyId are
+           deliberately left unset: they are what turn a media field into an uploader, and
+           nothing here may write. -->
+      <app-dynamic-form-renderer
+        [definition]="definition()"
+        [answers]="answers()"
+        [readOnly]="true"
+        [emptyMessage]="t('surveys.preview.empty')"
+      />
+    }
+
+    <ng-template pTemplate="footer">
+      <p-button [label]="t('common.close')" severity="secondary" [text]="true" (onClick)="close()" />
+    </ng-template>
+  </p-dialog>
+</ng-container>

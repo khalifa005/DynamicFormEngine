@@ -1,0 +1,41 @@
+{
+  "apiBaseUrl": "https://localhost:7098",
+  "defaultLanguage": "ar",
+  "availableLanguages": [
+    "ar",
+    "en"
+  ],
+  "tokenRefreshEnabled": true,
+  "appName": "MK.FormEngine",
+  "fakeLogin": false,
+  "dashboardSections": {
+    "filters": true,
+    "kpis": true,
+    "trend": true,
+    "statusDistribution": true,
+    "transactions": true,
+    "myPerformance": false,
+    "peerComparison": false,
+    "teamsByOrg": false,
+    "teamsByDepartment": false,
+    "lateSurveys": true,
+    "lateTeams": true,
+    "recentSurveys": true
+  },
+  "dashboardKpis": {
+    "totalSurveys": true,
+    "approvedSurveys": true,
+    "underReview": true,
+    "returnedSurveys": true,
+    "overdueSurveys": true,
+    "activeTeams": true,
+    "completionRate": true,
+    "onTimeRate": true,
+    "returnRate": true,
+    "avgCompletion": true
+  },
+  "sso": {
+    "enabled": true,
+    "autoRedirect": false
+  }
+}
